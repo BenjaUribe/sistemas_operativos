@@ -1,6 +1,10 @@
 #include <iostream>
 #include <vector>
 #include <cstring>
+#include <fstream>
+#include <string>
+#include <cstdlib>
+#include <sstream>
 
 using namespace std;
 
@@ -11,6 +15,9 @@ struct Users {
     char password[20];
     char perfil[20];
 };
+
+
+
 
 void menuPrincipal() {
     cout << "\nMódulo - Gestión de Usuarios" << endl;
@@ -73,12 +80,38 @@ void listarUsuarios(const vector<Users>& userList) {
     return;
 }
 
+/*
+int almacenar(const char* path, const vector<Users>& userList){
+    ofstream outFile(path);
+    if (!outFile) {
+            cerr << "Error al abrir archivo para escribir: " << path << "\n";
+            return 1;
+        }
+
+    for(const auto& user : userList) {
+        outFile << user.id << ","
+                << user.nombre << ","
+                << user.userName << ","
+                << user.password << ","
+                << user.perfil << "\n";
+    }
+
+    outFile.close();
+    return 0;
+}*/
 
 int main() {
     vector<Users> userList;
 
-    // Menú principal
+    // leer variable env
 
+
+
+
+    //
+
+    // Menú principal
+    
     cout << "\nMódulo - Gestión de Usuarios" << endl;
     cout << "\n0) Salir" << endl;
     cout << "1) Ingresar Usuario" << endl;
@@ -87,7 +120,7 @@ int main() {
     cout << "\nSeleccione una opción: ";
     int opcion;
     
-   
+    
     do {
         // --> despues de ingresar user estamos aqui
         cin >> opcion;
@@ -98,6 +131,7 @@ int main() {
             break;
             case 1:
             ingresarUsuario(userList);
+            //almacenar(path, userList);
             break;
             case 2:
             cout << "Listar Usuario" << endl;
