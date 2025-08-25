@@ -5,6 +5,7 @@
 #include <string>
 #include <cstdlib>
 #include <sstream>
+#include <algorithm>
 
 using namespace std;
 
@@ -80,6 +81,38 @@ void listarUsuarios(const vector<Users>& userList) {
     return;
 }
 
+string obtenerEnv(const string& nombre_archivo, const string& clave) {
+    ifstream archivo(nombre_archivo);
+    string linea;
+    while (getline(archivo, linea)) {
+        // Ignorar comentarios y líneas vacías
+        if (linea.empty() || linea[0] == '#') continue;
+
+        if (linea.rfind(clave + "=", 0) == 0) { // si empieza con "clave="
+            string valor = linea.substr(clave.size() + 1);
+
+            // Reemplazar '\' por '/' en la ruta (Windows)
+            replace(valor.begin(), valor.end(), '\\', '/');
+
+            return valor;
+        }
+    }
+    return "";
+}
+
+//Versión usando getenv
+/*const char* obtenerRuta(const string& clave) {
+    const char* valor = getenv(clave.c_str());
+    if (!valor) return "";
+
+    string ruta(valor);
+
+    replace(ruta.begin(), ruta.end(), '\\', '/');
+
+    return ruta;
+}*/
+
+
 /*
 int almacenar(const char* path, const vector<Users>& userList){
     ofstream outFile(path);
@@ -105,8 +138,8 @@ int main() {
 
     // leer variable env
 
-
-
+    string ruta_usuarios = obtenerEnv("../.env","USER_FILE");
+    //(con getenv) string ruta = obtenerRuta("USER_FILE");
 
     //
 
