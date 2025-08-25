@@ -1,2 +1,9 @@
 # sistemas_operativos
-Proyecto asignatura INFO198 (Sistema Operativo)
+Proyecto asignatura INFO198 (Sistemas Operativos)
+
+La aplicación consiste en un prototipo de sistema operativo, cuyo propósito actual es crear perfiles de usuario, con la opción de listarlos y eliminarlos, a la espera de implementar nuevas funcionalidades.
+
+Para ejecutar, se debe entrar a la carpeta /src donde se ubica el archivo main.cpp. Desde terminal, ejecutar make y luego ./main. 
+
+Variables de entorno:
+USER_FILE: ruta del archivo USUARIOS.txt, el cual almacena los datos de cada usuario ingresado al sistema.
