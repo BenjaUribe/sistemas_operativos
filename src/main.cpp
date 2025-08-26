@@ -57,10 +57,14 @@ void ingresarUsuario(vector<Users>& userList) {
     }
     
     nuevoUsuario.id = id;
-    strcpy(nuevoUsuario.nombre, nombre);
-    strcpy(nuevoUsuario.userName, userName);
-    strcpy(nuevoUsuario.password, password);
-    strcpy(nuevoUsuario.perfil, perfil);
+    strncpy(nuevoUsuario.nombre, nombre, 19);
+    nuevoUsuario.nombre[19] = '\0';
+    strncpy(nuevoUsuario.userName, userName, 19);
+    nuevoUsuario.userName[19] = '\0';
+    strncpy(nuevoUsuario.password, password, 19);
+    nuevoUsuario.password[19] = '\0';
+    strncpy(nuevoUsuario.perfil, perfil, 19);
+    nuevoUsuario.perfil[19] = '\0';
 
     userList.push_back(nuevoUsuario);
     cout << "Usuario ingresado exitosamente." << endl;
@@ -85,7 +89,7 @@ string obtenerEnv(const string& nombre_archivo, const string& clave) {
     ifstream archivo(nombre_archivo);
     string linea;
     while (getline(archivo, linea)) {
-        // Ignorar comentarios y líneas vacías
+        // Ignorar comentarios y lï¿½neas vacï¿½as
         if (linea.empty() || linea[0] == '#') continue;
 
         if (linea.rfind(clave + "=", 0) == 0) { // si empieza con "clave="
@@ -100,7 +104,7 @@ string obtenerEnv(const string& nombre_archivo, const string& clave) {
     return "";
 }
 
-//Versión usando getenv
+//Versiï¿½n usando getenv
 /*const char* obtenerRuta(const string& clave) {
     const char* valor = getenv(clave.c_str());
     if (!valor) return "";
@@ -113,11 +117,22 @@ string obtenerEnv(const string& nombre_archivo, const string& clave) {
 }*/
 
 
-/*
-int almacenar(const char* path, const vector<Users>& userList){
-    ofstream outFile(path);
+
+int almacenar(string path, const vector<Users>& userList){
+    // Verificar si el archivo existe antes de abrirlo
+    /*cout << "\nAlmacenando usuarios en: " << path << endl;
+    ifstream testFile(path);
+    if (testFile.good()) {
+        cout << "[VERIFICACION] El archivo existe: " << path << endl;
+    } else {
+        cout << "[VERIFICACION] El archivo NO existe, se crearÃ¡: " << path << endl;
+    }
+    testFile.close();*/
+
+    ofstream outFile(path, ios::app);
+    cout << "Almacenando usuarios en: " << path << endl;
     if (!outFile) {
-            cerr << "Error al abrir archivo para escribir: " << path << "\n";
+            cerr << "\nError al abrir archivo para escribir: " << path << "\n";
             return 1;
         }
 
@@ -131,20 +146,35 @@ int almacenar(const char* path, const vector<Users>& userList){
 
     outFile.close();
     return 0;
-}*/
+}
 
 int main() {
     vector<Users> userList;
 
     // leer variable env
-
     string ruta_usuarios = obtenerEnv("../.env","USER_FILE");
+    //cout << "[DEPURACION] Valor retornado por obtenerEnv: '" << ruta_usuarios << "'" << endl;
+
     //(con getenv) string ruta = obtenerRuta("USER_FILE");
 
-    //
+    // Elimina los espacion en blancos de la ruta
+    ruta_usuarios.erase(0, ruta_usuarios.find_first_not_of(" \n\r\t"));
+    ruta_usuarios.erase(ruta_usuarios.find_last_not_of(" \n\r\t") + 1);
+
+    
+    // Prueba de escritura en el archivo
+    /*cout << "[PRUEBA] Intentando abrir y escribir en data/USUARIOS.txt..." << endl;
+    ofstream testOut("data/USUARIOS.txt", ios::app);
+    if (testOut.is_open()) {
+        testOut << "PRUEBA_ESCRITURA\n";
+        testOut.close();
+        cout << "[PRUEBA] Escritura exitosa en data/USUARIOS.txt" << endl;
+    } else {
+        cout << "[PRUEBA] Error al abrir data/USUARIOS.txt para escribir" << endl;
+    }*/
+
 
     // MenÃº principal
-    
     cout << "\nMÃ³dulo - GestiÃ³n de Usuarios" << endl;
     cout << "\n0) Salir" << endl;
     cout << "1) Ingresar Usuario" << endl;
@@ -161,10 +191,10 @@ int main() {
         switch(opcion) {
             case 0:
             cout << "Saliendo..." << endl;
+            almacenar(ruta_usuarios, userList);
             break;
             case 1:
             ingresarUsuario(userList);
-            //almacenar(path, userList);
             break;
             case 2:
             cout << "Listar Usuario" << endl;
