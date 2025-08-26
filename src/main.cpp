@@ -18,10 +18,8 @@ struct Users {
 };
 
 
-
-
 void menuPrincipal() {
-    cout << "\nMódulo - Gestión de Usuarios" << endl;
+    cout << "\n:::::::::: Módulo - Gestión de Usuarios ::::::::::" << endl;
     cout << "\n0) Salir" << endl;
     cout << "1) Ingresar Usuario" << endl;
     cout << "2) Listar Usuarios" << endl;
@@ -36,7 +34,7 @@ void ingresarUsuario(vector<Users>& userList) {
     int id, opcion;
     char nombre[20], userName[20], password[20], perfil[20];
     
-    cout << "ID: ";
+    cout << "\nID: ";
     cin >> id;
     cout << "Nombre: ";
     cin >> nombre;
@@ -47,12 +45,12 @@ void ingresarUsuario(vector<Users>& userList) {
     cout << "Perfil: ";
     cin >> perfil;
 
-    cout << "1) guardar      2) cancelar" << endl;
+    cout << "\n1) guardar      2) cancelar" << endl;
     cout  << "Opción: ";
     cin >> opcion;
 
     if (opcion == 2) {
-        cout << "Operación cancelada." << endl;
+        cout << "\nOperación cancelada." << endl;
         return;
     }
     
@@ -67,15 +65,14 @@ void ingresarUsuario(vector<Users>& userList) {
     nuevoUsuario.perfil[19] = '\0';
 
     userList.push_back(nuevoUsuario);
-    cout << "Usuario ingresado exitosamente." << endl;
+    cout << "\nUsuario ingresado exitosamente." << endl;
     menuPrincipal();
     return;
 }
 
 void listarUsuarios(const vector<Users>& userList) {
-    cout << "\nLista de Usuarios:" << endl;
     for (const auto& user : userList) {
-        cout << "ID: " << user.id << endl;
+        cout << "\nID: " << user.id << endl;
         cout << "Nombre: " << user.nombre << endl;
         cout << "Username: " << user.userName << endl;
         cout << "Perfil: " << user.perfil << endl;
@@ -194,7 +191,7 @@ int clear(string path){
 }
 
 int eliminarUsuario(vector<Users>& userList){
-    cout << "Indique el id del usuario que desea eliminar: ";
+    cout << "\nIndique el id del usuario que desea eliminar: ";
     int id;
     cin >> id;
     
@@ -202,11 +199,16 @@ int eliminarUsuario(vector<Users>& userList){
         return user.id == id;
     });
 
+    
+    if(strcmp(it -> perfil, "admin") == 0){
+        cout << "\nAdvertencia: el usuario a eliminar es admin." << endl;
+    }
+
     if(it != userList.end()){
         userList.erase(it);
-        cout << "Usuario eliminado." << endl;
+        cout << "\nUsuario eliminado." << endl;
     } else {
-        cout << "Usuario no encontrado." << endl;
+        cout << "\nUsuario no encontrado." << endl;
     }
     menuPrincipal();
     return 0;
@@ -237,9 +239,13 @@ int main() {
         cout << "[PRUEBA] Error al abrir data/USUARIOS.txt para escribir" << endl;
     }*/
 
+    //Carga inicial
+    cout << "Cargando datos de usuarios desde el archivo..." << endl;
+    cargarDatos(ruta_usuarios, userList);
+    
 
     // Menú principal
-    cout << "\nMódulo - Gestión de Usuarios" << endl;
+    cout << "\n:::::::::: Módulo - Gestión de Usuarios ::::::::::" << endl;
     cout << "\n0) Salir" << endl;
     cout << "1) Ingresar Usuario" << endl;
     cout << "2) Listar Usuarios" << endl;
@@ -254,27 +260,24 @@ int main() {
         
         switch(opcion) {
             case 0:
-            cout << "Saliendo..." << endl;
+            cout << "\nSaliendo..." << endl;
             clear(ruta_usuarios);
             almacenar(ruta_usuarios, userList);
             break;
             case 1:
+            cout << "\n:::::::::: Ingresar Usuario ::::::::::" << endl;
             ingresarUsuario(userList);
             break;
             case 2:
-            cout << "Listar Usuario" << endl;
-            if(userList.empty()){ // cargar datos cuando no estan en memoria
-                cout << "Cargando datos de usuarios desde el archivo..." << endl;
-                cargarDatos(ruta_usuarios, userList);
-            }
+            cout << "\n:::::::::: Listado de Usuarios ::::::::::" << endl;
             listarUsuarios(userList);
             break;
             case 3:
-            cout << "Eliminar Usuario" << endl;
+            cout << "\n:::::::::: Eliminar Usuario ::::::::::" << endl;
             eliminarUsuario(userList);
             break;
             default:
-            cout << "Opción no válida, intente de nuevo." << endl;
+            cout << "\nOpción no válida, intente de nuevo." << endl;
             }
     } while(opcion != 0);
     
