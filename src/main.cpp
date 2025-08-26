@@ -118,7 +118,7 @@ string obtenerEnv(const string& nombre_archivo, const string& clave) {
 
 
 
-int almacenar(string path, const vector<Users>& userList){
+int almacenar(string path, vector<Users>& userList){
     // Verificar si el archivo existe antes de abrirlo
     /*cout << "\nAlmacenando usuarios en: " << path << endl;
     ifstream testFile(path);
@@ -145,6 +145,70 @@ int almacenar(string path, const vector<Users>& userList){
     }
 
     outFile.close();
+    return 0;
+}
+
+int cargarDatos(string path, vector<Users>& userList) {
+    ifstream archivo(path);
+    if(!archivo.is_open()) {
+        cerr << "Error al abrir archivo: " << path << endl;
+        return 1;
+    }
+    string linea;
+    while(getline(archivo, linea)){
+        if (linea.empty() || linea[0] == '#') continue;
+        stringstream ss(linea);
+        string id, nombre, userName, password, perfil;
+        getline(ss, id, ',');
+        getline(ss, nombre, ',');
+        getline(ss, userName, ',');
+        getline(ss, password, ',');
+        getline(ss, perfil, ',');
+
+        int userId = stoi(id);
+        Users user;
+        user.id = userId;
+        strncpy(user.nombre, nombre.c_str(), 19);
+        user.nombre[19] = '\0';
+        strncpy(user.userName, userName.c_str(), 19);
+        user.userName[19] = '\0';
+        strncpy(user.password, password.c_str(), 19);
+        user.password[19] = '\0';
+        strncpy(user.perfil, perfil.c_str(), 19);
+        user.perfil[19] = '\0';
+        userList.push_back(user);
+    }
+
+    archivo.close();
+    return 0;
+}   
+
+int clear(string path){
+    ofstream outFile(path, ios::trunc);
+    if (!outFile) {
+        cerr << "\nError al abrir archivo para limpiar: " << path << "\n";
+        return 1;
+    }
+    outFile.close();
+    return 0;
+}
+
+int eliminarUsuario(vector<Users>& userList){
+    cout << "Indique el id del usuario que desea eliminar: ";
+    int id;
+    cin >> id;
+    
+    auto it = find_if(userList.begin(), userList.end(), [id](const Users& user) {
+        return user.id == id;
+    });
+
+    if(it != userList.end()){
+        userList.erase(it);
+        cout << "Usuario eliminado." << endl;
+    } else {
+        cout << "Usuario no encontrado." << endl;
+    }
+    menuPrincipal();
     return 0;
 }
 
@@ -191,6 +255,7 @@ int main() {
         switch(opcion) {
             case 0:
             cout << "Saliendo..." << endl;
+            clear(ruta_usuarios);
             almacenar(ruta_usuarios, userList);
             break;
             case 1:
@@ -198,11 +263,15 @@ int main() {
             break;
             case 2:
             cout << "Listar Usuario" << endl;
+            if(userList.empty()){ // cargar datos cuando no estan en memoria
+                cout << "Cargando datos de usuarios desde el archivo..." << endl;
+                cargarDatos(ruta_usuarios, userList);
+            }
             listarUsuarios(userList);
             break;
             case 3:
             cout << "Eliminar Usuario" << endl;
-            // Aquí agregar la función para eliminar usuarios
+            eliminarUsuario(userList);
             break;
             default:
             cout << "Opción no válida, intente de nuevo." << endl;
