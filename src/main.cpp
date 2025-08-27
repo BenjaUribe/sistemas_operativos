@@ -6,6 +6,7 @@
 #include <cstdlib>
 #include <sstream>
 #include <algorithm>
+#include <iomanip>
 
 using namespace std;
 
@@ -71,12 +72,15 @@ void ingresarUsuario(vector<Users>& userList) {
 }
 
 void listarUsuarios(const vector<Users>& userList) {
+    cout << "\nID   Nombre               Username             Perfil" << endl;
+    cout << "-------------------------------------------------------------------" << endl;
     for (const auto& user : userList) {
-        cout << "\nID: " << user.id << endl;
-        cout << "Nombre: " << user.nombre << endl;
-        cout << "Username: " << user.userName << endl;
-        cout << "Perfil: " << user.perfil << endl;
-        cout << "------------------------" << endl;
+        std::string idStr = std::to_string(user.id);
+        cout << setw(4) << left << idStr;        // ancho fijo 4
+        cout << " " << setw(20) << left << user.nombre; // ancho fijo 20
+        cout << " " << setw(20) << left << user.userName; // ancho fijo 20
+        cout << " " << setw(20) << left << user.perfil; // ancho fijo 20
+        cout << endl;
     }
     menuPrincipal();
     return;
@@ -180,7 +184,7 @@ int cargarDatos(string path, vector<Users>& userList) {
     return 0;
 }   
 
-int clear(string path){
+int limpiarUsuarios(string path){
     ofstream outFile(path, ios::trunc);
     if (!outFile) {
         cerr << "\nError al abrir archivo para limpiar: " << path << "\n";
@@ -261,7 +265,7 @@ int main() {
         switch(opcion) {
             case 0:
             cout << "\nSaliendo..." << endl;
-            clear(ruta_usuarios);
+            limpiarUsuarios(ruta_usuarios);
             almacenar(ruta_usuarios, userList);
             break;
             case 1:
