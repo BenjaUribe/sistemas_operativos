@@ -91,6 +91,12 @@ void ingresarUsuario(vector<Users>& userList) {
 
     userList.push_back(nuevoUsuario);
     cout << "\nUsuario ingresado exitosamente." << endl;
+
+    //Ordenar por id ascendente
+    sort(userList.begin(), userList.end(), [](const Users& a, const Users& b){
+        return a.id < b.id;
+    });
+
     menuPrincipal();
     return;
 }
