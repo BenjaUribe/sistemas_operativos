@@ -7,6 +7,8 @@
 #include <sstream>
 #include <algorithm>
 #include <iomanip>
+#include <limits>
+
 
 using namespace std;
 
@@ -28,6 +30,23 @@ void menuPrincipal() {
     cout << "\nSeleccione una opción: ";
     return ;
 }
+// Convierte el perfil a mayúsculas y valida
+void compPerfil(char* perfil) {
+    char temp[20];
+    strncpy(temp, perfil, 19);
+    temp[19] = '\0';
+    for (int i = 0; temp[i]; ++i) 
+        temp[i] = static_cast<char>(toupper(static_cast<unsigned char>(temp[i])));
+    if (strcmp(temp, "ADMIN") == 0) {
+        strcpy(perfil, "ADMIN");
+    } else if (strcmp(temp, "GENERAL") == 0) {
+        strcpy(perfil, "GENERAL");
+    } else {
+        cout << "Perfil inválido. Ingrese 'ADMIN' o 'GENERAL': ";
+        cin >> perfil;
+        compPerfil(perfil); 
+    }
+}
 
 
 void ingresarUsuario(vector<Users>& userList) {
@@ -36,7 +55,11 @@ void ingresarUsuario(vector<Users>& userList) {
     char nombre[20], userName[20], password[20], perfil[20];
     
     cout << "\nID: ";
-    cin >> id;
+    while (!(cin >> id)) {
+        cout << "ID inválido. Ingrese un número entero: ";
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    }
     cout << "Nombre: ";
     cin >> nombre;
     cout << "username: ";
@@ -45,6 +68,7 @@ void ingresarUsuario(vector<Users>& userList) {
     cin >> password;
     cout << "Perfil: ";
     cin >> perfil;
+    compPerfil(perfil);
 
     cout << "\n1) guardar      2) cancelar" << endl;
     cout  << "Opción: ";
@@ -90,7 +114,7 @@ string obtenerEnv(const string& nombre_archivo, const string& clave) {
     ifstream archivo(nombre_archivo);
     string linea;
     while (getline(archivo, linea)) {
-        // Ignorar comentarios y l�neas vac�as
+        // Ignorar comentarios y lineas vacias
         if (linea.empty() || linea[0] == '#') continue;
 
         if (linea.rfind(clave + "=", 0) == 0) { // si empieza con "clave="
@@ -105,7 +129,7 @@ string obtenerEnv(const string& nombre_archivo, const string& clave) {
     return "";
 }
 
-//Versi�n usando getenv
+//Version usando getenv
 /*const char* obtenerRuta(const string& clave) {
     const char* valor = getenv(clave.c_str());
     if (!valor) return "";
