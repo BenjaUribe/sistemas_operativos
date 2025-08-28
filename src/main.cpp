@@ -266,7 +266,7 @@ int eliminarUsuario(vector<Users>& userList){
     });
 
     
-    if(strcmp(it -> perfil, "admin") == 0){
+    if(strcmp(it -> perfil, "ADMIN") == 0){
         cout << "\nAdvertencia: el usuario a eliminar es admin." << endl;
     }
 
