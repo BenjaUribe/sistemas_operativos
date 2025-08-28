@@ -61,7 +61,7 @@ void ingresarUsuario(vector<Users>& userList) {
         if (cin.fail() || id <= 0) {
             cin.clear();
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
-            cout << "ID inválido. Ingrese un número entero positivo: ";
+            cout << "ID invÃ¡lido. Ingrese un ID entero positivo: ";
             continue;
         }
         bool idRepetido = false;
