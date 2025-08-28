@@ -7,9 +7,11 @@
 #include <sstream>
 #include <algorithm>
 #include <iomanip>
+#include <limits>
 
 using namespace std;
 
+// Ver si podemos utilizar string
 struct Users {
     int id;
     char nombre[20];
@@ -30,21 +32,82 @@ void menuPrincipal() {
 }
 
 
+// Convierte el perfil a mayúsculas y valida
+void compPerfil(char* perfil) {
+    char temp[20];
+    strncpy(temp, perfil, 19);
+    temp[19] = '\0';
+    for (int i = 0; temp[i]; ++i) 
+        temp[i] = static_cast<char>(toupper(static_cast<unsigned char>(temp[i])));
+    if (strcmp(temp, "ADMIN") == 0) {
+        strcpy(perfil, "ADMIN");
+    } else if (strcmp(temp, "GENERAL") == 0) {
+        strcpy(perfil, "GENERAL");
+    } else {
+        cout << "Perfil inválido. Ingrese 'ADMIN' o 'GENERAL': ";
+        cin >> perfil;
+        compPerfil(perfil); 
+    }
+}
+
+
 void ingresarUsuario(vector<Users>& userList) {
     Users nuevoUsuario;
     int id, opcion;
-    char nombre[20], userName[20], password[20], perfil[20];
     
     cout << "\nID: ";
-    cin >> id;
+    while (true) {
+        cin >> id;
+        if (cin.fail() || id <= 0) {
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            cout << "ID inv�lido. Ingrese un n�mero entero positivo: ";
+            continue;
+        }
+        bool idRepetido = false;
+        for (const auto& user : userList) {
+            if (user.id == id) {
+                idRepetido = true;
+                break;
+            }
+        }
+        if (idRepetido) {
+            cout << "ID ya existente. Ingrese un ID diferente: ";
+            continue;
+        }
+        break;
+    }
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
     cout << "Nombre: ";
-    cin >> nombre;
-    cout << "username: ";
-    cin >> userName;
-    cout << "password: ";
-    cin >> password;
+    cin.getline(nuevoUsuario.nombre, 20);
+    if (cin.fail()) {
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    }
+
+    cout << "Username: ";
+    cin.getline(nuevoUsuario.userName, 20);
+    if (cin.fail()) {
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    }
+
+    cout << "Password: ";
+    cin.getline(nuevoUsuario.password, 20);
+    if (cin.fail()) {
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    }
+
     cout << "Perfil: ";
-    cin >> perfil;
+    cin.getline(nuevoUsuario.perfil, 20);
+    if (cin.fail()) {
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    }
+
+    compPerfil(nuevoUsuario.perfil);
 
     cout << "\n1) guardar      2) cancelar" << endl;
     cout  << "Opción: ";
@@ -52,18 +115,11 @@ void ingresarUsuario(vector<Users>& userList) {
 
     if (opcion == 2) {
         cout << "\nOperación cancelada." << endl;
+        menuPrincipal();
         return;
     }
     
     nuevoUsuario.id = id;
-    strncpy(nuevoUsuario.nombre, nombre, 19);
-    nuevoUsuario.nombre[19] = '\0';
-    strncpy(nuevoUsuario.userName, userName, 19);
-    nuevoUsuario.userName[19] = '\0';
-    strncpy(nuevoUsuario.password, password, 19);
-    nuevoUsuario.password[19] = '\0';
-    strncpy(nuevoUsuario.perfil, perfil, 19);
-    nuevoUsuario.perfil[19] = '\0';
 
     userList.push_back(nuevoUsuario);
     cout << "\nUsuario ingresado exitosamente." << endl;
