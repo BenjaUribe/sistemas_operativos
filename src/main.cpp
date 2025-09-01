@@ -117,7 +117,7 @@ void ingresarUsuario(vector<Users>& userList) {
 
     compPerfil(nuevoUsuario.perfil);
 
-    cout << "\n1) guardar      2) cancelar" << endl;
+    cout << "\n1) Guardar      2) Cancelar" << endl;
     cout  << "Opción: ";
     cin >> opcion;
 
@@ -266,7 +266,7 @@ int limpiarUsuarios(string path){
 
 int eliminarUsuario(vector<Users>& userList){
     cout << "\nIndique el id del usuario que desea eliminar: ";
-    int id;
+    int id, opcion;
     cin >> id;
     
     auto it = find_if(userList.begin(), userList.end(), [id](const Users& user) {
@@ -275,7 +275,16 @@ int eliminarUsuario(vector<Users>& userList){
 
     
     if(strcmp(it -> perfil, "ADMIN") == 0){
-        cout << "\nAdvertencia: el usuario a eliminar es admin." << endl;
+        cout << "\nAdvertencia: el usuario a eliminar es admin.\n�Desea continuar?" << endl;
+        cout << "\n1) Si      2) No" << endl;
+        cout  << "Opción: ";
+        cin >> opcion;
+    }
+
+    if (opcion == 2) {
+        cout << "\nOperación cancelada." << endl;
+        menuPrincipal();
+        return 0;
     }
 
     if(it != userList.end()){
