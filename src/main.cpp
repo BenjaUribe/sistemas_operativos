@@ -21,6 +21,14 @@ struct Users {
 };
 
 
+void limpiarConsola() {
+    #ifdef _WIN32
+        system("cls");
+    #else
+        system("clear");
+    #endif
+}
+
 void menuPrincipal() {
     cout << "\n:::::::::: Módulo - Gestión de Usuarios ::::::::::" << endl;
     cout << "\n0) Salir" << endl;
@@ -331,19 +339,24 @@ int main() {
             almacenar(ruta_usuarios, userList);
             break;
             case 1:
+            limpiarConsola();
             cout << "\n:::::::::: Ingresar Usuario ::::::::::" << endl;
             ingresarUsuario(userList);
             break;
             case 2:
+            limpiarConsola();
             cout << "\n:::::::::: Listado de Usuarios ::::::::::" << endl;
             listarUsuarios(userList);
             break;
             case 3:
+            limpiarConsola();
             cout << "\n:::::::::: Eliminar Usuario ::::::::::" << endl;
             eliminarUsuario(userList);
             break;
             default:
+            limpiarConsola();
             cout << "\nOpción no válida, intente de nuevo." << endl;
+            menuPrincipal();
             }
     } while(opcion != 0);
     
