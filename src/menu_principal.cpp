@@ -68,7 +68,7 @@ unordered_map<string, pair<string,string>> cargarUsuarios(const string& path) {
 }
 
 void mostrar_menu(const string& usuario, const string& perfil) {
-    cout << "\n--- MENU PRINCIPAL ---" << endl;
+    cout << "\n:::::::::: Menu principal ::::::::::\n" << endl;
     if (perfil == "ADMIN") {
         cout << "1) Admin de usuarios y perfiles (en construcción)" << endl;
     }
@@ -95,10 +95,10 @@ int main(int argc, char* argv[]) {
         } else if (arg == "-p" && i + 1 < argc) {
             password = argv[++i];
             p_ok = true;
-        } else if (arg == "-F" && i + 1 < argc) {
+        } else if (arg == "-f" && i + 1 < argc) {
             file = argv[++i];
             f_ok = true;
-        } else if (arg == "-u" || arg == "-p" || arg == "-F") {
+        } else if (arg == "-u" || arg == "-p" || arg == "-f") {
             cout << "Error: Falta el valor para " << arg << endl;
             u_ok = p_ok = f_ok = false;
             break;
@@ -106,7 +106,7 @@ int main(int argc, char* argv[]) {
     }
 
     if (!u_ok || !p_ok || !f_ok) {
-        cout << "\nUso correcto: ./menu -u <usuario> -p <password> -F <file>\n";
+        cout << "\nUso correcto: ./menu -u <usuario> -p <password> -f <file>\n";
         return 1;
     }
 
