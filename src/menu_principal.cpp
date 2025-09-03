@@ -67,6 +67,25 @@ unordered_map<string, pair<string,string>> cargarUsuarios(const string& path) {
     return usuarios;
 }
 
+void palindromo(){
+    string str;
+    cout << "Ingrese una cadena: ";
+    getline(cin, str);
+
+    int left = 0;
+    int right = str.length() - 1;
+
+    while (left < right) {
+        if (str[left] != str[right]) {
+            cout << "No es palíndromo." << endl;
+            return;
+        }
+        left++;
+        right--;
+    }
+    cout << "Es palíndromo." << endl;
+}
+
 void mostrar_menu(const string& usuario, const string& perfil) {
     cout << "\n:::::::::: Menu principal ::::::::::\n" << endl;
     if (perfil == "ADMIN") {
