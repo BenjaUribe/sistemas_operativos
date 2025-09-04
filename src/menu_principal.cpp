@@ -1,11 +1,14 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <vector>
 #include <unordered_map>
 #include <map>
 #include <sstream>
 
 using namespace std;
+
+
 
 struct Users { // mantenido por compatibilidad futura
     int id;
@@ -15,8 +18,102 @@ struct Users { // mantenido por compatibilidad futura
     char perfil[20];
 };
 
+
+map<int, string> perfiles_opciones = {
+    {0, "Salir"},
+    {1, "Admin de usuarios y perfiles (en construcción)"},
+    {2, "Multiplica matrices NxN (en construcción)"},
+    {3, "Juego (en construcción)"},
+    {4, "es palíndromo?"},
+    {5, "Calcular f(x)=x*x + 2x + 8 "},
+    {6, "CONTEO SOBRE TEXTO (en construcción)"}
+};
+
 // Usaremos unordered_map<string, pair<string,string>>
 // pair.first = password, pair.second = perfil
+
+// funcion para limpiar consola
+void limpiarConsola() {
+    #ifdef _WIN32
+        system("cls");
+    #else
+        system("clear");
+    #endif
+}
+
+// Función para verificar si una cadena es palíndromo
+void palindromo(string str){
+    int left = 0;
+    int right = str.length() - 1;
+
+    while (left < right) {
+        if (str[left] != str[right]) {
+            cout << "No es palíndromo." << endl;
+            return;
+        }
+        left++;
+        right--;
+    }
+    cout << "Es palíndromo." << endl;
+}
+
+void interfaz_palindromo(){
+    string str;
+    cout << "Ingrese una cadena: ";
+    cin.ignore();
+    getline(cin, str);
+    int opcion;
+
+    cout << "1) Validar" << endl;
+    cout << "2) Cancelar" << endl;
+    cout << "Seleccione una opción: ";
+    cin >> opcion;
+
+    switch(opcion) {
+        case 1:
+            cout << "===========================" << endl;
+            palindromo(str);
+            break;
+        case 2:
+            return;
+        default:
+            cout << "Opción no válida." << endl;
+            break;
+    }
+}
+
+
+// funcion para evaluar funcion f(x)=x*x + 2x + 8
+int funcion(int x){
+    int res;
+    res = x*x + 2*x + 8;
+    return res;
+}
+
+void interfaz_funcion(){
+    cout << "Ingrese el valor de X: ";
+    int x;
+    cin >> x;
+    int opcion;
+    cout << "1) Calcular f(x) = x^2 + 2x + 8" << endl;
+    cout << "2) Cancelar" << endl;
+    cout << "Seleccione una opción: ";
+    cin >> opcion;
+
+    switch(opcion) {
+        case 1:
+            cout << "Resultado: " << funcion(x) << endl;
+            return;
+        case 2:
+            return;
+        default:
+            cout << "Opción no válida." << endl;
+            break;
+    }
+
+}
+
+
 
 // Función para leer variables del .env
 map<string, string> leer_env(const string& env_path) {
@@ -44,6 +141,7 @@ string validar_usuario(const unordered_map<string, pair<string,string>>& usuario
     return "";
 }
 
+
 // Carga hash userName -> (password, perfil)
 unordered_map<string, pair<string,string>> cargarUsuarios(const string& path) {
     unordered_map<string, pair<string,string>> usuarios;
@@ -67,36 +165,56 @@ unordered_map<string, pair<string,string>> cargarUsuarios(const string& path) {
     return usuarios;
 }
 
-void palindromo(){
-    string str;
-    cout << "Ingrese una cadena: ";
-    getline(cin, str);
-
-    int left = 0;
-    int right = str.length() - 1;
-
-    while (left < right) {
-        if (str[left] != str[right]) {
-            cout << "No es palíndromo." << endl;
-            return;
-        }
-        left++;
-        right--;
+// Carga perfiles y sus opciones válidas desde PERFILES.txt
+map<string, vector<int>> cargarPerfiles(const string& path) {
+    map<string, vector<int>> perfiles;
+    ifstream archivo(path);
+    if(!archivo.is_open()) {
+        cerr << "Error al abrir archivo de perfiles: " << path << endl;
+        return perfiles;
     }
-    cout << "Es palíndromo." << endl;
+    string linea;
+    while(getline(archivo, linea)) {
+        if (linea.empty() || linea[0] == '#') continue;
+        size_t punto_coma = linea.find(';');
+        if (punto_coma == string::npos) continue;
+        
+        string perfil = linea.substr(0, punto_coma);
+        string opciones_str = linea.substr(punto_coma + 1);
+        
+        vector<int> opciones;
+        stringstream ss(opciones_str);
+        string opcion;
+        while(getline(ss, opcion, ',')) {
+            try {
+                opciones.push_back(stoi(opcion));
+            } catch(...) {
+                // Ignorar opciones inválidas
+            }
+        }
+        perfiles[perfil] = opciones;
+    }
+    return perfiles;
 }
 
-void mostrar_menu(const string& usuario, const string& perfil) {
+
+void mostrar_menu(const string& usuario, const string& perfil, const map<string, vector<int>>& perfiles) {
     cout << "\n:::::::::: Menu principal ::::::::::\n" << endl;
-    if (perfil == "ADMIN") {
-        cout << "1) Admin de usuarios y perfiles (en construcción)" << endl;
+    cout << "Usuario: " << usuario << " | Perfil: " << perfil << "\n" << endl;
+    
+    auto it = perfiles.find(perfil);
+    if (it == perfiles.end()) {
+        cout << "Error: Perfil no encontrado" << endl;
+        return;
     }
-    cout << "2) Multiplica matrices NxN (en construcción)" << endl;
-    cout << "3) Juego (en construcción)" << endl;
-    cout << "4) ¿es palíndromo? (en construcción)" << endl;
-    cout << "5) Calcular f(x)=x*x + 2x + 8 (en construcción)" << endl;
-    cout << "6) CONTEO SOBRE TEXTO (en construcción)" << endl;
-    cout << "7) Salir" << endl;
+    
+    const vector<int>& opciones_validas = it->second;
+    
+    for (int opcion : opciones_validas) {
+        cout << opcion << ") " << perfiles_opciones[opcion] << endl;
+    }
+    
+    cout << "\nSeleccione una opción: ";
 }
 
 
@@ -150,8 +268,8 @@ int main(int argc, char* argv[]) {
     // Cargar mapa user->(password, perfil)
     Usuarios = cargarUsuarios(user_file);
 
-    // Cargar perfiles (aun no implementado)
-    
+    // Cargar perfiles y sus opciones válidas
+    map<string, vector<int>> perfiles = cargarPerfiles(perfil_file);
 
     // Validar usuario y password desde memoria
     string perfil = validar_usuario(Usuarios, usuario, password);
@@ -160,9 +278,73 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
-    // Mostrar menú principal
-    mostrar_menu(usuario, perfil);
+    // Obtener opciones válidas para este perfil
+    auto it = perfiles.find(perfil);
+    if (it == perfiles.end()) {
+        cout << "\nError: Perfil no encontrado en configuración.\n";
+        return 1;
+    }
+    const vector<int>& opciones_validas = it->second;
 
-    // No se implementan las funciones, solo se muestra el menú
+    int opcion;
+    do {
+        // Mostrar menú principal con opciones según perfil
+        mostrar_menu(usuario, perfil, perfiles);
+        cin >> opcion;
+
+        // Verificar si la opción seleccionada es válida para este perfil
+        bool opcion_valida = false;
+        for (int op_valida : opciones_validas) {
+            if (opcion == op_valida) {
+                opcion_valida = true;
+                break;
+            }
+        }
+
+        if (!opcion_valida && opcion != 0) {
+            cout << "\nOpción no válida para su perfil. Intente de nuevo." << endl;
+            continue;
+        }
+
+        switch(opcion) {
+            case 0:
+                cout << "\nSaliendo..." << endl;
+                break;
+            case 1:
+                limpiarConsola();
+                cout << "\n:::::::::: Admin de usuarios y perfiles ::::::::::" << endl;
+                cout << "Funcionalidad en desarrollo..." << endl;
+                break;
+            case 2:
+                limpiarConsola();
+                cout << "\n:::::::::: Multiplica matrices NxN ::::::::::" << endl;
+                cout << "Funcionalidad en desarrollo..." << endl;
+                break;
+            case 3:
+                limpiarConsola();
+                cout << "\n:::::::::: Juego ::::::::::" << endl;
+                cout << "Funcionalidad en desarrollo..." << endl;
+                break;
+            case 4:
+                limpiarConsola();
+                cout << "\n:::::::::: ¿Es palíndromo? ::::::::::" << endl;
+                interfaz_palindromo();
+                break;
+            case 5:
+                limpiarConsola();
+                cout << "\n:::::::::: Calcular f(x)=x*x + 2x + 8 ::::::::::" << endl;
+                interfaz_funcion();
+                break;
+            case 6:
+                limpiarConsola();
+                cout << "\n:::::::::: CONTEO SOBRE TEXTO ::::::::::" << endl;
+                cout << "Funcionalidad en desarrollo..." << endl;
+                break;
+            default:
+                limpiarConsola();
+                cout << "\nOpción no válida, intente de nuevo." << endl;
+        }
+    } while(opcion != 0);
+
     return 0;
 }
