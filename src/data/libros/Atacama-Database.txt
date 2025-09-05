@@ -1,0 +1,942 @@
+Antonie van Leeuwenhoek (2020) 113:185–195
+https://doi.org/10.1007/s10482-019-01328-x
+(0123456789().,-volV)
+( 01234567
+89().,-volV)
+
+ORIGINAL PAPER
+
+Atacama Database: a platform of the microbiome
+of the Atacama Desert
+Carolina A. Contador . Luis Veas-Castillo . Emilio Tapia . Marcela Antipán .
+Noemi Miranda . Benjamı́n Ruiz-Tagle . Jonathan Garcı́a-Araya .
+Barbara A. Andrews . Mauricio Marin . Cristina Dorador .
+Juan A. Asenjo
+
+Received: 15 May 2019 / Accepted: 7 September 2019 / Published online: 18 September 2019
+Ó Springer Nature Switzerland AG 2019
+
+Abstract The Atacama Desert is one of the oldest
+and driest places on Earth. In the last decade,
+microbial richness and diversity has been acknowledged as an important biological resource of this
+region. Owing to the value of the microbial diversity
+apparent in potential biotechnology applications and
+conservation purposes, it is necessary to catalogue
+these microbial communities to promote research
+activities and help to preserve the wide range of
+ecological niches of the Atacama region. A prototype
+Atacama Database has been designed and it provides a
+description of the rich microbial diversity of the
+Atacama Desert, and helps to visualise available
+
+C. A. Contador (&)  M. Antipán  N. Miranda 
+B. A. Andrews  J. A. Asenjo
+Centre for Biotechnology and Bioengineering (CeBiB),
+Department of Chemical Engineering, Biotechnology and
+Materials, University of Chile, Beauchef 851,
+8370456 Santiago, Chile
+e-mail: cacontad@ing.uchile.cl
+L. Veas-Castillo  E. Tapia  B. Ruiz-Tagle  M. Marin
+Centre for Biotechnology and Bioengineering (CeBiB),
+Departamento de Ingenierı́a Informática (DIINF),
+Universidad de Santiago de Chile, Santiago, Chile
+J. Garcı́a-Araya  C. Dorador
+Centre for Biotechnology and Bioengineering (CeBiB),
+Laboratorio de Complejidad Microbiana y Ecologı́a
+Funcional, Instituto Antofagasta & Departamento de
+Biotecnologı́a, Facultad de Ciencias del Mar y Recursos
+Biológicos, Universidad de Antofagasta, Antofagasta,
+Chile
+
+literature resources. Data has been collected, curated,
+and organised into several categories to generate a
+single record for each organism in the database that
+covers classification, isolation metadata, morphology,
+physiology, genome and metabolism information. The
+current version of Atacama Database contains 2302
+microorganisms and includes cultured and uncultured
+organisms retrieved from different environments
+within the desert between 1984 and 2016. These
+organisms are distributed in bacterial, archaeal or
+eukaryotic domains, along with those that are unclassified taxonomically. The initial prototype of the
+Atacama Database includes a basic search and taxonomic and advanced search tools to allow identification and comparison of microbial populations, and
+space distribution within this biome. A geolocation
+search was implemented to visualise the microbial
+diversity of the ecological niches defined by sectors
+and extract general information of the sampling sites.
+This effort will aid understanding of the microbial
+ecology of the desert, microbial population dynamics,
+seasonal behaviour, impact of climate change over
+time, and reveal further biotechnological applications
+of these microorganisms. The Atacama Database is
+freely available at: https://www.atacamadb.cl.
+Keywords Atacama Desert  Chile  Microbial
+database  Microbial diversity
+
+123
+
+186
+
+Introduction
+The Atacama Desert is located in the north of Chile
+from 19°S to 30°S along the Pacific coast of South
+America and from east to west extending from the
+Andean Cordillera to the coast. It encompasses
+105,000 sq km with an altitude ranging from sea level
+to over 3500 m above (Dorador 2007; Azua-Bustos
+et al. 2017; Bull et al. 2018). Arid conditions in the
+region date back 150 million years making this desert
+one of the oldest and driest places on earth (Hartley
+et al. 2005; Clarke 2006). The Atacama Desert
+exhibits semi-arid to extreme hyper-arid environments
+that are characterised by low water availability and
+variable levels of organic carbon content. The ecological niches of the zone are very diverse comprising
+sectors with conditions considered to be at the dry
+limit for life (Connon et al. 2007; Schulze-Makuch
+et al. 2018), caves in the Coastal range, geyser fields,
+and the high Andean plateau (Altiplano) where
+different water bodies with a wide range of salinity
+(from freshwater to saturated saltwater), and peatland
+(bofedales) can be found (Demergasso et al.
+2004, 2010; Dorador et al. 2013). It is notable that
+several of these sectors are extremely sensitive to
+climate change and anthropogenic disturbances (Bull
+et al. 2016). For decades, the Atacama Desert has been
+known as a rich resource of minerals with an intense
+mining activity present in the region and heavy use of
+natural resources for those purposes, especially water
+extraction (Scheihing and Tröger 2018). During the
+last decade, microbiological research has grown
+substantially in this hyper-arid desert covering different topics from microbial diversity and ecology
+studies to biogeochemistry and Mars-like environments as shown in Fig. 1 (Bull et al. 2016). Thanks to
+these research efforts and their findings, the microbial
+richness and diversity of the Atacama Desert is
+evident. In general, these studies establish what
+microbes are present, what type of niches they
+colonise and the tolerance mechanisms to extreme
+physical and chemical conditions, amongst others
+(Azua-Bustos et al. 2012; Bull et al. 2016; Idris et al.
+2017a; Pérez et al. 2017; Schulze-Makuch et al. 2018).
+Bioprospecting studies of microorganisms isolated
+from the extremely arid zone of the Atacama have
+shown promising results with the isolation of novel
+species, and new chemical structures with biological
+activity such as antibiotics and anticancer agents
+
+123
+
+Antonie van Leeuwenhoek (2020) 113:185–195
+
+(Schulz et al. 2011; Santhanam et al. 2012a, b; Idris
+et al. 2017b; Wichner et al. 2017). Indeed, several new
+Streptomyces strains have been isolated and described.
+For example, Streptomyces leeuwenhoekii produces
+previously described metabolites, but also synthesises
+novel antibiotics, chaxamycins and chaxalactins, and
+chaxapeptin (Elsayed et al. 2015; Gomez-Escribano
+et al. 2015; Castro et al. 2018). At present, specialised
+metabolite producers are of particular interest to help
+with the growing problem of antimicrobial resistant
+strains (Mohammadipanah and Wink 2016). In addition, many studies have been carried out in the arid
+region of the Atacama Desert since it has been
+compared to Mars soil, with increased attention on
+astrobiology applications (Navarro-Gonzalez 2003;
+Davila and Schulze-Makuch 2016; Azua-Bustos et al.
+2018).
+The microbial diversity of the Atacama Desert is of
+great importance due to its current and potential
+biotechnological applications. It is important to highlight their functional role regarding trophic web
+interactions (Dorador et al. 2018), C and N biogeochemical cycles (Thiel et al. 2010; Molina et al.
+2018a) and greenhouse gas production (Molina et al.
+2018b). Previous studies have demonstrated the high
+microbial diversity in different habitats of the Atacama Desert independent of the applied technique
+(Demergasso et al. 2004; Dorador et al. 2013; Idris
+et al. 2017a). Therefore, a catalogue of these microbial
+communities is necessary to promote its diversity,
+protect these endemic resources and their environment, and as an educational resource about the value
+of these microorganisms. These microbial communities are important natural resources whose environment is mostly without protection. For instance, there
+is no protection for areas of the core of the hyper-arid
+desert that are known to be vulnerable to perturbation
+by mining, recreational (e.g. Rally) and other activities. Most of the microbial diversity of the Atacama
+Desert has been described from either the hyper-arid
+desert or high altitude saline wetlands (locally called
+‘salares’), some of which are included in national
+reserves and national parks. To obtain samples from
+protected areas it is imperative to have permission
+from CONAF (National Forest Corporation, Ministry
+of Agriculture) following strict regulations. Some of
+these areas are managed by local indigenous communities (e.g. Atacameños). The area covered by the
+database described here includes some protected areas
+
+Antonie van Leeuwenhoek (2020) 113:185–195
+
+187
+
+Fig. 1 Enumeration of
+microbial research
+publications by topics from
+1966 to 2019.
+Figure adapted and updated
+from data by Bull et al.
+(2016)
+
+such as Los Flamencos National Reserve (Salar de
+Atacama, Salar de Tara, Salar de Pujsa) and Llullaillaco National Park. Nevertheless, most of the microbiological studies performed in the Atacama Desert
+have been carried out in unprotected areas. Furthermore, the knowledge about microbial diversity of
+these ecosystems is mostly unknown to the local and
+national community.
+Over the past 20 years, several efforts have been
+made to create microbial diversity databases to
+promote the understanding of microbial communities
+within the context of their habitats (Stoner et al. 2001;
+Majhi et al. 2013; Wu et al. 2013). Stoner et al. (2001)
+were pioneers with their development of The Yellowstone Microbial Database and Map server. This
+database integrates microbiological data with environmental, geographical and ecological data to
+improve the understanding of the microbial communities and provides a scheme to implement maps of
+microbial diversity. Using these previous studies as a
+base, the prototype Atacama Database seeks to make
+visible the microbiological research done in the region
+during the last 50 years in order to value and preserve
+the unique and native microbial diversity of the
+Atacama Desert. It compiles the published resources
+available to facilitate information retrieval from
+primary literature to create a comprehensive source
+of microbial information. The prototype Atacama
+Database currently houses data relating to 2302
+strains. These organisms include archaea, bacteria,
+fungi, microalgae, and taxonomically unidentified
+
+microorganisms. Data stored have an emphasis on
+taxonomic and isolation metadata information. Morphology, physiology, genome and metabolism information were included in the cases in which these data
+were available. Data were collected from open access
+sources and articles published in peer-reviewed journals. Data were processed and stored in a document
+storage system built using MongoDB (https://www.
+mongodb.com/). The current version of the Atacama
+Database Platform includes tools to access the data
+such as a quick search by typing entries and taxonomic
+and advance search tools where filters can be used to
+identify specific microorganisms. A geolocation
+search was implemented to help with the visualisation
+of ecological niches and extract physical and chemical
+parameters of the sampling sites. When this database
+is fully developed, it will help to promote the study of
+the microbial ecology of the desert, microbial population dynamics, biogeography, seasonal behaviour,
+impact of climate change over time, and reveal further
+biotechnological
+applications
+of
+local
+microorganisms.
+
+Materials and methods
+Data sources and database structure
+The Atacama Database contains information from
+literature sources including more than 100 publications and open access sources such as the US National
+
+123
+
+188
+
+Library of Medicine (Pubmed) (NCBI Resource
+Coordinators 2017), and Genomes Online Database
+(GOLD) (Bernal et al. 2001). Links to external
+databases were added to facilitate access to primary
+data. By the end of March 2018, the Atacama Database
+contained information on 2302 organisms isolated
+from 135 different sampling sites. The sampling sites
+cover diverse ecological niches from lakes and foggy
+sites to extreme and hyper-arid desert areas ranging
+from 0 to 5916 [m above sea level]. The data collected
+are continually evolving, but preliminary statistics
+show that the catalogue includes representatives of 32
+phyla, 50 classes, 75 orders, 90 families, 104 genera
+and 70 species. To date, the number of validly named
+species isolated from the Atacama Desert is low and a
+general taxonomic rank is usually provided in most of
+the published studies. The number of microorganisms
+associated with each phylum present in the catalogue
+is shown in Fig. 2a.
+Data were collected, curated and organised into six
+main categories: taxonomy, isolation metadata, morphology, physiology, genome and metabolism. These
+categories encompass the major characteristics of
+these organisms and the available information has
+been added to each respective attribute. Taxonomy
+includes information related to general classification,
+NCBI taxonomy ID, accession numbers to different
+databases and literature information. Isolation metadata provides information such as isolation environment, environment features, sample type, collection
+site, geographical location (latitude and longitude in
+decimal format), altitude and physical and chemical
+characteristics of the sample and/or sites. Morphology
+describes cell size, cell shape, motility and spore
+morphology while the physiology section provides
+growth requirements such as pH and O2 requirements.
+The data related to genomes includes genomic features
+such as genome size and digital DNA G ? C composition. Metabolic products data associated with pharmacological/biotechnological applications has been
+included such as compound type and PubChem
+Compound ID (CID). Figure 2b shows the available
+data for each category.
+A single record was generated for each organism
+where a unique Organism ID was assigned to each
+organism to link all its attributes in a Microsoft Excel
+Open XML Format Spreadsheet file (XLSX file
+extension). This file includes a reference for metabolic
+information that was saved in a separate XLSX file.
+
+123
+
+Antonie van Leeuwenhoek (2020) 113:185–195
+
+Relevant geographic areas were stored in a similar
+way. Data were processed with an application developed in Java programming language, which stores it in
+a document database system using MongoDB. The
+platform was built using a Web Service Layer (API
+REST architecture), the back-end was implemented
+using Golang programming language (https://golang.
+org/) and the front-end was built using a JavaScript
+framework (Vue.js framework (https://vuejs.org/)) to
+visualise the data. Geolocation was implemented with
+the help of the Google Maps JavaScript API (https://
+developers.google.com/maps/). Several indexes were
+constructed with the stored documents to allow taxonomic, advanced, and geographic searches in an efficient and scalable way. Figure 3a summarises the
+organisation of data and database structure in the
+Atacama Database and Fig. 3b shows the internal
+structure of data saved in the database.
+
+Results and discussion
+Database features
+The prototype version of Atacama Database offers
+access to a catalogue of microorganisms of the
+Atacama Desert through a web interface. It was
+implemented using a non-structured database where
+data was stored using a document-oriented approach
+in MongoDB and the Vue.js JavaScript framework for
+interacting with the data. This configuration allows
+scalability and easy modification of fields or attributes
+of the information. Currently, the data present in this
+database has an emphasis on taxonomic and isolation
+metadata and specific information about each organism is continually added as it becomes available. The
+Atacama Database homepage gives easy access to the
+main querying options: basic search, taxonomy tree
+search, advanced search, and geolocation search.
+Graphs with the distribution of organisms by domain
+and phylum, and by the different levels of the
+phylogenetic tree, are provided to reflect the diversity
+of the organisms in the database and acquisition of
+data into Atacama Database. The Atacama Database
+gives support for users that require assistance or would
+like to submit suggestions about the data after
+registration. Registration is free and gives access to
+the Database content. Additionally, a brief tutorial is
+included in the Help section.
+
+Antonie van Leeuwenhoek (2020) 113:185–195
+Fig. 2 a Distribution of
+microorganisms by Phylum
+in the database. Numbers in
+parenthesis indicate total
+number of microorganisms
+in each phylum. b Number
+of microorganisms
+associated with each data
+category in the Atacama
+Database
+
+189
+
+a
+
+b
+
+Basic search
+A basic or simple search option can be performed to
+query the database from the homepage. Microorganism name or ID are used to request information from
+the database under this option. Query results are
+displayed as a list with organism ID and organism
+description fields. Specific data can be retrieved after
+selecting an organism. Data is displayed in a table with
+different sections: taxonomy, isolation metadata,
+morphology, physiology, genome, and metabolism.
+Links to other databases are provided to access
+additional information. Also, links to the respective
+
+publications in which the microorganism was identified are provided.
+Taxonomic tree viewer
+A taxonomic search was implemented through a
+phylogenetic tree. A phylogenetic tree containing the
+microorganisms for each domain was constructed to
+organise the data. Graphs describing the taxonomic
+distribution are provided. Microorganisms are listed
+on the basis of their classification. All data associated
+with a specific organism can be retrieved after
+selecting it. Information regarding any specific
+
+123
+
+190
+
+Antonie van Leeuwenhoek (2020) 113:185–195
+
+Fig. 3 a Workflow describing the organisation of data and the
+database structure used in the Atacama Database. b Internal data
+structure. Single records of each organism are stored in the form
+
+of JSON style documents using MongoDB. Several querying
+options and display formats have been implemented allowing
+users to apply filters to refine searches
+
+microorganism can be inspected using the same
+display format from Basic Search. A summary of the
+search can be downloaded in CSV format.
+
+Advanced search
+
+123
+
+An advanced search tool is available to query the
+database for specific information. The filters of the
+advanced search allow the user to narrow down the
+results, explore the data in Atacama Database and look
+
+Antonie van Leeuwenhoek (2020) 113:185–195
+
+191
+
+Table 1 Geolocations in Atacama Database
+Sector
+
+Number of microorganisms
+
+Salar de Atacama
+
+185
+
+Salar Punta Negra
+
+7
+
+Environment
+Hyper-arid zone
+Athalassohaline wetland
+
+Salar Grande
+Death Valley
+
+42
+252
+
+Hyper-arid zone
+Saline soil zone
+
+Laguna Tebenquiche
+
+190
+
+Athalassohaline lake water
+
+Valle de la Luna
+
+42
+
+Hyper-arid and extreme hyper-arid zones
+
+Salar de Aguas Calientes
+
+17
+
+Salt flat with saturated salt waters
+
+Salar de Huasco
+
+230
+
+Altiplano
+
+Salar de Ascotán
+
+320
+
+Hyperhaline lake
+
+Laguna Chaxa
+
+99
+
+High-altitude salt lake
+
+Yungay
+
+245
+
+Extreme hyper-arid zone
+
+Maria Elena South
+
+26
+
+Extreme hyper-arid zone
+
+Lomas Bayas
+
+22
+
+Extreme hyper-arid zone
+
+El Tatio
+
+8
+
+Geothermal geyser field
+
+Cerro Chajnantor
+
+29
+
+Arid zone
+
+Lomas de Tilocalar
+
+6
+
+Hyper-arid zone
+
+Sairecabur volcano
+
+7
+
+Sulfur-rich soil
+
+Simba summit lake
+
+13
+
+High-altitude lake with acid pH
+
+Laguna Miscanti
+Laguna Lejia
+
+5
+26
+
+Brackish water lake
+Oligohaline shallow lake
+
+Pozo Almonte
+
+10
+
+Arid zone
+
+La Portada
+
+2
+
+Atacama coast
+
+Laguna de Piacota
+
+27
+
+Freshwater lake
+
+Lago Chungara
+
+55
+
+Polymictic cold lake
+
+Laguna Brava
+
+2
+
+Extreme conditions
+
+Salar de Llamara
+
+137
+
+Hyper-arid zone
+
+Salar de Tara
+
+14
+
+Salt flat
+
+Licancabur summit lake
+
+11
+
+High-altitude lake with alkaline pH
+
+Llullaillaco volcano lake
+
+1
+
+High-altitude lake
+
+Burro Muerto lake
+
+3
+
+Athalassohaline water body
+
+Altamira
+
+27
+
+Arid zone with heavy fog events
+
+Salar Soronal
+
+4
+
+Hyper-arid zone
+
+Llano de la Paciencia
+
+33
+
+Hyper-arid zone
+
+Bofedal de Parinacota
+Cordillera de Domeyko
+
+45
+32
+
+Wetland
+Mountain range
+
+for organisms with specific characteristics. The
+Database can be explored by taxa classification
+(domain, phylum, class, order, family, genus and
+species); collection site features such as isolation
+environment, environment feature, sample type; and
+strains with specific characteristics such as type strain,
+Gram stain, oxygen requirements, and metabolic
+products. Results are listed by organism ID and
+description. Specific microorganism data can be
+
+accessed using the display format described above.
+An overview of the query results can be retrieved in
+CSV format.
+Geolocation search
+Since the Atacama Desert has many different ecological niches, a geolocation search was implemented to
+display organisms by their sample collection sites data
+
+123
+
+Fig. 4 Geolocation search in the Atacama Database to visualise microorganisms and extract physical and chemical parameters of the sampling sites: isolated markers can be
+displayed by isolation environment to narrow down the search. Markers are clustered by distance: blue, yellow and red markers indicate less than 10 sites, more than 10 sites and 100
+or more sites, respectively. Number indicates the number of sites in that set. Area list includes thirty-five isolation sectors. The selected area is highlighted in the map. (Color
+figure online)
+
+192
+
+123
+
+Antonie van Leeuwenhoek (2020) 113:185–195
+
+Antonie van Leeuwenhoek (2020) 113:185–195
+
+using Google Maps JavaScript API. Organisms are
+grouped by polygons and markers in the Atacama
+Desert map. The search by polygons is defined by
+thirty-five areas that include salt lakes (salares), lakes,
+lagoons and volcanoes among others. Table 1 summarises the geolocations available in the database.
+These areas were selected since they cluster the prime
+collection sites. Areas are highlighted and listed on the
+map to facilitate selection, location and retrieval of
+information. A description of the areas and a list with
+the organisms associated with each sector are provided. On the other hand, information on latitude and
+longitude was used to display collection site locations
+by markers on the map. An example of the geolocation
+search is shown in Fig. 4.
+Future steps
+Since 2000, several Microbial Observatory projects
+have established to help and support research into
+microbial communities over time and across environmental gradients. These observatories have had a key
+role in the study and understanding of microbial
+diversity (Countway et al. 2010; Edgcomb et al. 2011;
+Cardace et al. 2013) and in efforts to describe new
+species of bacteria and archaea. Although the Atacama
+Database is still in the early stages of development,
+this project provides a preliminary interface to
+describe the phylogenetic diversity derived from the
+Atacama Desert and compile a library of the primary
+literature. The Database will continue to grow and
+information related to proteins, genes and metabolic
+pathways will be incorporated in the next stages. Also,
+the Geolocation search tool will be improved to
+include additional information related to the environmental and geological context. Isolation metadata
+provides data from published studies and it includes
+general information such as sample type, sample
+collection date, collection site information and physical and chemical properties of the sites. However, this
+data is scarce or not always available. Additional data
+related to the geological and geochemical habitats will
+help the study of ecosystems, microbial population
+dynamics and seasonal behaviour.
+The current version of Atacama Database is mainly
+directed to the academic sector. A public version of
+Atacama Database is being developed to reach the
+general community since it is important to educate the
+
+193
+
+public about the value of these endemic resources and
+the necessity of protecting their environment.
+
+Conclusions
+Many studies have been done in the arid region of the
+Atacama Desert with the first findings of bacterial
+presence dating back to the 19600 s (Cameron et al.
+1966), but in general the information is sparse and did
+not reveal the complexity of this ecosystem. Despite
+the growing interest in the microbiology of the
+Atacama Desert, there is a low number of validly
+named microbial species that have been first isolated
+from the Atacama. In this study, a platform for the
+valorisation of the microbial diversity of the Atacama
+Desert was developed. The Atacama Database will
+help to promote research, provide a comprehensive
+data collection of the Atacama Desert microorganisms
+and find further biotechnology applications for its
+microorganisms.
+Acknowledgements We would like to thank Mervyn Bibb,
+and Marcel Jaspars for their valuable help and suggestions to
+improve the design of the Atacama Database website; and Felipe
+Maturana, Luis Riquelme and Diego Arenas for their support in
+the software development process.
+Author’s contribution Conceiving the study: CAC and CD.
+PIs of project that support this research: CD, MM, BAA, and
+JAA. Data acquisition and Curation: CAC. Curation Location:
+CAC and JGA. Database Design: MA, NM, BRT, LVC, ET and
+CAC. Development of database and webpages: LVC, ET and
+BRT. Define database queries: LVC, ET, CAC, MA and NM.
+Manuscript drafting: CAC, BAA, and JAA. All authors read and
+approved the final manuscript.
+Funding This work was supported by the Conicyt Basal
+Centre Grant for the CeBiB (FB0001).
+Data availability Atacama Database is freely available at
+https://www.atacamadb.cl. Recommended web browsers are
+Chrome, Firefox and Safari.
+Compliance with ethical standards
+Conflict of interest
+interest.
+
+The authors have declared no conflict of
+
+References
+Azua-Bustos A, Urrejola C, Vicuña R (2012) Life at the dry edge:
+microorganisms of the Atacama Desert. FEBS Lett
+
+123
+
+194
+586:2939–2945. https://doi.org/10.1016/J.FEBSLET.2012.
+07.025
+Azua-Bustos A, González-Silva C, Corsini G (2017) The
+hyperarid core of the Atacama Desert, an extremely dry
+and carbon deprived habitat of potential interest for the
+field of carbon science. Front Microbiol 8:993. https://doi.
+org/10.3389/FMICB.2017.00993
+Azua-Bustos A, Fairén AG, González-Silva C, Ascaso C, Carrizo D, Fernández-Martı́nez MÁ, Fernández-Sampedro M,
+Garcı́a-Descalzo L, Garcı́a-Villadangos M, Martin-Redondo MP, Sánchez-Garcı́a L, Wierzchos J, Parro V (2018)
+Unprecedented rains decimate surface microbial communities in the hyperarid core of the Atacama Desert. Sci Rep
+8:16706. https://doi.org/10.1038/s41598-018-35051-w
+Bernal A, Ear U, Kyrpides N (2001) Genomes OnLine Database
+(GOLD): a monitor of genome projects world-wide.
+Nucleic Acids Res 29:126–127
+Bull AT, Asenjo JA, Goodfellow M, Gómez-Silva B (2016) The
+Atacama Desert: technical resources and the growing
+importance of novel microbial diversity. Annu Rev
+Microbiol 70:215–234. https://doi.org/10.1146/annurevmicro-102215-095236
+Bull AT, Andrews BA, Dorador C, Goodfellow M (2018)
+Introducing the Atacama Desert. Antonie Van Leeuwenhoek 111(8):1269–1272. https://doi.org/10.1007/s10482018-1100-2
+Cameron R, Gensel D, Blank C (1966) Soil studies desert
+microflora. XII. Abundance of microflora in soil samples
+from the Chile Atacama Desert. Space Progr Summ
+IV:140–147
+Cardace D, Hoehler T, McCollom T, Schrenk M, Carnevale D,
+Kubo M, Twing K (2013) Establishment of the Coast
+Range ophiolite microbial observatory (CROMO): drilling
+objectives and preliminary outcomes. Sci Drill 16:45–55.
+https://doi.org/10.5194/sd-16-45-2013
+Castro JF, Razmilic V, Gomez-Escribano JP, Andrews B,
+Asenjo J, Bibb M (2018) The ‘gifted’ actinomycete
+Streptomyces leeuwenhoekii. Antonie Van Leeuwenhoek
+111(8):1433–1448. https://doi.org/10.1007/s10482-0181034-8
+Clarke JDA (2006) Antiquity of aridity in the Chilean Atacama
+Desert. Geomorphology 73:101–114. https://doi.org/10.
+1016/j.entcs.2005.12.035
+Connon SA, Lester ED, Shafaat HS, Obenhuber DC, Ponce A
+(2007) Bacterial diversity in hyperarid atacama desert
+soils. J Geophys Res 112:G04S17. https://doi.org/10.1029/
+2006JG000311
+Countway PD, Vigil PD, Schnetzer A, Moorthi SD, Caron DA
+(2010) Seasonal analysis of protistan community structure
+and diversity at the USC microbial observatory (San Pedro
+Channel, North Pacific Ocean). Limnol Oceanogr
+55:2381–2396. https://doi.org/10.4319/lo.2010.55.6.2381
+Davila AF, Schulze-Makuch D (2016) The last possible outposts
+for life on mars. Astrobiology 16:159–168. https://doi.org/
+10.1089/ast.2015.1380
+Demergasso C, Casamayor EO, Chong G, Galleguillos P,
+Escudero L, Pedrós-Alió C (2004) Distribution of
+prokaryotic genetic diversity in athalassohaline lakes of the
+Atacama Desert, Northern Chile. FEMS Microbiol Ecol
+48:57–69. https://doi.org/10.1016/j.femsec.2003.12.013
+
+123
+
+Antonie van Leeuwenhoek (2020) 113:185–195
+Demergasso C, Dorador C, Meneses D, Blamey J, Cabrol N,
+Escudero L, Chong G (2010) Prokaryotic diversity pattern
+in high-altitude ecosystems of the Chilean Altiplano.
+J Geophys Res 115:G00D09. https://doi.org/10.1029/
+2008JG000836
+Dorador CI (2007) Microbial communities in high altitude
+altiplanic wetlands in northern Chile: phylogeny, diversity
+and function. Ph.D. Thesis, Max Planck Institute for Evolutionary Biology
+Dorador C, Vila I, Witzel K-P, Imhoff JF (2013) Bacterial and
+archaeal diversity in high altitude wetlands of the Chilean
+Altiplano. Fundam Appl Limnol/Arch für Hydrobiol
+182:135–159.
+https://doi.org/10.1127/1863-9135/2013/
+0393
+Dorador C, Fink P, Hengst M, Icaza G, Villalobos AS, Vejar D,
+Meneses D, Zadjelovic V, Burmann L, Moelzner J, Harrod C
+(2018) Microbial community composition and trophic role
+along a marked salinity gradient in Laguna Puilar, Salar de
+Atacama.
+Chile
+Antonie
+van
+Leeuwenhoek
+111(8):1361–1374.
+https://doi.org/10.1007/s10482-0181091-z
+Edgcomb V, Orsi W, Bunge J, Jeon S, Christen R, Leslin C,
+Holder M, Taylor GT, Suarez P, Varela R, Epstein S (2011)
+Protistan microbial observatory in the Cariaco Basin,
+Caribbean. I. Pyrosequencing vs Sanger insights into species richness. ISME J 5:1344–1356. https://doi.org/10.
+1038/ismej.2011.6
+Elsayed SS, Trusch F, Deng H, Raab A, Prokes I, Busarakam K,
+Asenjo JA, Andrews BA, Van West P, Bull AT, Goodfellow
+M, Yi Y, Ebel R, Jaspars M, Rateb ME (2015) Chaxapeptin,
+a Lasso Peptide from Extremotolerant Streptomyces
+leeuwenhoekii Strain C58 from the Hyperarid Atacama
+Desert. J Org Chem 80:10252–10260. https://doi.org/10.
+1021/acs.joc.5b01878
+Gomez-Escribano JP, Castro JF, Razmilic V, Chandra G,
+Andrews B, Asenjo JA, Bibb MJ (2015) The Streptomyces
+leeuwenhoekii genome: de novo sequencing and assembly
+in single contigs of the chromosome, circular plasmid
+pSLE1 and linear plasmid pSLE2. BMC Genom 16:485.
+https://doi.org/10.1186/s12864-015-1652-8
+Hartley AJ, Chong G, Houston J, Mather AE (2005) 150 million
+years of climatic stability: evidence from the Atacama
+Desert, northern Chile. J Geol Soc Lond 162:421–424.
+https://doi.org/10.1144/0016-764904-071
+Idris H, Goodfellow M, Sanderson R, Asenjo JA, Bull AT
+(2017a) Actinobacterial rare biospheres and dark matter
+revealed in habitats of the Chilean Atacama Desert. Sci
+Rep 7:1–11. https://doi.org/10.1038/s41598-017-08937-4
+Idris H, Nouioui I, Asenjo JA, Bull AT, Goodfellow M (2017b)
+Lentzea chajnantorensis sp. nov., an actinobacterium from
+a very high altitude Cerro Chajnantor gravel soil in
+northern Chile. Antonie Van Leeuwenhoek 110:795–802.
+https://doi.org/10.1007/s10482-017-0851-5
+Majhi MC, Behera AK, Kulshreshtha NM, Kumar R, Kumar A
+(2013) ExtremeDB : a unified web repository of extremophilic archaea and bacteria. PLoS ONE 8:e63083. https://
+doi.org/10.1371/journal.pone.0063083
+Mohammadipanah F, Wink J (2016) Actinobacteria from arid and
+desert habitats: diversity and biological activity. Front
+Microbiol 6:1541. https://doi.org/10.3389/fmicb.2015.01541
+
+Antonie van Leeuwenhoek (2020) 113:185–195
+Molina V, Dorador C, Fernández C, Bristow L, Eissler Y, Hengst
+M, Hernandez K, Olsen LM, Harrod C, Marchant F, Anguita
+C, Cornejo M (2018a) The activity of nitrifying microorganisms in a high-altitude Andean wetland. FEMS Microbiol Ecol 94:1–13. https://doi.org/10.1093/femsec/fiy062
+Molina V, Eissler Y, Cornejo M, Galand PE, Dorador C, Hengst
+M, Fernandez C, Francois JP (2018b) Distribution of
+greenhouse gases in hyper-arid and arid areas of northern
+Chile and the contribution of the high altitude wetland
+microbiome (Salar de Huasco, Chile). Antonie Van
+Leeuwenhoek 111(8):1421–1432. https://doi.org/10.1007/
+s10482-018-1078-9
+Navarro-Gonzalez R (2003) Mars-like soils in the Atacama
+Desert, Chile, and the dry limit of microbial life. Science
+80(302):1018–1021.
+https://doi.org/10.1126/science.
+1089143
+NCBI Resource Coordinators (2017) Database resources of the
+National Center for Biotechnology Information. Nucleic Acids
+Res 45:D12–D17. https://doi.org/10.1093/nar/gkw1071
+Pérez V, Hengst M, Kurte L, Dorador C, Jeffrey WH, Wattiez R,
+Molina V, Matallana-Surget S (2017) Bacterial survival
+under extreme UV radiation: a comparative proteomics
+study of Rhodobacter sp., isolated from high altitude
+wetlands in Chile. Front Microbiol 8:1–16. https://doi.org/
+10.3389/fmicb.2017.01173
+Santhanam R, Okoro CK, Rong X, Huang Y, Bull AT, Weon
+HY, Andrews BA, Asenjo JA, Goodfellow M (2012a)
+Streptomyces atacamensis sp. nov., isolated from an
+extreme hyper-arid soil of the Atacama Desert. Chile Int J
+Syst Evol Microbiol 62:2680–2684. https://doi.org/10.
+1099/ijs.0.038463-0
+Santhanam R, Okoro CK, Rong X, Huang Y, Bull AT, Andrews
+BA, Asenjo JA, Weon HY, Goodfellow M (2012b) Streptomyces deserti sp. nov., isolated from hyper-arid Atacama
+Desert soil. Antonie Van Leeuwenhoek 101:575–581.
+https://doi.org/10.1007/s10482-011-9672-0
+Scheihing K, Tröger U (2018) Local climate change induced by
+groundwater overexploitation in a high Andean arid
+watershed, Lagunillas basin, northern Chile. Hydrogeol J
+26:705–719. https://doi.org/10.1007/s10040-017-1647-4
+Schulz D, Beese P, Ohlendorf B, Erhard A, Zinecker H, Dorador
+C, Imhoff JF (2011) Abenquines A-D: aminoquinone
+derivatives produced by Streptomyces sp. strain DB634.
+
+195
+J Antibiot (Tokyo) 64:763–768. https://doi.org/10.1038/ja.
+2011.87
+Schulze-Makuch D, Wagner D, Kounaves SP, Mangelsdorf K,
+Devine KG, de Vera J-P, Schmitt-Kopplin P, Grossart H-P,
+Parro V, Kaupenjohann M, Galy A, Schneider B, Airo A,
+Frösler J, Davila AF, Arens FL, Cáceres L, Solı́s Cornejo F,
+Carrizo D, Dartnell L, DiRuggiero J, Flury M, Ganzert L,
+Gessner MO, Grathwohl P, Guan L, Heinz J, Hess M, Keppler
+F, Maus D, McKay CP, Meckenstock RU, Montgomery W,
+Oberlin EA, Probst AJ, Sáenz JS, Sattler T, Schirmack J,
+Sephton MA, Schloter M, Uhl J, Valenzuela B, Vestergaard
+G, Wörmer L, Zamorano P (2018) Transitory microbial
+habitat in the hyperarid Atacama Desert. PNAS
+115:2670–2675. https://doi.org/10.1073/pnas.1714341115
+Stoner DL, Geary MC, White LJ, Lee RD, Brizzee JA, Rodman
+AC, Rope RC (2001) Mapping microbial biodiversity.
+Appl Environ Microbiol 67:4324–4328. https://doi.org/10.
+1128/AEM.67.9.4324
+Thiel V, Tank M, Neulinger SC, Gehrmann L, Dorador C,
+Imhoff JF (2010) Unique communities of anoxygenic
+phototrophic bacteria in saline lakes of Salar de Atacama
+(Chile): evidence for a new phylogenetic lineage of phototrophic Gammaproteobacteria from pufLM gene analyses. FEMS Microbiol Ecol 74:510–522. https://doi.org/10.
+1111/j.1574-6941.2010.00966.x
+Wichner D, Idris H, Houssen WE, McEwan AR, Bull AT,
+Asenjo JA, Goodfellow M, Jaspars M, Ebel R, Rateb ME
+(2017) Isolation and anti-HIV-1 integrase activity of
+lentzeosides A-F from extremotolerant lentzea sp. H45, a
+strain isolated from a high-altitude Atacama Desert soil.
+J Antibiot (Tokyo) 70:448–453. https://doi.org/10.1038/ja.
+2016.78
+Wu L, Sun Q, Sugawara H, Yang S, Zhou Y, McCluskey K,
+Vasilenko A, Suzuki K, Ohkuma M, Lee Y, Robert V,
+Ingsriswang S, Guissart F, Phillippe D, Ma J (2013) Global
+catalogue of microorganisms (gcm): a comprehensive
+database and information retrieval, analysis, and visualization system for microbial resources. BMC Genom
+14:933
+Publisher’s Note Springer Nature remains neutral with
+regard to jurisdictional claims in published maps and
+institutional affiliations.
+
+123
+
+

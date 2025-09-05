@@ -31,7 +31,7 @@ map<int, string> perfiles_opciones = {
     {3, "Juego (en construcción)"},
     {4, "es palíndromo?"},
     {5, "Calcular f(x)=x*x + 2x + 8"},
-    {6, "CONTEO SOBRE TEXTO (en construcción)"}
+    {6, "CONTEO SOBRE TEXTO"}
 };
 
 // Usaremos unordered_map<string, pair<string,string>>
@@ -471,11 +471,19 @@ int main(int argc, char* argv[]) {
     env_vars["MATRIZ2_FILE"].erase(0, env_vars["MATRIZ2_FILE"].find_first_not_of(" \n\r\t"));
     env_vars["MATRIZ2_FILE"].erase(env_vars["MATRIZ2_FILE"].find_last_not_of(" \n\r\t") + 1);
 
+    env_vars["LIBROS_DIR"].erase(0, env_vars["LIBROS_DIR"].find_first_not_of(" \n\r\t"));
+    env_vars["LIBROS_DIR"].erase(env_vars["LIBROS_DIR"].find_last_not_of(" \n\r\t") + 1);
+
     // Verificación de limpieza
     string user_file = env_vars["USER_FILE"];
     string perfil_file = env_vars["PERFIL_FILE"];
     string M1 = env_vars["MATRIZ1_FILE"];
     string M2 = env_vars["MATRIZ2_FILE"];
+
+    string libros_dir = env_vars["LIBROS_DIR"];
+    
+    // Concatenar directorio de libros con el archivo específico
+    string ruta_libro = libros_dir + "/" + file;
 
 
     // Cargar mapa user->(password, perfil)
@@ -498,6 +506,8 @@ int main(int argc, char* argv[]) {
         return 1;
     }
     const vector<int>& opciones_validas = it->second;
+
+    
 
     int opcion;
     do {
@@ -551,7 +561,7 @@ int main(int argc, char* argv[]) {
             case 6:
                 limpiarConsola();
                 cout << "\n:::::::::: CONTEO SOBRE TEXTO ::::::::::" << endl;
-                conteoTexto(file);
+                conteoTexto(ruta_libro);
                 break;
             default:
                 limpiarConsola();
