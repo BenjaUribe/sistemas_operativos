@@ -142,14 +142,14 @@ void ingresarUsuario(vector<Users>& userList) {
 }
 
 void listarUsuarios(const vector<Users>& userList) {
-    cout << "\nID   Nombre               Username             Perfil" << endl;
-    cout << "-------------------------------------------------------------------" << endl;
+    cout << "\nID  |Nombre              |Username            |Perfil" << endl;
+    cout <<   "----|--------------------|--------------------|--------------------" << endl;
     for (const auto& user : userList) {
         std::string idStr = std::to_string(user.id);
         cout << setw(4) << left << idStr;        // ancho fijo 4
-        cout << " " << setw(20) << left << user.nombre; // ancho fijo 20
-        cout << " " << setw(20) << left << user.userName; // ancho fijo 20
-        cout << " " << setw(20) << left << user.perfil; // ancho fijo 20
+        cout << "|" << setw(20) << left << user.nombre; // ancho fijo 20
+        cout << "|" << setw(20) << left << user.userName; // ancho fijo 20
+        cout << "|" << setw(20) << left << user.perfil; // ancho fijo 20
         cout << endl;
     }
     menuPrincipal();
@@ -201,7 +201,6 @@ int almacenar(string path, vector<Users>& userList){
     testFile.close();*/
 
     ofstream outFile(path, ios::app);
-    cout << "Almacenando usuarios en: " << path << endl;
     if (!outFile) {
             cerr << "\nError al abrir archivo para escribir: " << path << "\n";
             return 1;
@@ -344,13 +343,13 @@ int main() {
         switch(opcion) {
             case 0:
             cout << "\nSaliendo..." << endl;
-            limpiarUsuarios(ruta_usuarios);
-            almacenar(ruta_usuarios, userList);
             break;
             case 1:
             limpiarConsola();
             cout << "\n:::::::::: Ingresar Usuario ::::::::::" << endl;
             ingresarUsuario(userList);
+            limpiarUsuarios(ruta_usuarios);
+            almacenar(ruta_usuarios, userList);
             break;
             case 2:
             limpiarConsola();
@@ -361,6 +360,8 @@ int main() {
             limpiarConsola();
             cout << "\n:::::::::: Eliminar Usuario ::::::::::" << endl;
             eliminarUsuario(userList);
+            limpiarUsuarios(ruta_usuarios);
+            almacenar(ruta_usuarios, userList);
             break;
             default:
             limpiarConsola();
