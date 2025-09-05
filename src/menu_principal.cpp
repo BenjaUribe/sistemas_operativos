@@ -5,10 +5,15 @@
 #include <unordered_map>
 #include <map>
 #include <sstream>
+#include <cctype>
 
 using namespace std;
 
-
+// variables globales //
+// Declarar wide strings con L antes de las comillas
+wstring vocales = L"aeiouáéíóúüAEIOUÁÉÍÓÚÜ";
+wstring consonantes = L"bcdfghjklmnñpqrstvwxyzBCDFGHJKLMNÑPQRSTVWXYZ";
+// // // // // // // // // // // // // // // //
 
 struct Users { // mantenido por compatibilidad futura
     int id;
@@ -247,6 +252,72 @@ void multi_matrices(string matriz1_path, string matriz2_path){
     }
 }
 
+// funcion que retorna true si c es vocal y false si no
+bool esVocal(wchar_t c) {
+    // wcout << L"caracter: "<< c <<" esVocal: " << (vocales.find(c) != wstring::npos) << endl; // Línea de depuración
+    return vocales.find(c) != wstring::npos;
+}
+
+// funcion que retorna true si c es consonante y false si no
+bool esConsonante(wchar_t c) {
+    // wcout << "caracter: "<< c << " esConsonante: " << (consonantes.find(c) != wstring::npos) << endl; // Línea de depuración
+    return consonantes.find(c) != wstring::npos;
+}
+
+void conteoTexto(string ruta) {
+    int cont_vocales = 0, cont_consonantes = 0, cont_especiales = 0, cont_palabras = 0;
+    bool dentroPalabra = false;
+    wifstream archivo(ruta);
+    archivo.imbue(locale(""));
+    wstring linea;
+
+    if (archivo.is_open()){
+        while (getline(archivo, linea)){
+            for (wchar_t c : linea) {
+                if (esVocal(c)) {
+                    cont_vocales++;
+                if (!dentroPalabra) {
+                    dentroPalabra = true;
+                    cont_palabras++;
+                }
+                } 
+                else if (esConsonante(c)) {
+                cont_consonantes++;
+                if (!dentroPalabra) {
+                    dentroPalabra = true;
+                    cont_palabras++;
+                }
+                } 
+            else {
+                // Todo lo que no sea vocal ni consonante es especial
+                cont_especiales++;
+                dentroPalabra = false;
+                }
+            }
+        }
+    }
+    else {
+        cout << "no se puedo abrir el archivo" << endl;
+    }
+
+    cout << "\n--- Resumen de Conteo ---\n";
+    cout << "Cantidad de vocales: " << cont_vocales << endl;
+    cout << "Cantidad de consonantes: " << cont_consonantes << endl;
+    cout << "Cantidad de caracteres especiales: " << cont_especiales << endl;
+    cout << "Cantidad de palabras: " << cont_palabras << endl;
+
+    // Opción volver
+    int opcion;
+    do{
+        cout << "\n0) Volver al menú principal: ";
+        cin >> opcion;
+        switch (opcion)
+        {
+        case 0:
+            break;
+        }
+    }while(opcion != 0);
+}
 
 // Función para leer variables del .env
 map<string, string> leer_env(const string& env_path) {
@@ -480,7 +551,7 @@ int main(int argc, char* argv[]) {
             case 6:
                 limpiarConsola();
                 cout << "\n:::::::::: CONTEO SOBRE TEXTO ::::::::::" << endl;
-                cout << "Funcionalidad en desarrollo..." << endl;
+                conteoTexto(file);
                 break;
             default:
                 limpiarConsola();
