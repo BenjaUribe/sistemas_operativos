@@ -17,9 +17,12 @@ Para ejecutar, se debe entrar a la carpeta `/src` donde se ubica el archivo `men
 
 ### ***Variables de entorno***
 
-`USER_FILE`: ruta del archivo `USUARIOS.txt`, el cual almacena los datos de cada usuario ingresado al sistema.
-`PERFIL_FILE`: ruta del archivo `PERFILES.txt`, el cual almacena los datos de cada PERFIL disponible en el sistema.
-`MATRIZ1_FILE`: ruta del archivo `matriz1.txt`, el cual almacena la matriz para la multiplicacion de matrices.
-`MATRIZ2_FILE`: ruta del archivo `matriz2.txt`, el cual almacena la matriz para la multiplicacion de matrices.
-`LIBROS_DIR`: ruta del archivo `libros`, el cual almacena la ruta de la carpeta donde se almacena todos los libros.
-
+- **`USER_FILE`**: ruta del archivo `USUARIOS.txt`, el cual almacena los datos de cada usuario ingresado al sistema.
+<br/>
+- **`PERFIL_FILE`**: ruta del archivo `PERFILES.txt`, el cual almacena los datos de cada PERFIL disponible en el sistema.
+<br/>
+- **`MATRIZ1_FILE`**: ruta del archivo `matriz1.txt`, el cual almacena la matriz para la multiplicacion de matrices.
+<br/>
+- **`MATRIZ2_FILE`**: ruta del archivo `matriz2.txt`, el cual almacena la matriz para la multiplicacion de matrices.
+<br/>
+- **`LIBROS_DIR`**: ruta del archivo `libros`, el cual almacena la ruta de la carpeta donde se almacena todos los libros.
