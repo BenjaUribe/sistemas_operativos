@@ -118,7 +118,7 @@ void interfaz_funcion(){
 
 }
 
-
+/*
 // Funcion multiplicar matrices
 
 int matrizNxN(string M_path){
@@ -251,6 +251,7 @@ void multi_matrices(string matriz1_path, string matriz2_path){
         cout << endl;
     }
 }
+*/
 
 // funcion que retorna true si c es vocal y false si no
 bool esVocal(wchar_t c) {
@@ -541,7 +542,7 @@ int main(int argc, char* argv[]) {
             case 2:
                 limpiarConsola();
                 cout << "\n:::::::::: Multiplica matrices NxN ::::::::::" << endl;
-                multi_matrices(M1, M2);
+                //multi_matrices(M1, M2);
                 break;
             case 3:
                 limpiarConsola();

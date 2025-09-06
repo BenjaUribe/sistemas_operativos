@@ -11,7 +11,7 @@ La aplicación consiste en un prototipo de sistema operativo, cuyo propósito ac
 
 ### ***Instrucciones de uso***
 
-Para ejecutar, se debe entrar a la carpeta `/src` donde se ubica el archivo `menu_principal.cpp` y `user_admin.cpp`. Desde la terminal, ejecuta `make` y luego `./menu` para ejecuta el menu principal y `./user_admin` para ejecutar el administrador de usuarios.
+Para ejecutar, se debe entrar a la carpeta `/src` donde se ubica el archivo `menu_principal.cpp`, `user_admin.cpp` y `matmul.cpp`. Desde la terminal, ejecuta `make` y luego `./menu` para ejecuta el menu principal, `./user_admin` para ejecutar el administrador de usuarios y `./matmul` para ejecutar la multiplicación de matrices.
 
 ---
 
