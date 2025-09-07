@@ -11,7 +11,7 @@ using namespace std;
 
 // variables globales //
 // Declarar wide strings con L antes de las comillas
-wstring vocales = L"aeiouáéíóúüAEIOUÁÉÍÓÚÜ";
+wstring vocales = L"aeiouáéíóúüAEIOUÝÉÝÓÚÜ";
 wstring consonantes = L"bcdfghjklmnñpqrstvwxyzBCDFGHJKLMNÑPQRSTVWXYZ";
 // // // // // // // // // // // // // // // //
 
@@ -53,31 +53,32 @@ void palindromo(string str){
 
     while (left < right) {
         if (str[left] != str[right]) {
-            cout << "No es palíndromo." << endl;
+            cout << "No es palíndromo";
             return;
         }
         left++;
         right--;
     }
-    cout << "Es palíndromo." << endl;
+    cout << "Es palíndromo";
 }
 
 void interfaz_palindromo(){
     string str;
-    cout << "Ingrese una cadena: ";
+    cout << "\nIngrese una cadena: ";
     cin.ignore();
     getline(cin, str);
     int opcion;
 
-    cout << "1) Validar" << endl;
+    cout << "\n1) Validar" << endl;
     cout << "2) Cancelar" << endl;
-    cout << "Seleccione una opción: ";
+    cout << "\nSeleccione una opción: ";
     cin >> opcion;
 
     switch(opcion) {
         case 1:
-            cout << "===========================" << endl;
+            cout << "\n=== ";
             palindromo(str);
+            cout << " ===" << endl;
             break;
         case 2:
             return;
@@ -96,23 +97,23 @@ int funcion(int x){
 }
 
 void interfaz_funcion(){
-    cout << "Ingrese el valor de X: ";
+    cout << "\nIngrese el valor de X: ";
     int x;
     cin >> x;
     int opcion;
-    cout << "1) Calcular f(x) = x^2 + 2x + 8" << endl;
+    cout << "\n1) Calcular f(" << x << ") = " << x << "^2 + (2*" << x << ") + 8" << endl;
     cout << "2) Cancelar" << endl;
-    cout << "Seleccione una opción: ";
+    cout << "\nSeleccione una opción: ";
     cin >> opcion;
 
     switch(opcion) {
         case 1:
-            cout << "Resultado: " << funcion(x) << endl;
+            cout << "\n=== Resultado de f(" << x << "): " << funcion(x) << " ===" << endl;
             return;
         case 2:
             return;
         default:
-            cout << "Opción no válida." << endl;
+            cout << "\nOpción no válida.\n" << endl;
             break;
     }
 
@@ -296,16 +297,17 @@ void conteoTexto(string ruta) {
                 }
             }
         }
+
+        cout << "\n=== Resumen de conteo ===\n" << endl;
+        cout << "Archivo: " << ruta.substr(12) << "\n" << endl;
+        cout << "Cantidad de vocales: " << cont_vocales << endl;
+        cout << "Cantidad de consonantes: " << cont_consonantes << endl;
+        cout << "Cantidad de caracteres especiales: " << cont_especiales << endl;
+        cout << "Cantidad de palabras: " << cont_palabras << endl;
     }
     else {
-        cout << "no se puedo abrir el archivo" << endl;
+        cout << "\nNo se puedo abrir el archivo" << endl;
     }
-
-    cout << "\n--- Resumen de Conteo ---\n";
-    cout << "Cantidad de vocales: " << cont_vocales << endl;
-    cout << "Cantidad de consonantes: " << cont_consonantes << endl;
-    cout << "Cantidad de caracteres especiales: " << cont_especiales << endl;
-    cout << "Cantidad de palabras: " << cont_palabras << endl;
 
     // Opción volver
     int opcion;
@@ -351,21 +353,35 @@ string validar_usuario(const unordered_map<string, pair<string,string>>& usuario
 unordered_map<string, pair<string,string>> cargarUsuarios(const string& path) {
     unordered_map<string, pair<string,string>> usuarios;
     ifstream archivo(path);
-    if(!archivo.is_open()) {
+    if (!archivo.is_open()) {
         cerr << "Error al abrir archivo: " << path << endl;
         return usuarios;
     }
+
     string linea;
-    while(getline(archivo, linea)) {
+    while (getline(archivo, linea)) {
         if (linea.empty() || linea[0] == '#') continue;
-        stringstream ss(linea);
-        string id, nombre, userName, password, perfil;
-        if(!getline(ss, id, ',')) continue;
-        if(!getline(ss, nombre, ',')) continue;
-        if(!getline(ss, userName, ',')) continue;
-        if(!getline(ss, password, ',')) continue;
-        getline(ss, perfil, ','); // puede venir vacío
-    usuarios[userName] = {password, perfil}; // sobrescribe si duplicado
+        if (linea.size() < 113) continue;
+
+        string id = linea.substr(0, 5);
+        string nombre = linea.substr(5, 40);
+        string userName = linea.substr(45, 40);
+        string password = linea.substr(85, 20);
+        string perfil = linea.substr(105, 8);
+
+        // Funci�n trim (quita espacios sobrantes)
+        auto trim = [](string &s) {
+            while (!s.empty() && isspace((unsigned char)s.back())) s.pop_back();
+            while (!s.empty() && isspace((unsigned char)s.front())) s.erase(s.begin());
+        };
+
+        trim(id);
+        trim(nombre);
+        trim(userName);
+        trim(password);
+        trim(perfil);
+
+        usuarios[userName] = {password, perfil};
     }
     return usuarios;
 }
@@ -537,7 +553,7 @@ int main(int argc, char* argv[]) {
             case 1:
                 limpiarConsola();
                 cout << "\n:::::::::: Admin de usuarios y perfiles ::::::::::" << endl;
-                cout << "Funcionalidad en desarrollo..." << endl;
+                cout << "\n === Funcionalidad en desarrollo ===" << endl;
                 break;
             case 2:
                 limpiarConsola();
@@ -547,7 +563,7 @@ int main(int argc, char* argv[]) {
             case 3:
                 limpiarConsola();
                 cout << "\n:::::::::: Juego ::::::::::" << endl;
-                cout << "Funcionalidad en desarrollo..." << endl;
+                cout << "\n === Funcionalidad en desarrollo ===" << endl;
                 break;
             case 4:
                 limpiarConsola();
@@ -556,12 +572,12 @@ int main(int argc, char* argv[]) {
                 break;
             case 5:
                 limpiarConsola();
-                cout << "\n:::::::::: Calcular f(x)=x*x + 2x + 8 ::::::::::" << endl;
+                cout << "\n:::::::::: Calcular f(x) = x*x + 2x + 8 ::::::::::" << endl;
                 interfaz_funcion();
                 break;
             case 6:
                 limpiarConsola();
-                cout << "\n:::::::::: CONTEO SOBRE TEXTO ::::::::::" << endl;
+                cout << "\n:::::::::: Conteo sobre texto ::::::::::" << endl;
                 conteoTexto(ruta_libro);
                 break;
             default:

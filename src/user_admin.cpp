@@ -14,10 +14,10 @@ using namespace std;
 // Ver si podemos utilizar string
 struct Users {
     int id;
-    char nombre[20];
-    char userName[20];
+    char nombre[40];
+    char userName[40];
     char password[20];
-    char perfil[20];
+    char perfil[8];
 };
 
 
@@ -88,14 +88,14 @@ void ingresarUsuario(vector<Users>& userList) {
     cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
     cout << "Nombre: ";
-    cin.getline(nuevoUsuario.nombre, 20);
+    cin.getline(nuevoUsuario.nombre, 40);
     if (cin.fail()) {
         cin.clear();
         cin.ignore(numeric_limits<streamsize>::max(), '\n');
     }
 
     cout << "Username: ";
-    cin.getline(nuevoUsuario.userName, 20);
+    cin.getline(nuevoUsuario.userName, 40);
     if (cin.fail()) {
         cin.clear();
         cin.ignore(numeric_limits<streamsize>::max(), '\n');
@@ -109,7 +109,7 @@ void ingresarUsuario(vector<Users>& userList) {
     }
 
     cout << "Perfil: ";
-    cin.getline(nuevoUsuario.perfil, 20);
+    cin.getline(nuevoUsuario.perfil, 8);
     if (cin.fail()) {
         cin.clear();
         cin.ignore(numeric_limits<streamsize>::max(), '\n');
@@ -142,14 +142,14 @@ void ingresarUsuario(vector<Users>& userList) {
 }
 
 void listarUsuarios(const vector<Users>& userList) {
-    cout << "\nID  |Nombre              |Username            |Perfil" << endl;
-    cout <<   "----|--------------------|--------------------|--------------------" << endl;
+    cout << "\nID  |Nombre                                  |Username                                |Perfil" << endl;
+    cout <<   "----|----------------------------------------|----------------------------------------|-------" << endl;
     for (const auto& user : userList) {
         std::string idStr = std::to_string(user.id);
         cout << setw(4) << left << idStr;        // ancho fijo 4
-        cout << "|" << setw(20) << left << user.nombre; // ancho fijo 20
-        cout << "|" << setw(20) << left << user.userName; // ancho fijo 20
-        cout << "|" << setw(20) << left << user.perfil; // ancho fijo 20
+        cout << "|" << setw(40) << left << user.nombre; // ancho fijo 40
+        cout << "|" << setw(40) << left << user.userName; // ancho fijo 40
+        cout << "|" << setw(8) << left << user.perfil; // ancho fijo 8
         cout << endl;
     }
     menuPrincipal();
@@ -188,70 +188,98 @@ string obtenerEnv(const string& nombre_archivo, const string& clave) {
 }*/
 
 
-
-int almacenar(string path, vector<Users>& userList){
-    // Verificar si el archivo existe antes de abrirlo
-    /*cout << "\nAlmacenando usuarios en: " << path << endl;
-    ifstream testFile(path);
-    if (testFile.good()) {
-        cout << "[VERIFICACION] El archivo existe: " << path << endl;
-    } else {
-        cout << "[VERIFICACION] El archivo NO existe, se crearÃ¡: " << path << endl;
-    }
-    testFile.close();*/
-
-    ofstream outFile(path, ios::app);
+int almacenar(string path, const vector<Users>& userList) {
+    ofstream outFile(path, ios::trunc); // trunc para reescribir siempre
     if (!outFile) {
-            cerr << "\nError al abrir archivo para escribir: " << path << "\n";
-            return 1;
-        }
+        cerr << "\nError al abrir archivo para escribir: " << path << "\n";
+        return 1;
+    }
 
-    for(const auto& user : userList) {
-        outFile << user.id << ","
-                << user.nombre << ","
-                << user.userName << ","
-                << user.password << ","
-                << user.perfil << "\n";
+    for (const auto& user : userList) {
+        // ID: 5 caracteres, con ceros a la izquierda
+        outFile << setw(5) << setfill('0') << right << user.id;
+
+        // Nombre: 40 caracteres, alineado a la izquierda y relleno con espacios
+        outFile << setw(40) << setfill(' ') << left << user.nombre;
+
+        // Username: 40 caracteres
+        outFile << setw(40) << setfill(' ') << left << user.userName;
+
+        // Password: 20 caracteres
+        outFile << setw(20) << setfill(' ') << left << user.password;
+
+        // Perfil: 20 caracteres
+        outFile << setw(8) << setfill(' ') << left << user.perfil;
+
+        outFile << "\n";
     }
 
     outFile.close();
     return 0;
 }
 
+
 int cargarDatos(string path, vector<Users>& userList) {
     ifstream archivo(path);
-    if(!archivo.is_open()) {
+    if (!archivo.is_open()) {
         cerr << "Error al abrir archivo: " << path << endl;
         return 1;
     }
-    string linea;
-    while(getline(archivo, linea)){
-        if (linea.empty() || linea[0] == '#') continue;
-        stringstream ss(linea);
-        string id, nombre, userName, password, perfil;
-        getline(ss, id, ',');
-        getline(ss, nombre, ',');
-        getline(ss, userName, ',');
-        getline(ss, password, ',');
-        getline(ss, perfil, ',');
 
-        int userId = stoi(id);
+    string linea;
+    while (getline(archivo, linea)) {
+        if (linea.empty()) continue;
+        if (linea.size() < 113) continue;
+
         Users user;
-        user.id = userId;
-        strncpy(user.nombre, nombre.c_str(), 19);
-        user.nombre[19] = '\0';
-        strncpy(user.userName, userName.c_str(), 19);
-        user.userName[19] = '\0';
+
+        // ID (primeros 5 caracteres)
+        string idStr = linea.substr(0, 5);
+
+        // Validar que el ID tenga solo dígitos
+        if (!all_of(idStr.begin(), idStr.end(), ::isdigit)) {
+            cerr << "ID inválido en línea: [" << linea << "]" << endl;
+            continue;
+        }
+
+        user.id = stoi(idStr);
+
+        // Nombre [5, 45)
+        string nombre = linea.substr(5, 40);
+        strncpy(user.nombre, nombre.c_str(), 39);
+        user.nombre[39] = '\0';
+
+        // Username [45, 85)
+        string userName = linea.substr(45, 40);
+        strncpy(user.userName, userName.c_str(), 39);
+        user.userName[39] = '\0';
+
+        // Password [85, 105)
+        string password = linea.substr(85, 20);
         strncpy(user.password, password.c_str(), 19);
         user.password[19] = '\0';
-        strncpy(user.perfil, perfil.c_str(), 19);
-        user.perfil[19] = '\0';
+
+        // Perfil [105, 113)
+        string perfil = linea.substr(105, 8);
+        strncpy(user.perfil, perfil.c_str(), 7);
+        user.perfil[7] = '\0';
+
+        // Quitar espacios finales en cada campo
+        for (char* p : {user.nombre, user.userName, user.password, user.perfil}) {
+            int len = strlen(p);
+            while (len > 0 && p[len - 1] == ' ') {
+                p[len - 1] = '\0';
+                --len;
+            }
+        }
+
         userList.push_back(user);
     }
 
     archivo.close();
     return 0;
-}   
+}
+
 
 int limpiarUsuarios(string path){
     ofstream outFile(path, ios::trunc);
@@ -322,7 +350,6 @@ int main() {
     }*/
 
     //Carga inicial
-    cout << "Cargando datos de usuarios desde el archivo..." << endl;
     cargarDatos(ruta_usuarios, userList);
     
 
