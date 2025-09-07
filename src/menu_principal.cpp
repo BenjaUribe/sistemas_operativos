@@ -29,9 +29,9 @@ map<int, string> perfiles_opciones = {
     {1, "Admin de usuarios y perfiles (en construcción)"},
     {2, "Multiplica matrices NxN"},
     {3, "Juego (en construcción)"},
-    {4, "es palíndromo?"},
-    {5, "Calcular f(x)=x*x + 2x + 8"},
-    {6, "CONTEO SOBRE TEXTO"}
+    {4, "¿Es palíndromo?"},
+    {5, "Calcular f(x) = x*x + 2x + 8"},
+    {6, "Conteo sobre texto"}
 };
 
 // Usaremos unordered_map<string, pair<string,string>>

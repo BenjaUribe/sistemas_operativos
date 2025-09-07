@@ -13,7 +13,7 @@ int matrizNxN(string M_path, char separador){
     ifstream M(M_path);
     //cout << "Abriendo archivo..." << endl;
     if(!M.is_open()){
-        cout << "Erro al abrir " << M_path<< endl;
+        cout << "Error al abrir " << M_path<< endl;
         return -1; // Error al abrir archivo
     }
     //cout << "Archivo abierto correctamente." << endl;
@@ -125,7 +125,7 @@ void multi_matrices(string matriz1_path, string matriz2_path, char separador){
         return;
     }
 
-    cout << "Multiplicando matrices..." << endl;
+    cout << "\nMultiplicando matrices...\n" << endl;
     if(matrizNxN(matriz1_path, separador) == -1 || matrizNxN(matriz2_path, separador) == -1){
         cout << "Error al multiplicar las matrices\n";
         return;
@@ -170,6 +170,7 @@ void multi_matrices(string matriz1_path, string matriz2_path, char separador){
         }
         cout << endl;
     }
+    cout << "\n";
 }
 
 
