@@ -175,18 +175,6 @@ string obtenerEnv(const string& nombre_archivo, const string& clave) {
     return "";
 }
 
-//Versiï¿½n usando getenv
-/*const char* obtenerRuta(const string& clave) {
-    const char* valor = getenv(clave.c_str());
-    if (!valor) return "";
-
-    string ruta(valor);
-
-    replace(ruta.begin(), ruta.end(), '\\', '/');
-
-    return ruta;
-}*/
-
 
 int almacenar(string path, const vector<Users>& userList) {
     ofstream outFile(path, ios::trunc); // trunc para reescribir siempre
@@ -196,19 +184,19 @@ int almacenar(string path, const vector<Users>& userList) {
     }
 
     for (const auto& user : userList) {
-        // ID: 5 caracteres, con ceros a la izquierda
+        //ID
         outFile << setw(5) << setfill('0') << right << user.id;
 
-        // Nombre: 40 caracteres, alineado a la izquierda y relleno con espacios
+        //Nombre
         outFile << setw(40) << setfill(' ') << left << user.nombre;
 
-        // Username: 40 caracteres
+        //Username
         outFile << setw(40) << setfill(' ') << left << user.userName;
 
-        // Password: 20 caracteres
+        //Password
         outFile << setw(20) << setfill(' ') << left << user.password;
 
-        // Perfil: 20 caracteres
+        //Perfil
         outFile << setw(8) << setfill(' ') << left << user.perfil;
 
         outFile << "\n";
@@ -219,52 +207,36 @@ int almacenar(string path, const vector<Users>& userList) {
 }
 
 
-int cargarDatos(string path, vector<Users>& userList) {
-    ifstream archivo(path);
+int cargarDatos(const string& path, vector<Users>& userList) {
+    ifstream archivo(path, ios::binary);
     if (!archivo.is_open()) {
         cerr << "Error al abrir archivo: " << path << endl;
         return 1;
     }
 
-    string linea;
-    while (getline(archivo, linea)) {
-        if (linea.empty()) continue;
-        if (linea.size() < 113) continue;
+    char linea[114]; 
+    while (archivo.read(linea, 113)) {
+        linea[113] = '\0';
 
         Users user;
 
-        // ID (primeros 5 caracteres)
-        string idStr = linea.substr(0, 5);
+        char idStr[6];
+        strncpy(idStr, linea, 5);
+        idStr[5] = '\0';
+        user.id = atoi(idStr);
 
-        // Validar que el ID tenga solo dígitos
-        if (!all_of(idStr.begin(), idStr.end(), ::isdigit)) {
-            cerr << "ID inválido en línea: [" << linea << "]" << endl;
-            continue;
-        }
-
-        user.id = stoi(idStr);
-
-        // Nombre [5, 45)
-        string nombre = linea.substr(5, 40);
-        strncpy(user.nombre, nombre.c_str(), 39);
+        strncpy(user.nombre, linea + 5, 39);
         user.nombre[39] = '\0';
 
-        // Username [45, 85)
-        string userName = linea.substr(45, 40);
-        strncpy(user.userName, userName.c_str(), 39);
+        strncpy(user.userName, linea + 45, 39);
         user.userName[39] = '\0';
 
-        // Password [85, 105)
-        string password = linea.substr(85, 20);
-        strncpy(user.password, password.c_str(), 19);
+        strncpy(user.password, linea + 85, 19);
         user.password[19] = '\0';
 
-        // Perfil [105, 113)
-        string perfil = linea.substr(105, 8);
-        strncpy(user.perfil, perfil.c_str(), 7);
+        strncpy(user.perfil, linea + 105, 7);
         user.perfil[7] = '\0';
 
-        // Quitar espacios finales en cada campo
         for (char* p : {user.nombre, user.userName, user.password, user.perfil}) {
             int len = strlen(p);
             while (len > 0 && p[len - 1] == ' ') {
@@ -274,9 +246,10 @@ int cargarDatos(string path, vector<Users>& userList) {
         }
 
         userList.push_back(user);
+
+        archivo.ignore(1); //ignorar el salto de línea
     }
 
-    archivo.close();
     return 0;
 }
 
@@ -302,7 +275,7 @@ int eliminarUsuario(vector<Users>& userList){
 
     
     if(strcmp(it -> perfil, "ADMIN") == 0){
-        cout << "\nAdvertencia: el usuario a eliminar es admin.\nï¿½Desea continuar?" << endl;
+        cout << "\nAdvertencia: el usuario a eliminar es admin.\nÂ¿Desea continuar?" << endl;
         cout << "\n1) Si      2) No" << endl;
         cout  << "OpciÃ³n: ";
         cin >> opcion;
