@@ -20,7 +20,7 @@ struct Users {
     char perfil[8];
 };
 
-
+//Función limpiar consola 
 void limpiarConsola() {
     #ifdef _WIN32
         system("cls");
