@@ -8,6 +8,14 @@
 #include <algorithm>
 #include <iomanip>
 #include <limits>
+#include <stdio.h>
+
+#ifdef _WIN32
+    #include <windows.h>
+#else
+    #include <unistd.h>
+#endif
+
 
 using namespace std;
 
@@ -20,7 +28,7 @@ struct Users {
     char perfil[8];
 };
 
-//Funci�n limpiar consola 
+
 void limpiarConsola() {
     #ifdef _WIN32
         system("cls");
@@ -30,7 +38,14 @@ void limpiarConsola() {
 }
 
 void menuPrincipal() {
-    cout << "\n:::::::::: Módulo - Gestión de Usuarios ::::::::::" << endl;
+    cout << "\n:::::::::: Admin de usuarios y perfiles ::::::::::" << endl;
+
+    #ifdef _WIN32
+        printf("[PID: %d]\n", GetCurrentProcessId());
+    #else
+        printf("[PID: %d]\n", getpid());
+    #endif
+
     cout << "\n0) Salir" << endl;
     cout << "1) Ingresar Usuario" << endl;
     cout << "2) Listar Usuarios" << endl;
@@ -62,13 +77,19 @@ void compPerfil(char* perfil) {
 void ingresarUsuario(vector<Users>& userList) {
     Users nuevoUsuario;
     int id, opcion;
+
+    #ifdef _WIN32
+        printf("[PID: %d]\n", GetCurrentProcessId());
+    #else
+        printf("[PID: %d]\n", getpid());
+    #endif
     
     cout << "\nID: ";
     while (true) {
         cin >> id;
         if (cin.fail() || id <= 0) {
             cin.clear();
-            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            cin.ignore(10000, '\n');
             cout << "ID inválido. Ingrese un ID entero positivo: ";
             continue;
         }
@@ -85,34 +106,34 @@ void ingresarUsuario(vector<Users>& userList) {
         }
         break;
     }
-    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    cin.ignore(10000, '\n');
 
     cout << "Nombre: ";
     cin.getline(nuevoUsuario.nombre, 40);
     if (cin.fail()) {
         cin.clear();
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        cin.ignore(10000, '\n');
     }
 
     cout << "Username: ";
     cin.getline(nuevoUsuario.userName, 40);
     if (cin.fail()) {
         cin.clear();
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        cin.ignore(10000, '\n');
     }
 
     cout << "Password: ";
     cin.getline(nuevoUsuario.password, 20);
     if (cin.fail()) {
         cin.clear();
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        cin.ignore(10000, '\n');
     }
 
     cout << "Perfil: ";
     cin.getline(nuevoUsuario.perfil, 8);
     if (cin.fail()) {
         cin.clear();
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        cin.ignore(10000, '\n');
     }
 
     compPerfil(nuevoUsuario.perfil);
@@ -142,8 +163,14 @@ void ingresarUsuario(vector<Users>& userList) {
 }
 
 void listarUsuarios(const vector<Users>& userList) {
+    #ifdef _WIN32
+        printf("[PID: %d]\n", GetCurrentProcessId());
+    #else
+        printf("[PID: %d]\n", getpid());
+    #endif
+
     cout << "\nID  |Nombre                                  |Username                                |Perfil" << endl;
-    cout <<   "----|----------------------------------------|----------------------------------------|-------" << endl;
+    cout <<   "====|========================================|========================================|=======" << endl;
     for (const auto& user : userList) {
         std::string idStr = std::to_string(user.id);
         cout << setw(4) << left << idStr;        // ancho fijo 4
@@ -175,6 +202,18 @@ string obtenerEnv(const string& nombre_archivo, const string& clave) {
     return "";
 }
 
+//Versi�n usando getenv
+/*const char* obtenerRuta(const string& clave) {
+    const char* valor = getenv(clave.c_str());
+    if (!valor) return "";
+
+    string ruta(valor);
+
+    replace(ruta.begin(), ruta.end(), '\\', '/');
+
+    return ruta;
+}*/
+
 
 int almacenar(string path, const vector<Users>& userList) {
     ofstream outFile(path, ios::trunc); // trunc para reescribir siempre
@@ -184,19 +223,19 @@ int almacenar(string path, const vector<Users>& userList) {
     }
 
     for (const auto& user : userList) {
-        //ID
+        // ID: 5 caracteres, con ceros a la izquierda
         outFile << setw(5) << setfill('0') << right << user.id;
 
-        //Nombre
+        // Nombre: 40 caracteres, alineado a la izquierda y relleno con espacios
         outFile << setw(40) << setfill(' ') << left << user.nombre;
 
-        //Username
+        // Username: 40 caracteres
         outFile << setw(40) << setfill(' ') << left << user.userName;
 
-        //Password
+        // Password: 20 caracteres
         outFile << setw(20) << setfill(' ') << left << user.password;
 
-        //Perfil
+        // Perfil: 20 caracteres
         outFile << setw(8) << setfill(' ') << left << user.perfil;
 
         outFile << "\n";
@@ -207,36 +246,52 @@ int almacenar(string path, const vector<Users>& userList) {
 }
 
 
-int cargarDatos(const string& path, vector<Users>& userList) {
-    ifstream archivo(path, ios::binary);
+int cargarDatos(string path, vector<Users>& userList) {
+    ifstream archivo(path);
     if (!archivo.is_open()) {
         cerr << "Error al abrir archivo: " << path << endl;
         return 1;
     }
 
-    char linea[114]; 
-    while (archivo.read(linea, 113)) {
-        linea[113] = '\0';
+    string linea;
+    while (getline(archivo, linea)) {
+        if (linea.empty()) continue;
+        if (linea.size() < 113) continue;
 
         Users user;
 
-        char idStr[6];
-        strncpy(idStr, linea, 5);
-        idStr[5] = '\0';
-        user.id = atoi(idStr);
+        // ID (primeros 5 caracteres)
+        string idStr = linea.substr(0, 5);
 
-        strncpy(user.nombre, linea + 5, 39);
+        // Validar que el ID tenga solo d�gitos
+        if (!all_of(idStr.begin(), idStr.end(), ::isdigit)) {
+            cerr << "ID inválido en línea: [" << linea << "]" << endl;
+            continue;
+        }
+
+        user.id = stoi(idStr);
+
+        // Nombre [5, 45)
+        string nombre = linea.substr(5, 40);
+        strncpy(user.nombre, nombre.c_str(), 39);
         user.nombre[39] = '\0';
 
-        strncpy(user.userName, linea + 45, 39);
+        // Username [45, 85)
+        string userName = linea.substr(45, 40);
+        strncpy(user.userName, userName.c_str(), 39);
         user.userName[39] = '\0';
 
-        strncpy(user.password, linea + 85, 19);
+        // Password [85, 105)
+        string password = linea.substr(85, 20);
+        strncpy(user.password, password.c_str(), 19);
         user.password[19] = '\0';
 
-        strncpy(user.perfil, linea + 105, 7);
+        // Perfil [105, 113)
+        string perfil = linea.substr(105, 8);
+        strncpy(user.perfil, perfil.c_str(), 7);
         user.perfil[7] = '\0';
 
+        // Quitar espacios finales en cada campo
         for (char* p : {user.nombre, user.userName, user.password, user.perfil}) {
             int len = strlen(p);
             while (len > 0 && p[len - 1] == ' ') {
@@ -246,10 +301,9 @@ int cargarDatos(const string& path, vector<Users>& userList) {
         }
 
         userList.push_back(user);
-
-        archivo.ignore(1); //ignorar el salto de l�nea
     }
 
+    archivo.close();
     return 0;
 }
 
@@ -265,6 +319,12 @@ int limpiarUsuarios(string path){
 }
 
 int eliminarUsuario(vector<Users>& userList){
+    #ifdef _WIN32
+        printf("[PID: %d]\n", GetCurrentProcessId());
+    #else
+        printf("[PID: %d]\n", getpid());
+    #endif
+
     cout << "\nIndique el id del usuario que desea eliminar: ";
     int id, opcion;
     cin >> id;
@@ -277,7 +337,7 @@ int eliminarUsuario(vector<Users>& userList){
     if(strcmp(it -> perfil, "ADMIN") == 0){
         cout << "\nAdvertencia: el usuario a eliminar es admin.\n¿Desea continuar?" << endl;
         cout << "\n1) Si      2) No" << endl;
-        cout  << "Opción: ";
+        cout << "Opción: ";
         cin >> opcion;
     }
 
@@ -327,7 +387,12 @@ int main() {
     
 
     // Menú principal
-    cout << "\n:::::::::: Módulo - Gestión de Usuarios ::::::::::" << endl;
+    cout << "\n:::::::::: Admin de usuarios y perfiles ::::::::::" << endl;
+    #ifdef _WIN32
+        printf("[PID: %d]\n", GetCurrentProcessId());
+    #else
+        printf("[PID: %d]\n", getpid());
+    #endif
     cout << "\n0) Salir" << endl;
     cout << "1) Ingresar Usuario" << endl;
     cout << "2) Listar Usuarios" << endl;
@@ -343,22 +408,23 @@ int main() {
         switch(opcion) {
             case 0:
             cout << "\nSaliendo..." << endl;
+            limpiarConsola();
             break;
             case 1:
             limpiarConsola();
-            cout << "\n:::::::::: Ingresar Usuario ::::::::::" << endl;
+            cout << ":::::::::: Ingresar Usuario ::::::::::" << endl;
             ingresarUsuario(userList);
             limpiarUsuarios(ruta_usuarios);
             almacenar(ruta_usuarios, userList);
             break;
             case 2:
             limpiarConsola();
-            cout << "\n:::::::::: Listado de Usuarios ::::::::::" << endl;
+            cout << ":::::::::: Listado de Usuarios ::::::::::" << endl;
             listarUsuarios(userList);
             break;
             case 3:
             limpiarConsola();
-            cout << "\n:::::::::: Eliminar Usuario ::::::::::" << endl;
+            cout << ":::::::::: Eliminar Usuario ::::::::::" << endl;
             eliminarUsuario(userList);
             limpiarUsuarios(ruta_usuarios);
             almacenar(ruta_usuarios, userList);

@@ -6,6 +6,13 @@
 #include <map>
 #include <sstream>
 #include <cctype>
+#include <stdio.h>
+
+#ifdef _WIN32
+    #include <windows.h>
+#else
+    #include <unistd.h>
+#endif
 
 using namespace std;
 
@@ -26,12 +33,13 @@ struct Users { // mantenido por compatibilidad futura
 
 map<int, string> perfiles_opciones = {
     {0, "Salir"},
-    {1, "Admin de usuarios y perfiles (en construcción)"},
+    {1, "Admin de usuarios y perfiles"},
     {2, "Multiplica matrices NxN"},
     {3, "Juego (en construcción)"},
     {4, "¿Es palíndromo?"},
     {5, "Calcular f(x) = x*x + 2x + 8"},
-    {6, "Conteo sobre texto"}
+    {6, "Conteo sobre texto"},
+    {7, "Crear índice invertido"}
 };
 
 // Usaremos unordered_map<string, pair<string,string>>
@@ -44,7 +52,198 @@ void limpiarConsola() {
     #else
         system("clear");
     #endif
+    
 }
+
+void print_pid(){
+    #ifdef _WIN32
+        printf("[PID: %d]\n", GetCurrentProcessId());
+    #else
+        printf("[PID: %d]\n", getpid());
+    #endif
+}
+
+
+// interfaz para indice invertido
+bool terminaEnIdx(const string& nombreArchivo) {
+    return nombreArchivo.size() >= 4 &&
+           nombreArchivo.compare(nombreArchivo.size() - 4, 4, ".idx") == 0;
+}
+
+int create_index(string create_index_path){
+    #ifdef _WIN32
+        printf("[PID: %d]\n", GetCurrentProcessId());
+    #else
+        printf("[PID: %d]\n", getpid());
+    #endif
+
+    string nombre_indice;
+    do{
+        cout << "\nIngrese el nombre del indice a crear (debe terminar en .idx): ";
+        cin >> nombre_indice;
+    }while(terminaEnIdx(nombre_indice) == false);
+
+    string path_carpetas; // ruta fija para libros
+    cout << "Ingrese la ruta de la carpeta donde se encuentran los libros: ";
+    cin >> path_carpetas;
+
+    system((create_index_path + " " + nombre_indice + " " + path_carpetas).c_str());
+    return 0;
+}
+
+
+
+// funciones para las matrices
+int matrizNxN(string M_path, char separador){
+    //cout << "Verificando matriz en: " << M_path << endl;
+    ifstream M(M_path);
+    //cout << "Abriendo archivo..." << endl;
+    if(!M.is_open()){
+        cout << "Error al abrir " << M_path<< endl;
+        return -1; // Error al abrir archivo
+    }
+    //cout << "Archivo abierto correctamente." << endl;
+    string linea;
+    int numLineas = 0;
+    unsigned int ancho = 0;
+
+    //cout << "Leyendo lineas..." << endl;
+    while(getline(M, linea)){
+        numLineas++;
+        //cout << "Linea " << numLineas << ": " << linea << endl;
+
+        // Contar números en la línea usando el separador especificado
+        unsigned int cantidadNumeros = 0;
+        stringstream ss(linea);
+        string token;
+        
+        // Si el separador es espacio, usa metodo que cuenta tokens distintos de espacio
+        if(separador == ' ') {
+            while(ss >> token) {
+                cantidadNumeros++;
+            }
+        } else {
+            // Para cualquier otro separador, separa la cadena por los caracteres
+            while(getline(ss, token, separador)) {
+                token.erase(0, token.find_first_not_of(" \t\n\r"));
+                token.erase(token.find_last_not_of(" \t\n\r") + 1);
+                if(!token.empty()) {
+                    cantidadNumeros++;
+                }
+            }
+        }
+        
+        if(ancho == 0) {
+            ancho = cantidadNumeros; // Establecer ancho con la primera línea
+        } else if(cantidadNumeros != ancho) {
+            //cout << "Error: Línea " << numLineas << " tiene " << cantidadNumeros << " números, pero se esperaba " << ancho << "." << endl;
+            //cout << "Error: Líneas con diferente cantidad de números." << endl;
+            return -1; // Líneas de diferente longitud
+        }
+    }
+    
+    M.close();
+    //cout << M_path << endl;
+    //cout << numLineas << " " << (int)ancho << endl;
+    // Verificar si es cuadrada (n×n)
+    if(numLineas == (int)ancho) {
+        return numLineas; // Retorna n (dimensión de la matriz)
+    }
+    
+    return -1; // No es cuadrada
+}
+
+
+// interfaz intermedia para matmul
+void interfaz_matmul(string matmul_path){
+    string matriz1_path;
+    string matriz2_path;
+    char separador;
+    int n, opcion;
+
+    #ifdef _WIN32
+        printf("[PID: %d]\n", GetCurrentProcessId());
+    #else
+        printf("[PID: %d]\n", getpid());
+    #endif
+
+    // Validar primera matriz
+    do {
+        cout << "\nIngrese la ruta de la primera matriz: ";
+        cin >> matriz1_path;
+        
+        ifstream M1(matriz1_path);
+        if (!M1.is_open()) {
+            cout << "Error: No se pudo abrir el archivo '" << matriz1_path << "'. Intente de nuevo." << endl;
+        } else {
+            M1.close();
+            break; // Salir del bucle si el archivo se abrió correctamente
+        }
+    } while (true);
+
+    // Validar segunda matriz
+    do {
+        cout << "Ingrese la ruta de la segunda matriz: ";
+        cin >> matriz2_path;
+        
+        ifstream M2(matriz2_path);
+        if (!M2.is_open()) {
+            cout << "Error: No se pudo abrir el archivo '" << matriz2_path << "'. Intente de nuevo." << endl;
+        } else {
+            M2.close();
+            break; // Salir del bucle si el archivo se abrió correctamente
+        }
+    } while (true);
+
+
+    cout << "Ingrese la dimensión de las matrices (NxN): ";
+    cin >> n;
+    
+    cout << "Ingrese el separador (por defecto es espacio, presione Enter para espacio): ";
+    cin.ignore(); // Limpiar el buffer después de cin >> n
+    
+    string separador_input;
+    getline(cin, separador_input);
+    
+    // Si no ingresa nada (Enter), usar espacio por defecto
+    if (separador_input.empty()) {
+        separador = ' ';
+        cout << "\nUsando separador por defecto: espacio" << endl;
+    } else {
+        separador = separador_input[0]; // Tomar el primer carácter
+        cout << "\nUsando separador: '" << separador << "'" << endl;
+    }
+
+    if(matrizNxN(matriz1_path, separador) == -1 || matrizNxN(matriz2_path, separador) == -1){
+        cout << "\nMatrices de diferente tamaño\n" << endl;
+    return;
+    }
+    if(matrizNxN(matriz1_path, separador) != n || matrizNxN(matriz2_path, separador) != n){
+        cout << "\nError: Las matrices no son de dimensión " << n << "x" << n << "\n" << endl;
+        return;
+    }
+
+    cout << "\n1) Multiplicar matrices" << endl;
+    cout << "2) Cancelar" << endl;
+    cout << "\nSeleccione una opción: ";
+    cin >> opcion;
+
+    string comando = matmul_path + " " + matriz1_path + " " + matriz2_path + " " + separador + " " + to_string(n);
+    switch(opcion) {
+        case 1:
+            cout << "\nEjecutando programa de multiplicación de matrices..." << endl;
+            cout << ">> " << comando << endl;
+            system(comando.c_str());
+            return;
+        case 2:
+            cout << "\nOperación cancelada\n" << endl;
+            return;
+        default:
+            cout << "\nOpción no válida.\n" << endl;
+            break;
+    }
+}
+
 
 // Función para verificar si una cadena es palíndromo
 void palindromo(string str){
@@ -53,7 +252,7 @@ void palindromo(string str){
 
     while (left < right) {
         if (str[left] != str[right]) {
-            cout << "No es palíndromo";
+            cout << "No es palíndromo\n";
             return;
         }
         left++;
@@ -63,6 +262,7 @@ void palindromo(string str){
 }
 
 void interfaz_palindromo(){
+    print_pid();
     string str;
     cout << "\nIngrese una cadena: ";
     cin.ignore();
@@ -78,9 +278,10 @@ void interfaz_palindromo(){
         case 1:
             cout << "\n=== ";
             palindromo(str);
-            cout << " ===" << endl;
+            cout << " ===\n" << endl;
             break;
         case 2:
+            cout << "\nOperación cancelada.\n" << endl;
             return;
         default:
             cout << "Opción no válida." << endl;
@@ -97,6 +298,7 @@ int funcion(int x){
 }
 
 void interfaz_funcion(){
+    print_pid();
     cout << "\nIngrese el valor de X: ";
     int x;
     cin >> x;
@@ -108,7 +310,7 @@ void interfaz_funcion(){
 
     switch(opcion) {
         case 1:
-            cout << "\n=== Resultado de f(" << x << "): " << funcion(x) << " ===" << endl;
+            cout << "\n=== Resultado de f(" << x << "): " << funcion(x) << " ===\n" << endl;
             return;
         case 2:
             return;
@@ -118,7 +320,6 @@ void interfaz_funcion(){
     }
 
 }
-
 
 // funcion que retorna true si c es vocal y false si no
 bool esVocal(wchar_t c) {
@@ -133,6 +334,7 @@ bool esConsonante(wchar_t c) {
 }
 
 void conteoTexto(string ruta) {
+    print_pid();
     int cont_vocales = 0, cont_consonantes = 0, cont_especiales = 0, cont_palabras = 0;
     bool dentroPalabra = false;
     wifstream archivo(ruta);
@@ -235,7 +437,7 @@ unordered_map<string, pair<string,string>> cargarUsuarios(const string& path) {
         string password = linea.substr(85, 20);
         string perfil = linea.substr(105, 8);
 
-        // Funci�n trim (quita espacios sobrantes)
+        // Funci�n trim (quita espacios sobrantes)
         auto trim = [](string &s) {
             while (!s.empty() && isspace((unsigned char)s.back())) s.pop_back();
             while (!s.empty() && isspace((unsigned char)s.front())) s.erase(s.begin());
@@ -284,10 +486,10 @@ map<string, vector<int>> cargarPerfiles(const string& path) {
     return perfiles;
 }
 
-
 void mostrar_menu(const string& usuario, const string& perfil, const map<string, vector<int>>& perfiles) {
-    cout << "\n:::::::::: Menu principal ::::::::::\n" << endl;
-    cout << "Usuario: " << usuario << " | Perfil: " << perfil << "\n" << endl;
+    cout << ":::::::::: Menú principal ::::::::::" << endl;
+    print_pid();
+    cout << "\nUsuario: " << usuario << " | Perfil: " << perfil << "\n" << endl;
     
     auto it = perfiles.find(perfil);
     if (it == perfiles.end()) {
@@ -357,6 +559,15 @@ int main(int argc, char* argv[]) {
     env_vars["LIBROS_DIR"].erase(0, env_vars["LIBROS_DIR"].find_first_not_of(" \n\r\t"));
     env_vars["LIBROS_DIR"].erase(env_vars["LIBROS_DIR"].find_last_not_of(" \n\r\t") + 1);
 
+    env_vars["ADMIN_SYS"].erase(0, env_vars["ADMIN_SYS"].find_first_not_of(" \n\r\t"));
+    env_vars["ADMIN_SYS"].erase(env_vars["ADMIN_SYS"].find_last_not_of(" \n\r\t") + 1);
+
+    env_vars["MUTLI_M"].erase(0, env_vars["MUTLI_M"].find_first_not_of(" \n\r\t"));
+    env_vars["MUTLI_M"].erase(env_vars["MUTLI_M"].find_last_not_of(" \n\r\t") + 1);
+
+    env_vars["CREATE_INDEX"].erase(0, env_vars["CREATE_INDEX"].find_first_not_of(" \n\r\t"));
+    env_vars["CREATE_INDEX"].erase(env_vars["CREATE_INDEX"].find_last_not_of(" \n\r\t") + 1);
+
     // Verificación de limpieza
     string user_file = env_vars["USER_FILE"];
     string perfil_file = env_vars["PERFIL_FILE"];
@@ -364,6 +575,9 @@ int main(int argc, char* argv[]) {
     string M2 = env_vars["MATRIZ2_FILE"];
 
     string libros_dir = env_vars["LIBROS_DIR"];
+    string user_admin_path = env_vars["ADMIN_SYS"];
+    string matmul_path = env_vars["MUTLI_M"];
+    string create_index_path = env_vars["CREATE_INDEX"];
     
     // Concatenar directorio de libros con el archivo específico
     string ruta_libro = libros_dir + "/" + file;
@@ -390,7 +604,7 @@ int main(int argc, char* argv[]) {
     }
     const vector<int>& opciones_validas = it->second;
 
-    
+    limpiarConsola();
 
     int opcion;
     do {
@@ -414,37 +628,43 @@ int main(int argc, char* argv[]) {
 
         switch(opcion) {
             case 0:
-                cout << "\nSaliendo..." << endl;
+                cout << "\nSaliendo...\n" << endl;
                 break;
             case 1:
                 limpiarConsola();
-                cout << "\n:::::::::: Admin de usuarios y perfiles ::::::::::" << endl;
-                cout << "\n === Funcionalidad en desarrollo ===" << endl;
+                cout << "Ejecutando programa de administración..." << endl;
+                system(user_admin_path.c_str());
                 break;
             case 2:
                 limpiarConsola();
-                cout << "\n:::::::::: Multiplica matrices NxN ::::::::::" << endl;
-                //multi_matrices(M1, M2);
+                cout << ":::::::::: Multiplica matrices NxN ::::::::::" << endl;
+                interfaz_matmul(matmul_path);
                 break;
             case 3:
                 limpiarConsola();
-                cout << "\n:::::::::: Juego ::::::::::" << endl;
-                cout << "\n === Funcionalidad en desarrollo ===" << endl;
+                cout << ":::::::::: Juego ::::::::::" << endl;
+                cout << "\n=== Funcionalidad en desarrollo ===\n" << endl;
                 break;
             case 4:
                 limpiarConsola();
-                cout << "\n:::::::::: ¿Es palíndromo? ::::::::::" << endl;
+                cout << ":::::::::: ¿Es palíndromo? ::::::::::" << endl;
                 interfaz_palindromo();
                 break;
             case 5:
                 limpiarConsola();
-                cout << "\n:::::::::: Calcular f(x) = x*x + 2x + 8 ::::::::::" << endl;
+                cout << ":::::::::: Calcular f(x) = x*x + 2x + 8 ::::::::::" << endl;
                 interfaz_funcion();
                 break;
             case 6:
                 limpiarConsola();
-                cout << "\n:::::::::: Conteo sobre texto ::::::::::" << endl;
+                cout << ":::::::::: Conteo sobre texto ::::::::::" << endl;
                 conteoTexto(ruta_libro);
+                cout << endl;
+                break;
+            case 7:
+                limpiarConsola();
+                cout << ":::::::::: Crear índice invertido ::::::::::" << endl;
+                create_index(create_index_path);
                 break;
             default:
                 limpiarConsola();

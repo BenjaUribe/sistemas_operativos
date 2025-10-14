@@ -4,6 +4,14 @@
 #include <string>
 #include <sstream>
 
+#include <stdio.h>
+
+#ifdef _WIN32
+    #include <windows.h>
+#else
+    #include <unistd.h>
+#endif
+
 using namespace std;
 
 // Funcion multiplicar matrices
@@ -13,7 +21,7 @@ int matrizNxN(string M_path, char separador){
     ifstream M(M_path);
     //cout << "Abriendo archivo..." << endl;
     if(!M.is_open()){
-        cout << "Error al abrir " << M_path<< endl;
+        cout << "Error al abrir\n" << M_path<< endl;
         return -1; // Error al abrir archivo
     }
     //cout << "Archivo abierto correctamente." << endl;
@@ -71,7 +79,7 @@ int convert_matriz(string path, vector<vector<int>> &matriz, char separador){
     ifstream archivo(path);
 
     if(!archivo.is_open()) {
-        cerr << "Error al abrir archivo: " << path << endl;
+        cerr << "Error al abrir archivo: " << path << "\n" << endl;
         return -1;
     }
 
@@ -98,7 +106,7 @@ int convert_matriz(string path, vector<vector<int>> &matriz, char separador){
                         int num = stoi(token);
                         fila.push_back(num);
                     } catch(const exception& e) {
-                        cerr << "Error: No se pudo convertir '" << token << "' a número" << endl;
+                        cerr << "Error: No se pudo convertir '" << token << "' a número\n" << endl;
                     }
                 }
             }
@@ -112,26 +120,34 @@ int convert_matriz(string path, vector<vector<int>> &matriz, char separador){
     return 1;
 }
 
-void multi_matrices(string matriz1_path, string matriz2_path, char separador){
+void multi_matrices(string matriz1_path, string matriz2_path, char separador, int n){
     ifstream M1(matriz1_path);
     ifstream M2(matriz2_path);
 
-    if(!M1.is_open()) {
+    /*if(!M1.is_open()) {
         cerr << "Error al abrir archivo: " << matriz1_path << endl;
         return;
     }
     if(!M2.is_open()) {
         cerr << "Error al abrir archivo: " << matriz2_path << endl;
         return;
-    }
+    }*/
 
-    cout << "\nMultiplicando matrices...\n" << endl;
-    if(matrizNxN(matriz1_path, separador) == -1 || matrizNxN(matriz2_path, separador) == -1){
+    
+
+    cout << "\nMultiplicando matrices..." << endl;
+    #ifdef _WIN32
+        printf("[PID: %d]\n", GetCurrentProcessId());
+    #else
+        printf("[PID: %d]\n", getpid());
+    #endif
+
+    /*if(matrizNxN(matriz1_path, separador) == -1 || matrizNxN(matriz2_path, separador) == -1){
         cout << "Error al multiplicar las matrices\n";
         return;
     }
 
-    int n = matrizNxN(matriz1_path, separador);
+    int n = matrizNxN(matriz1_path, separador);*/
 
     vector<vector<int>> matriz1;
     vector<vector<int>> matriz2;
@@ -164,29 +180,33 @@ void multi_matrices(string matriz1_path, string matriz2_path, char separador){
             result[i][j] = sum[0] + sum[1] + extra;
         }
     }
+
+    cout << "\n=== Resultado ===" << endl;
     for (const auto& fila : result) {
         for (int elemento : fila) {
             cout << elemento << " ";
         }
         cout << endl;
     }
-    cout << "\n";
+
+    cout << endl;
 }
 
 
 int main(int argc, char* argv[]){
 
     // Verificar que se pasaron los argumentos correctos
-    if (argc != 4) {
-        cout << "Uso correcto: " << argv[0] << " <ruta_matriz1> <ruta_matriz2> <caracter>" << endl;
+    if (argc != 5) {
+        cout << "Uso correcto: " << argv[0] << " <ruta_matriz1> <ruta_matriz2> <caracter> <n>" << endl;
         return 1;
     }
-    
+
     // Obtener los argumentos
     string matriz1_path = argv[1];
     string matriz2_path = argv[2];
     char caracter = argv[3][0]; // Tomar el primer caracter del tercer argumento
-    
+    int n = stoi(argv[4]); // Convertir el cuarto argumento a entero
+
     /*
     cout << "Matriz 1: " << matriz1_path << endl;
     cout << "Matriz 2: " << matriz2_path << endl;
@@ -194,6 +214,6 @@ int main(int argc, char* argv[]){
     cout << "----------------------------------------" << endl;
     */
     
-    multi_matrices(matriz1_path, matriz2_path, caracter);
+    multi_matrices(matriz1_path, matriz2_path, caracter, n);
     return 0;
 }
