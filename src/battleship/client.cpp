@@ -7,6 +7,19 @@
 const string DEFAULT_SERVER_IP = "127.0.0.1";
 const int DEFAULT_SERVER_PORT = 8080;
 
+// === FUNCIONES AUXILIARES ===
+// Determinar si dos jugadores están en el mismo equipo (solo para modo 2vs2)
+bool sameTeam(int player1, int player2) {
+    // Solo aplicar lógica de equipos si hay más de 2 jugadores (modo 2vs2)
+    // En modo 1vs1, los jugadores 0 y 1 son siempre oponentes
+    if (player1 <= 1 && player2 <= 1) {
+        return false; // En modo 1vs1, jugadores 0 y 1 son siempre oponentes
+    }
+    
+    // Modo 2vs2: Equipo 1: jugadores 0 y 1, Equipo 2: jugadores 2 y 3
+    return (player1 / 2) == (player2 / 2);
+}
+
 // === FUNCIONES DE RED ===
 bool sendGameMessage(int socket, const GameMessage& msg) {
     int total_sent = 0;
@@ -339,6 +352,67 @@ void updateEnemyBoard(Board& enemyBoard, int x, int y, bool hit) {
     }
 }
 
+// Manejar colocación de un solo barco (modo 2vs2)
+bool handleSingleShipPlacement(int socket) {
+    cout << "\n🚢 Coloca tu barco en el tablero del equipo" << endl;
+    cout << "Ingresa: fila,columna,orientación (ej: 1,2,H o 1,2,V): ";
+    
+    string input;
+    getline(cin, input);
+    
+    // Parsear entrada
+    size_t comma1 = input.find(',');
+    size_t comma2 = input.find(',', comma1 + 1);
+    
+    if (comma1 != string::npos && comma2 != string::npos) {
+        try {
+            int x = stoi(input.substr(0, comma1));
+            int y = stoi(input.substr(comma1 + 1, comma2 - comma1 - 1));
+            char orientChar = toupper(input.substr(comma2 + 1)[0]);
+            
+            if (x < 0 || x >= BOARD_SIZE || y < 0 || y >= BOARD_SIZE) {
+                cout << "❌ Coordenadas fuera de rango." << endl;
+                return false;
+            }
+            
+            if (orientChar != 'H' && orientChar != 'V') {
+                cout << "❌ Orientación inválida. Use H o V." << endl;
+                return false;
+            }
+            
+            // Determinar tipo de barco (rotativo: DESTROYER, BATTLESHIP, AIRCRAFT_CARRIER)
+            static int ship_type_index = 0;
+            ShipType shipTypes[3] = {DESTROYER, BATTLESHIP, AIRCRAFT_CARRIER};
+            ShipType currentShipType = shipTypes[ship_type_index % 3];
+            ship_type_index++;
+            
+            Orientation orientation = (orientChar == 'H') ? HORIZONTAL : VERTICAL;
+            
+            // Crear mensaje de colocación
+            GameMessage place_msg(MSG_PLACE_SHIP);
+            place_msg.x = x;
+            place_msg.y = y;
+            place_msg.data1 = static_cast<int>(currentShipType);
+            place_msg.data2 = static_cast<int>(orientation);
+            
+            if (sendGameMessage(socket, place_msg)) {
+                cout << "📤 Barco enviado a posición [" << x << "," << y << "]..." << endl;
+                return true;
+            } else {
+                cout << "❌ Error enviando barco" << endl;
+                return false;
+            }
+            
+        } catch (...) {
+            cout << "❌ Error en formato de entrada." << endl;
+        }
+    } else {
+        cout << "❌ Formato inválido. Use: fila,columna,orientación" << endl;
+    }
+    
+    return false;
+}
+
 int main() {
     cout << "=== CLIENTE BATTLESHIP ===" << endl;
     cout << "Conectando al servidor " << DEFAULT_SERVER_IP << ":" << DEFAULT_SERVER_PORT << "..." << endl;
@@ -375,10 +449,12 @@ int main() {
     
     // Paso 4: Recibir mensaje de bienvenida del servidor
     GameMessage welcome_msg;
+    int my_player_id = -1;
     if (receiveGameMessage(client_socket, welcome_msg)) {
         if (welcome_msg.type == MSG_WELCOME) {
+            my_player_id = welcome_msg.player_id;
             cout << "📩 Servidor dice: " << welcome_msg.text << endl;
-            cout << "🆔 Tu ID de jugador: " << welcome_msg.player_id << endl;
+            cout << "🆔 Tu ID de jugador: " << my_player_id << endl;
         } else {
             cout << "⚠️ Mensaje inesperado del servidor (tipo " << welcome_msg.type << ")" << endl;
         }
@@ -422,11 +498,25 @@ int main() {
             switch (server_msg.type) {
                 case MSG_WAIT:
                     cout << "⏳ " << server_msg.text << endl;
-                    // Detectar si es tiempo de colocar barcos
-                    if (shipPlacementPhase && (string(server_msg.text).find("Coloca") != string::npos || 
-                                               string(server_msg.text).find("barcos") != string::npos)) {
+                    // Detectar fin de la fase de colocación
+                    if (string(server_msg.text).find("combate ha comenzado") != string::npos || 
+                        string(server_msg.text).find("El combate ha comenzado") != string::npos) {
+                        shipPlacementPhase = false;
+                        cout << "🎯 Cambiando a fase de combate" << endl;
+                    }
+                    // Detectar si es tiempo de colocar barcos (modo 1vs1)
+                    else if (shipPlacementPhase && (string(server_msg.text).find("Coloca tus") != string::npos)) {
                         handleShipPlacement(client_socket, myBoard);
                         shipPlacementPhase = false;
+                    }
+                    // En modo 2vs2, cuando es nuestro turno individual, pedimos coordenadas directamente
+                    else if (shipPlacementPhase && string(server_msg.text).find("Tu turno: coloca barco") != string::npos) {
+                        // Esto es modo 2vs2, pedimos solo las coordenadas del barco actual
+                        // Repetir hasta que la colocación sea exitosa
+                        bool placement_successful = false;
+                        while (!placement_successful) {
+                            placement_successful = handleSingleShipPlacement(client_socket);
+                        }
                     }
                     break;
                     
@@ -441,13 +531,15 @@ int main() {
                     
                 case MSG_SHOT_RESULT: {
                     // El servidor usa data1=1 para hit, data2=1 para sunk, x,y con coordenadas
+                    // player_id indica quién disparó
                     bool hit = (server_msg.data1 == 1);
                     bool sunk = (server_msg.data2 == 1);
                     int rx = server_msg.x;
                     int ry = server_msg.y;
+                    int shooter_id = server_msg.player_id;
 
-                    // Si estamos esperando resultado (fuimos quienes disparamos), actualizar enemyBoard
-                    if (awaiting_result) {
+                    if (shooter_id == my_player_id) {
+                        // Yo disparé - actualizar tablero enemigo
                         updateEnemyBoard(enemyBoard, rx, ry, hit);
                         awaiting_result = false;
 
@@ -457,9 +549,18 @@ int main() {
                         } else {
                             cout << "🌊 Agua en [" << rx << "," << ry << "]" << endl;
                         }
+                    } else if (sameTeam(shooter_id, my_player_id)) {
+                        // Mi compañero disparó - actualizar tablero enemigo
+                        updateEnemyBoard(enemyBoard, rx, ry, hit);
+                        
+                        if (hit) {
+                            cout << "🤝 Tu compañero impactó en [" << rx << "," << ry << "]!" << endl;
+                            if (sunk) cout << "💥 Tu compañero hundió un barco!" << endl;
+                        } else {
+                            cout << "🌊 Tu compañero falló en [" << rx << "," << ry << "]" << endl;
+                        }
                     } else {
-                        // Si no estábamos esperando, entonces este resultado es por el disparo del oponente
-                        // Actualizar nuestro tablero propio (myBoard)
+                        // El equipo enemigo disparó - actualizar mi tablero
                         if (hit) {
                             myBoard.grid[rx][ry] = HIT;
                             cout << "⚠️ Te han impactado en [" << rx << "," << ry << "]!" << endl;
@@ -494,6 +595,39 @@ int main() {
                 case MSG_ERROR:
                     cout << "❌ Error del servidor: " << server_msg.text << endl;
                     break;
+                    
+                case MSG_BOARD_STATE: {
+                    // Recibir estado del tablero del equipo
+                    if (strlen(server_msg.text) > 0) {
+                        // Primer mensaje con descripción
+                        cout << "\n📋 " << server_msg.text << endl;
+                        
+                        // Crear tablero temporal para recibir el estado
+                        Board teamBoard;
+                        initializeBoard(teamBoard);
+                        
+                        // Recibir estado de todas las celdas
+                        for (int i = 0; i < BOARD_SIZE * BOARD_SIZE; i++) {
+                            GameMessage cell_msg;
+                            if (receiveGameMessage(client_socket, cell_msg)) {
+                                if (cell_msg.type == MSG_BOARD_STATE) {
+                                    teamBoard.grid[cell_msg.x][cell_msg.y] = cell_msg.data1;
+                                }
+                            }
+                        }
+                        
+                        // Mostrar el tablero del equipo
+                        cout << "Estado actual del tablero de tu equipo:" << endl;
+                        printBoard(teamBoard, true);
+                        
+                        // Si ya terminó la fase de colocación, actualizar myBoard con el estado del equipo
+                        if (!shipPlacementPhase) {
+                            cout << "🔄 Actualizando tu tablero con los barcos del equipo..." << endl;
+                            myBoard = teamBoard;
+                        }
+                    }
+                    break;
+                }
                     
                 default:
                     cout << "❓ Mensaje desconocido del servidor (tipo " << server_msg.type << ")" << endl;

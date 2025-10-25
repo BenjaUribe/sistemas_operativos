@@ -9,8 +9,15 @@
 using namespace std;
 
 // Constantes del juego
-const int BOARD_SIZE = 5;
+const int BOARD_SIZE = 8;
 const int NUM_SHIPS = 3;
+const int MAX_PLAYERS = 4;      // Máximo para modo 2vs2
+
+// === MODOS DE JUEGO ===
+enum GameMode {
+    MODE_1VS1 = 1,
+    MODE_2VS2 = 2
+};
 
 // === PROTOCOLO DE RED ===
 
@@ -27,6 +34,7 @@ const int MSG_YOUR_TURN = 12;   // Es tu turno
 const int MSG_SHOT_RESULT = 13; // Resultado de disparo
 const int MSG_GAME_OVER = 14;   // Juego terminado
 const int MSG_ERROR = 15;       // Error del servidor
+const int MSG_BOARD_STATE = 16; // Estado del tablero (para modo 2vs2)
 
 // Estructura del mensaje de red
 struct GameMessage {
@@ -126,12 +134,33 @@ struct Player {
     bool all_ships_placed() const;
 };
 
+// Estructura de equipo para modo 2vs2
+struct Team {
+    int id;                         // ID del equipo (0 o 1)
+    int player_ids[2];             // IDs de los jugadores en el equipo
+    Board shared_board;            // Tablero compartido del equipo
+    vector<Ship> team_ships;       // Todos los barcos del equipo (6 total)
+    int ships_placed_count;        // Barcos ya colocados
+    int current_placing_player;    // Jugador que está colocando ahora
+    
+    // Constructor
+    Team();
+    
+    // Métodos
+    int ships_remaining() const;
+    bool all_ships_placed() const;
+    void add_player(int player_id);
+};
+
 // Estructura del juego
 struct Game {
-    Player players[2];
+    Player players[MAX_PLAYERS];    // Hasta 4 jugadores
+    Team teams[2];                  // 2 equipos para modo 2vs2
     GameState state;
+    GameMode mode;                  // Modo de juego seleccionado
     int current_turn;
     int winner;
+    int active_players;             // Número real de jugadores (2 o 4)
     
     // Constructor
     Game();
@@ -139,6 +168,8 @@ struct Game {
     // Métodos
     bool is_game_over() const;
     void switch_turn();
+    void set_mode(GameMode game_mode, int num_players);
+    void setup_teams();             // Configurar equipos para modo 2vs2
 };
 
 // === DECLARACIONES DE FUNCIONES ===
@@ -169,6 +200,11 @@ bool addPlayer(Game& game, const string& name);
 void startGame(Game& game);
 bool processMove(Game& game, int x, int y);
 string getGameStatus(const Game& game);
+
+// Funciones para modo 2vs2
+int getNextPlacingPlayer(const Game& game, int ship_number);
+int getPlayerTeam(int player_id);
+bool isTeamMate(int player1, int player2);
 
 // === FUNCIONES DE RED ===
 

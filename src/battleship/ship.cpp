@@ -22,27 +22,46 @@ int Ship::get_size() const {
 bool canPlaceShip(const Board& board, const Ship& ship) {
     int ship_size = ship.get_size();
     
+    cout << "\n🔍 DEBUG: Validando barco en posición (" << ship.x << "," << ship.y << ")" << endl;
+    cout << "   - Tipo: " << ship.type << ", Tamaño: " << ship_size << endl;
+    cout << "   - Orientación: " << (ship.orientation == HORIZONTAL ? "HORIZONTAL" : "VERTICAL") << endl;
+    
     // Verificar límites del tablero
     if (ship.orientation == HORIZONTAL) {
+        cout << "   - Verificando límites horizontales: y + size = " << ship.y << " + " << ship_size << " = " << (ship.y + ship_size) << " <= " << BOARD_SIZE << endl;
         if (ship.x < 0 || ship.x >= BOARD_SIZE || 
             ship.y < 0 || ship.y + ship_size > BOARD_SIZE) {
+            cout << "   ❌ Fuera de límites del tablero" << endl;
             return false;
         }
     } else { // VERTICAL
+        cout << "   - Verificando límites verticales: x + size = " << ship.x << " + " << ship_size << " = " << (ship.x + ship_size) << " <= " << BOARD_SIZE << endl;
         if (ship.x < 0 || ship.x + ship_size > BOARD_SIZE || 
             ship.y < 0 || ship.y >= BOARD_SIZE) {
+            cout << "   ❌ Fuera de límites del tablero" << endl;
             return false;
         }
     }
     
+    cout << "   ✓ Dentro de límites del tablero" << endl;
+    
     // Verificar que no haya barcos en esas posiciones
    
     vector<pair<int, int>> coordinates = getShipCoordinates(ship);
+    cout << "   - Coordenadas a ocupar: ";
+    for (const auto& coord : coordinates) {
+        cout << "(" << coord.first << "," << coord.second << ") ";
+    }
+    cout << endl;
+    
     for (const auto& coord : coordinates) {
         if (board.grid[coord.first][coord.second] != WATER) {
+            cout << "   ❌ Ya hay barco en (" << coord.first << "," << coord.second << ")" << endl;
             return false;
         }
     }
+    
+    cout << "   ✓ No hay conflictos con otros barcos" << endl;
     
     // Verificar que no haya barcos adyacentes
     for (const auto& coord : coordinates) {
@@ -52,12 +71,14 @@ bool canPlaceShip(const Board& board, const Ship& ship) {
                 int ny = coord.second + dy;
                 if (isValidPosition(nx, ny) && 
                     board.grid[nx][ny] == SHIP) {
+                    cout << "   ❌ Barco adyacente en (" << nx << "," << ny << ")" << endl;
                     return false;
                 }
             }
         }
     }
     
+    cout << "   ✓ No hay barcos adyacentes - BARCO VÁLIDO" << endl;
     return true;
 }
 
