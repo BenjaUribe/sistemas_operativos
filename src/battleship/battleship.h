@@ -9,8 +9,16 @@
 using namespace std;
 
 // Constantes del juego
-const int BOARD_SIZE = 5;
-const int NUM_SHIPS = 3;
+const int BOARD_SIZE_1VS1 = 6;   // Tablero 8x8 para modo 1vs1
+const int BOARD_SIZE_2VS2 = 8;  // Tablero 10x10 para modo 2vs2 (más barcos)
+const int NUM_SHIPS = 3;         // 3 barcos por jugador en ambos modos
+const int MAX_PLAYERS = 4;       // Máximo para modo 2vs2
+
+// === MODOS DE JUEGO ===
+enum GameMode {
+    MODE_1VS1 = 1,
+    MODE_2VS2 = 2
+};
 
 // === PROTOCOLO DE RED ===
 
@@ -27,6 +35,8 @@ const int MSG_YOUR_TURN = 12;   // Es tu turno
 const int MSG_SHOT_RESULT = 13; // Resultado de disparo
 const int MSG_GAME_OVER = 14;   // Juego terminado
 const int MSG_ERROR = 15;       // Error del servidor
+const int MSG_BOARD_STATE = 16; // Estado del tablero (para modo 2vs2)
+const int MSG_BOARD_SIZE = 17;  // Tamaño del tablero
 
 // Estructura del mensaje de red
 struct GameMessage {
@@ -85,10 +95,15 @@ enum GameState {
 struct Board {
     vector<vector<int>> grid;
     bool ships_placed;
+    int size;  // Tamaño dinámico del tablero
     
-    // Constructor
-    Board();
+    // Constructores
+    Board();                    // Constructor por defecto (8x8)
+    Board(int board_size);      // Constructor con tamaño específico
 };
+
+// === FUNCIONES UTILITARIAS ===
+int getBoardSizeForMode(GameMode mode);
 
 // Estructura de un barco
 struct Ship {
@@ -126,12 +141,34 @@ struct Player {
     bool all_ships_placed() const;
 };
 
+// Estructura de equipo para modo 2vs2
+struct Team {
+    int id;                         // ID del equipo (0 o 1)
+    int player_ids[2];             // IDs de los jugadores en el equipo
+    Board shared_board;            // Tablero compartido del equipo
+    vector<Ship> team_ships;       // Todos los barcos del equipo (6 total)
+    int ships_placed_count;        // Barcos ya colocados
+    int current_placing_player;    // Jugador que está colocando ahora
+    
+    // Constructor
+    Team();
+    Team(int board_size);          // Constructor con tamaño de tablero específico
+    
+    // Métodos
+    int ships_remaining() const;
+    bool all_ships_placed() const;
+    void add_player(int player_id);
+};
+
 // Estructura del juego
 struct Game {
-    Player players[2];
+    Player players[MAX_PLAYERS];    // Hasta 4 jugadores
+    Team teams[2];                  // 2 equipos para modo 2vs2
     GameState state;
+    GameMode mode;                  // Modo de juego seleccionado
     int current_turn;
     int winner;
+    int active_players;             // Número real de jugadores (2 o 4)
     
     // Constructor
     Game();
@@ -139,6 +176,8 @@ struct Game {
     // Métodos
     bool is_game_over() const;
     void switch_turn();
+    void set_mode(GameMode game_mode, int num_players);
+    void setup_teams(GameMode mode);   // Configurar equipos para modo 2vs2 con tamaño correcto
 };
 
 // === DECLARACIONES DE FUNCIONES ===
@@ -147,7 +186,7 @@ struct Game {
 void initializeBoard(Board& board);
 void displayBoard(const Board& board, bool hide_ships = false);
 void displayBothBoards(const Player& player);
-bool isValidPosition(int x, int y);
+bool isValidPosition(int x, int y, int board_size);
 void updateCell(Board& board, int x, int y, CellState state);
 
 // Funciones de barcos (ship.cpp)
@@ -164,11 +203,16 @@ bool hasWon(const Player& player);
 void markPlayerReady(Player& player);
 
 // Funciones del juego (game_logic.cpp)
-void initializeGame(Game& game);
+void initializeGame(Game& game, GameMode mode);
 bool addPlayer(Game& game, const string& name);
 void startGame(Game& game);
 bool processMove(Game& game, int x, int y);
 string getGameStatus(const Game& game);
+
+// Funciones para modo 2vs2
+int getNextPlacingPlayer(const Game& game, int ship_number);
+int getPlayerTeam(int player_id);
+bool isTeamMate(int player1, int player2);
 
 // === FUNCIONES DE RED ===
 

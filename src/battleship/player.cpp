@@ -50,7 +50,7 @@ void initializePlayer(Player& player, int id, const string& name) {
 // Realizar un disparo
 bool makeShot(Player& attacker, Player& defender, int x, int y) {
     // Verificar posición válida
-    if (!isValidPosition(x, y)) {
+    if (!isValidPosition(x, y, defender.own_board.size)) {
         return false;
     }
     
