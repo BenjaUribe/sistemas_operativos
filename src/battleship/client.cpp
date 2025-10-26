@@ -9,16 +9,19 @@ const int DEFAULT_SERVER_PORT = 8080;
 
 // === FUNCIONES AUXILIARES ===
 // Determinar si dos jugadores están en el mismo equipo (solo para modo 2vs2)
-bool sameTeam(int player1, int player2) {
-    // Solo aplicar lógica de equipos si hay más de 2 jugadores (modo 2vs2)
-    // En modo 1vs1, los jugadores 0 y 1 son siempre oponentes
-    if (player1 <= 1 && player2 <= 1) {
-        return false; // En modo 1vs1, jugadores 0 y 1 son siempre oponentes
-    }
+bool sameTeam(int player1, int player2, int board_size) {
+    // Determinar modo basado en el tamaño del tablero
+    bool is_2vs2_mode = (board_size == BOARD_SIZE_2VS2);
     
-    // Modo 2vs2: Equipo 1: jugadores 0 y 1, Equipo 2: jugadores 2 y 3
-    return (player1 / 2) == (player2 / 2);
+    if (is_2vs2_mode) {
+        // Modo 2vs2: Equipo 1: jugadores 0 y 1, Equipo 2: jugadores 2 y 3
+        return (player1 / 2) == (player2 / 2);
+    } else {
+        // Modo 1vs1: jugadores 0 y 1 son siempre oponentes
+        return false;
+    }
 }
+
 
 // === FUNCIONES DE RED ===
 bool sendGameMessage(int socket, const GameMessage& msg) {
@@ -62,14 +65,14 @@ bool receiveGameMessage(int socket, GameMessage& msg) {
 // Funciones para interfaz interactiva
 void printBoard(const Board& board, bool show_ships = true) {
     cout << "\n   ";
-    for (int j = 0; j < BOARD_SIZE; j++) {
+    for (int j = 0; j < board.size; j++) {
         cout << " " << j << " ";
     }
     cout << endl;
     
-    for (int i = 0; i < BOARD_SIZE; i++) {
+    for (int i = 0; i < board.size; i++) {
         cout << " " << i << " ";
-        for (int j = 0; j < BOARD_SIZE; j++) {
+        for (int j = 0; j < board.size; j++) {
             char cell = ' ';
             if (board.grid[i][j] == SHIP && show_ships) {
                 cell = 'S';  // Barco
@@ -96,15 +99,15 @@ void printBothBoards(const Board& myBoard, const Board& enemyBoard) {
     
     // Encabezado para mi tablero
     cout << "   ";
-    for (int j = 0; j < BOARD_SIZE; j++) {
+    for (int j = 0; j < myBoard.size; j++) {
         cout << " " << j << " ";
     }
     cout << endl;
     
     // Mi tablero
-    for (int i = 0; i < BOARD_SIZE; i++) {
+    for (int i = 0; i < myBoard.size; i++) {
         cout << " " << i << " ";
-        for (int j = 0; j < BOARD_SIZE; j++) {
+        for (int j = 0; j < myBoard.size; j++) {
             char cell = '~';
             if (myBoard.grid[i][j] == SHIP) {
                 cell = 'S';  // Mis barcos
@@ -125,15 +128,15 @@ void printBothBoards(const Board& myBoard, const Board& enemyBoard) {
     
     // Encabezado para tablero enemigo
     cout << "   ";
-    for (int j = 0; j < BOARD_SIZE; j++) {
+    for (int j = 0; j < enemyBoard.size; j++) {
         cout << " " << j << " ";
     }
     cout << endl;
     
     // Tablero enemigo
-    for (int i = 0; i < BOARD_SIZE; i++) {
+    for (int i = 0; i < enemyBoard.size; i++) {
         cout << " " << i << " ";
-        for (int j = 0; j < BOARD_SIZE; j++) {
+        for (int j = 0; j < enemyBoard.size; j++) {
             char cell = '~';
             if (enemyBoard.grid[i][j] == HIT) {
                 cell = 'X';  // Impactos míos
@@ -147,7 +150,7 @@ void printBothBoards(const Board& myBoard, const Board& enemyBoard) {
     cout << "======================================\n" << endl;
 }
 
-bool getCoordinates(int& x, int& y, const string& prompt) {
+bool getCoordinates(int& x, int& y, const string& prompt, int board_size) {
     cout << prompt;
     string input;
     getline(cin, input);
@@ -160,7 +163,7 @@ bool getCoordinates(int& x, int& y, const string& prompt) {
         try {
             x = stoi(input.substr(0, comma));
             y = stoi(input.substr(comma + 1));
-            return (x >= 0 && x < BOARD_SIZE && y >= 0 && y < BOARD_SIZE);
+            return (x >= 0 && x < board_size && y >= 0 && y < board_size);
         } catch (...) {
             return false;
         }
@@ -168,7 +171,7 @@ bool getCoordinates(int& x, int& y, const string& prompt) {
         try {
             x = stoi(input.substr(0, space));
             y = stoi(input.substr(space + 1));
-            return (x >= 0 && x < BOARD_SIZE && y >= 0 && y < BOARD_SIZE);
+            return (x >= 0 && x < board_size && y >= 0 && y < board_size);
         } catch (...) {
             return false;
         }
@@ -185,7 +188,7 @@ bool handleShipPlacement(int socket, Board& myBoard) {
     cout << "  3. Portaaviones (tamaño 4)" << endl;
     cout << "Formato: fila,columna,orientación (ejemplo: 2,3,H o 2,3,V)" << endl;
     cout << "Orientación: H=horizontal, V=vertical" << endl;
-    cout << "Rango válido: 0-" << (BOARD_SIZE-1) << endl;
+    cout << "Rango válido: 0-" << (myBoard.size-1) << endl;
     
     // myBoard debe venir inicializado por el llamador
     
@@ -218,7 +221,7 @@ bool handleShipPlacement(int socket, Board& myBoard) {
                     int y = stoi(input.substr(comma1 + 1, comma2 - comma1 - 1));
                     char orientChar = toupper(input.substr(comma2 + 1)[0]);
                     
-                    if (x < 0 || x >= BOARD_SIZE || y < 0 || y >= BOARD_SIZE) {
+                    if (x < 0 || x >= myBoard.size || y < 0 || y >= myBoard.size) {
                         cout << "❌ Coordenadas fuera de rango." << endl;
                         continue;
                     }
@@ -318,7 +321,7 @@ bool handleShooting(int socket, Board& myBoard, Board& enemyBoard, bool &awaitin
     bool validShot = false;
     
     while (!validShot) {
-        if (getCoordinates(x, y, "Dispara a (fila,columna): ")) {
+        if (getCoordinates(x, y, "Dispara a (fila,columna): ", enemyBoard.size)) {
             if (enemyBoard.grid[x][y] == WATER) {  // Solo disparar a posiciones desconocidas
                 GameMessage shoot_msg(MSG_SHOOT);
                 shoot_msg.x = x;
@@ -370,7 +373,10 @@ bool handleSingleShipPlacement(int socket) {
             int y = stoi(input.substr(comma1 + 1, comma2 - comma1 - 1));
             char orientChar = toupper(input.substr(comma2 + 1)[0]);
             
-            if (x < 0 || x >= BOARD_SIZE || y < 0 || y >= BOARD_SIZE) {
+            // Para esta función, necesitamos conocer el tamaño del tablero
+            // Por ahora usamos el tamaño por defecto, pero esto debería ser un parámetro
+            int board_size = 8; // Temporal - debería ser parámetro
+            if (x < 0 || x >= board_size || y < 0 || y >= board_size) {
                 cout << "❌ Coordenadas fuera de rango." << endl;
                 return false;
             }
@@ -464,6 +470,29 @@ int main() {
         return 1;
     }
     
+    // Paso 4.5: Recibir tamaño del tablero del servidor
+    int board_size = BOARD_SIZE_1VS1; // Tamaño por defecto
+    GameMessage board_size_msg;
+    if (receiveGameMessage(client_socket, board_size_msg)) {
+        if (board_size_msg.type == MSG_BOARD_SIZE) {
+            board_size = board_size_msg.data1;
+            cout << "📐 " << board_size_msg.text << endl;
+            cout << "🎯 Configurando tableros con tamaño " << board_size << "x" << board_size << endl;
+        } else {
+            cout << "⚠️ Mensaje inesperado del servidor (esperaba tamaño de tablero, tipo " << board_size_msg.type << ")" << endl;
+        }
+    } else {
+        cout << "❌ Error recibiendo tamaño de tablero" << endl;
+        close(client_socket);
+        return 1;
+    }
+    
+    // Inicializar tableros con el tamaño correcto
+    Board myBoard(board_size);
+    Board enemyBoard(board_size);
+    initializeBoard(myBoard);
+    initializeBoard(enemyBoard);
+    
     // Paso 5: Enviar nombre al servidor
     string player_name;
     cout << "\n👤 Ingresa tu nombre: ";
@@ -483,10 +512,6 @@ int main() {
     cout << "\n⏳ Esperando respuesta del servidor..." << endl;
     
     // Variables para el juego
-    Board myBoard;
-    Board enemyBoard;
-    initializeBoard(myBoard);
-    initializeBoard(enemyBoard);
     bool shipPlacementPhase = true;
     bool awaiting_result = false; // true cuando enviamos un disparo y esperamos resultado
     
@@ -538,8 +563,14 @@ int main() {
                     int ry = server_msg.y;
                     int shooter_id = server_msg.player_id;
 
+                    cout << "\n🔍 DEBUG: Shot result - shooter=" << shooter_id << ", my_id=" << my_player_id 
+                         << ", hit=" << hit << ", pos=[" << rx << "," << ry << "]" << endl;
+                    cout << "   sameTeam(" << shooter_id << ", " << my_player_id << ") = " 
+                         << (sameTeam(shooter_id, my_player_id, myBoard.size) ? "true" : "false") << endl;
+
                     if (shooter_id == my_player_id) {
                         // Yo disparé - actualizar tablero enemigo
+                        cout << "   -> Yo disparé, actualizando enemyBoard" << endl;
                         updateEnemyBoard(enemyBoard, rx, ry, hit);
                         awaiting_result = false;
 
@@ -549,26 +580,32 @@ int main() {
                         } else {
                             cout << "🌊 Agua en [" << rx << "," << ry << "]" << endl;
                         }
-                    } else if (sameTeam(shooter_id, my_player_id)) {
+                    } else if (sameTeam(shooter_id, my_player_id, myBoard.size)) {
                         // Mi compañero disparó - actualizar tablero enemigo
+                        cout << "   -> Mi compañero disparó, actualizando enemyBoard" << endl;
+                        cout << "   -> ANTES: enemyBoard[" << rx << "][" << ry << "] = " << enemyBoard.grid[rx][ry] << endl;
                         updateEnemyBoard(enemyBoard, rx, ry, hit);
+                        cout << "   -> DESPUÉS: enemyBoard[" << rx << "][" << ry << "] = " << enemyBoard.grid[rx][ry] << endl;
                         
                         if (hit) {
                             cout << "🤝 Tu compañero impactó en [" << rx << "," << ry << "]!" << endl;
                             if (sunk) cout << "💥 Tu compañero hundió un barco!" << endl;
                         } else {
-                            cout << "🌊 Tu compañero falló en [" << rx << "," << ry << "]" << endl;
+                            cout << "🌊 Tu compañero falló en [" << rx << "," << ry << "] - marcado en tablero ENEMIGO" << endl;
                         }
                     } else {
                         // El equipo enemigo disparó - actualizar mi tablero
+                        cout << "   -> Enemigo disparó, actualizando myBoard" << endl;
+                        cout << "   -> ANTES: myBoard[" << rx << "][" << ry << "] = " << myBoard.grid[rx][ry] << endl;
                         if (hit) {
                             myBoard.grid[rx][ry] = HIT;
                             cout << "⚠️ Te han impactado en [" << rx << "," << ry << "]!" << endl;
                             if (sunk) cout << "💥 Un barco tuyo se hundió!" << endl;
                         } else {
                             myBoard.grid[rx][ry] = MISS;
-                            cout << "✅ El oponente falló en [" << rx << "," << ry << "]" << endl;
+                            cout << "✅ El oponente falló en [" << rx << "," << ry << "] - marcado en MI tablero" << endl;
                         }
+                        cout << "   -> DESPUÉS: myBoard[" << rx << "][" << ry << "] = " << myBoard.grid[rx][ry] << endl;
                     }
                     
                     // Mostrar estado actualizado de ambos tableros
@@ -603,11 +640,11 @@ int main() {
                         cout << "\n📋 " << server_msg.text << endl;
                         
                         // Crear tablero temporal para recibir el estado
-                        Board teamBoard;
+                        Board teamBoard(myBoard.size); // Usar el mismo tamaño que mi tablero
                         initializeBoard(teamBoard);
                         
                         // Recibir estado de todas las celdas
-                        for (int i = 0; i < BOARD_SIZE * BOARD_SIZE; i++) {
+                        for (int i = 0; i < teamBoard.size * teamBoard.size; i++) {
                             GameMessage cell_msg;
                             if (receiveGameMessage(client_socket, cell_msg)) {
                                 if (cell_msg.type == MSG_BOARD_STATE) {

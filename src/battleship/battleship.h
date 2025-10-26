@@ -9,9 +9,10 @@
 using namespace std;
 
 // Constantes del juego
-const int BOARD_SIZE = 8;
-const int NUM_SHIPS = 3;
-const int MAX_PLAYERS = 4;      // Máximo para modo 2vs2
+const int BOARD_SIZE_1VS1 = 6;   // Tablero 8x8 para modo 1vs1
+const int BOARD_SIZE_2VS2 = 8;  // Tablero 10x10 para modo 2vs2 (más barcos)
+const int NUM_SHIPS = 3;         // 3 barcos por jugador en ambos modos
+const int MAX_PLAYERS = 4;       // Máximo para modo 2vs2
 
 // === MODOS DE JUEGO ===
 enum GameMode {
@@ -35,6 +36,7 @@ const int MSG_SHOT_RESULT = 13; // Resultado de disparo
 const int MSG_GAME_OVER = 14;   // Juego terminado
 const int MSG_ERROR = 15;       // Error del servidor
 const int MSG_BOARD_STATE = 16; // Estado del tablero (para modo 2vs2)
+const int MSG_BOARD_SIZE = 17;  // Tamaño del tablero
 
 // Estructura del mensaje de red
 struct GameMessage {
@@ -93,10 +95,15 @@ enum GameState {
 struct Board {
     vector<vector<int>> grid;
     bool ships_placed;
+    int size;  // Tamaño dinámico del tablero
     
-    // Constructor
-    Board();
+    // Constructores
+    Board();                    // Constructor por defecto (8x8)
+    Board(int board_size);      // Constructor con tamaño específico
 };
+
+// === FUNCIONES UTILITARIAS ===
+int getBoardSizeForMode(GameMode mode);
 
 // Estructura de un barco
 struct Ship {
@@ -145,6 +152,7 @@ struct Team {
     
     // Constructor
     Team();
+    Team(int board_size);          // Constructor con tamaño de tablero específico
     
     // Métodos
     int ships_remaining() const;
@@ -169,7 +177,7 @@ struct Game {
     bool is_game_over() const;
     void switch_turn();
     void set_mode(GameMode game_mode, int num_players);
-    void setup_teams();             // Configurar equipos para modo 2vs2
+    void setup_teams(GameMode mode);   // Configurar equipos para modo 2vs2 con tamaño correcto
 };
 
 // === DECLARACIONES DE FUNCIONES ===
@@ -178,7 +186,7 @@ struct Game {
 void initializeBoard(Board& board);
 void displayBoard(const Board& board, bool hide_ships = false);
 void displayBothBoards(const Player& player);
-bool isValidPosition(int x, int y);
+bool isValidPosition(int x, int y, int board_size);
 void updateCell(Board& board, int x, int y, CellState state);
 
 // Funciones de barcos (ship.cpp)
@@ -195,7 +203,7 @@ bool hasWon(const Player& player);
 void markPlayerReady(Player& player);
 
 // Funciones del juego (game_logic.cpp)
-void initializeGame(Game& game);
+void initializeGame(Game& game, GameMode mode);
 bool addPlayer(Game& game, const string& name);
 void startGame(Game& game);
 bool processMove(Game& game, int x, int y);

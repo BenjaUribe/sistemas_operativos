@@ -10,6 +10,14 @@ Team::Team() : id(0), ships_placed_count(0), current_placing_player(0) {
     team_ships.clear();
 }
 
+// Constructor con tamaño específico
+Team::Team(int board_size) : id(0), ships_placed_count(0), current_placing_player(0) {
+    player_ids[0] = -1;
+    player_ids[1] = -1;
+    shared_board = Board(board_size);
+    team_ships.clear();
+}
+
 // Contar barcos restantes del equipo
 int Team::ships_remaining() const {
     int count = 0;
@@ -68,12 +76,12 @@ void Game::set_mode(GameMode game_mode, int num_players) {
         cout << "1vs1 (" << active_players << " jugadores)" << endl;
     } else if (mode == MODE_2VS2) {
         cout << "2vs2 (" << active_players << " jugadores)" << endl;
-        setup_teams(); // Configurar equipos automáticamente
+        setup_teams(game_mode); // Configurar equipos automáticamente con modo correcto
     }
 }
 
 // Configurar equipos para modo 2vs2
-void Game::setup_teams() {
+void Game::setup_teams(GameMode mode) {
     // Equipo 1: Jugadores 0 y 1
     teams[0].id = 0;
     teams[0].add_player(0);
@@ -84,18 +92,34 @@ void Game::setup_teams() {
     teams[1].add_player(2);
     teams[1].add_player(3);
     
-    cout << "🔵 Equipo 1: Jugadores 0 y 1" << endl;
-    cout << "🔴 Equipo 2: Jugadores 2 y 3" << endl;
+    int board_size = getBoardSizeForMode(mode);
+    cout << "🔵 Equipo 1: Jugadores 0 y 1 (tablero " << board_size << "x" << board_size << ")" << endl;
+    cout << "🔴 Equipo 2: Jugadores 2 y 3 (tablero " << board_size << "x" << board_size << ")" << endl;
 }
 
 // Inicializar juego
-void initializeGame(Game& game) {
+void initializeGame(Game& game, GameMode mode) {
     game.state = WAITING_FOR_PLAYERS;
     game.current_turn = 0;
     game.winner = -1;
+    game.mode = mode;
+    
+    // Configurar tableros con tamaño apropiado según modo
+    int board_size = getBoardSizeForMode(mode);
     
     for (int i = 0; i < MAX_PLAYERS; i++) {
         game.players[i] = Player();
+        // Inicializar tableros con tamaño dinámico
+        game.players[i].own_board = Board(board_size);
+        initializeBoard(game.players[i].own_board);
+    }
+    
+    // Para modo 2vs2, también inicializar tableros de equipos
+    if (mode == MODE_2VS2) {
+        game.teams[0].shared_board = Board(board_size);
+        game.teams[1].shared_board = Board(board_size);
+        initializeBoard(game.teams[0].shared_board);
+        initializeBoard(game.teams[1].shared_board);
     }
 }
 

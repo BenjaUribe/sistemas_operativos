@@ -62,6 +62,15 @@ GameMessage createWelcomeMessage(int player_id) {
     return msg;
 }
 
+// Crear mensaje de tamaño del tablero
+GameMessage createBoardSizeMessage(int board_size) {
+    GameMessage msg(MSG_BOARD_SIZE);
+    msg.data1 = board_size;
+    string text = "Tablero " + to_string(board_size) + "x" + to_string(board_size);
+    strncpy(msg.text, text.c_str(), sizeof(msg.text) - 1);
+    return msg;
+}
+
 // Crear mensaje de espera
 GameMessage createWaitMessage(const string& reason) {
     GameMessage msg(MSG_WAIT);
@@ -78,8 +87,8 @@ void sendBoardState(int client_socket, const Board& board, const string& descrip
     sendGameMessage(client_socket, board_msg);
     
     // Enviar el estado completo del tablero en múltiples mensajes
-    for (int i = 0; i < BOARD_SIZE; i++) {
-        for (int j = 0; j < BOARD_SIZE; j++) {
+    for (int i = 0; i < board.size; i++) {
+        for (int j = 0; j < board.size; j++) {
             GameMessage cell_msg(MSG_BOARD_STATE);
             cell_msg.x = i;
             cell_msg.y = j;
@@ -194,6 +203,15 @@ int main() {
         } else {
             cout << "Error: No se pudo enviar bienvenida al jugador " << (i + 1) << endl;
         }
+        
+        // Enviar tamaño del tablero según el modo
+        int board_size = getBoardSizeForMode(selected_mode);
+        GameMessage board_size_msg = createBoardSizeMessage(board_size);
+        if (sendGameMessage(client_sockets[i], board_size_msg)) {
+            cout << "✓ Tamaño de tablero (" << board_size << "x" << board_size << ") enviado al jugador " << (i + 1) << endl;
+        } else {
+            cout << "Error: No se pudo enviar tamaño de tablero al jugador " << (i + 1) << endl;
+        }
     }
     
     string players_text = (target_players == 2) ? "jugadores" : "jugadores";
@@ -250,7 +268,7 @@ int main() {
     
     // === INICIALIZAR EL JUEGO ===
     Game battleship_game;
-    initializeGame(battleship_game);
+    initializeGame(battleship_game, selected_mode);
     
     // Configurar modo del juego
     battleship_game.set_mode(selected_mode, target_players);
@@ -494,7 +512,7 @@ int main() {
                         int defending_team = (attacking_team + 1) % 2;
                         
                         // Verificar que la posición sea válida y no haya sido atacada antes
-                        if (isValidPosition(shot_msg.x, shot_msg.y)) {
+                        if (isValidPosition(shot_msg.x, shot_msg.y, battleship_game.teams[defending_team].shared_board.size)) {
                             Board& target_board = battleship_game.teams[defending_team].shared_board;
                             
                             // Verificar que no se haya disparado antes a esta posición
@@ -635,7 +653,6 @@ int main() {
             // Modo 2vs2: El equipo ganador es el del jugador que hizo el último disparo
             int winning_player = battleship_game.current_turn;
             int winning_team = getPlayerTeam(winning_player);
-            int losing_team = (winning_team + 1) % 2;
             
             cout << "\n🏆 ¡Equipo " << (winning_team + 1) << " ha ganado la partida!" << endl;
             cout << "🔵 Equipo ganador: ";
