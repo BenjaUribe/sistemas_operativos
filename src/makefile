@@ -27,7 +27,7 @@ client:
 
 # Limpiar archivos ejecutables
 clean:
-	rm -f user_admin menu matmul indice_invertido battleship_server battleship_client
+	rm -f user_admin menu matmul indice_invertido indice_paralelo battleship_server battleship_client
 
 .PHONY: all battleship server client clean
 
