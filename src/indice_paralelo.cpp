@@ -29,7 +29,6 @@ using namespace std;
 const int NUM_HILOS = 5;
 
 // --- Función para crear un archivo vacío ---
-// (Sin cambios)
 int crear_archivo(const string& nombre_indice) {
     ofstream indice(nombre_indice);
     if (!indice.is_open()) {
@@ -73,7 +72,6 @@ void procesar_archivo(const string& archivo, unordered_map<string, map<string, i
 }
 
 // --- Función para escribir el índice invertido en un archivo ---
-// (Sin cambios. Se llamará una sola vez al final)
 void escribir_indice(const string& nombre_indice, const unordered_map<string, map<string, int>>& indice_invertido) {
     ofstream outFile(nombre_indice, ios::app);
     if (!outFile.is_open()) {
@@ -81,7 +79,7 @@ void escribir_indice(const string& nombre_indice, const unordered_map<string, ma
         return;
     }
 
-    // Copiar el mapa a un vector para ordenarlo por palabra (opcional, pero da orden)
+    // Copiar el mapa a un vector para ordenarlo por palabra
     vector<pair<string, map<string, int>>> indice_vec(indice_invertido.begin(), indice_invertido.end());
     sort(indice_vec.begin(), indice_vec.end(), 
         [](const auto& a, const auto& b) { return a.first < b.first; });
@@ -138,7 +136,7 @@ void funcion_worker(
                 hay_trabajo = true;
             } else if (productor_terminado) {
                 // La cola está vacía y el productor terminó, salimos del bucle
-                break; // Salir del bucle while(true)
+                break; // Salir del bucle while
             }
         } // El unique_lock (mutex_cola) se libera aquí
 
@@ -162,7 +160,7 @@ void funcion_worker(
 }
 
 
-// --- Función principal para crear el índice invertido (Modificada) ---
+// --- Función principal para crear el índice invertido ---
 void crear_indice(const string& nombre_indice, const string& path_carpeta) {
     
     // --- Variables compartidas ---
