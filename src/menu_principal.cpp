@@ -35,11 +35,12 @@ map<int, string> perfiles_opciones = {
     {0, "Salir"},
     {1, "Admin de usuarios y perfiles"},
     {2, "Multiplica matrices NxN"},
-    {3, "Juego (en construcción)"},
+    {3, "Juego"},
     {4, "¿Es palíndromo?"},
     {5, "Calcular f(x) = x*x + 2x + 8"},
     {6, "Conteo sobre texto"},
-    {7, "Crear índice invertido"}
+    {7, "Crear índice invertido"},
+    {8, "Crear índice invertido paralelo"}
 };
 
 // Usaremos unordered_map<string, pair<string,string>>
@@ -91,7 +92,10 @@ int create_index(string create_index_path){
     return 0;
 }
 
-
+int run_game(string game_app_path){
+    system((game_app_path).c_str());
+    return 0;
+}
 
 // funciones para las matrices
 int matrizNxN(string M_path, char separador){
@@ -568,6 +572,12 @@ int main(int argc, char* argv[]) {
     env_vars["CREATE_INDEX"].erase(0, env_vars["CREATE_INDEX"].find_first_not_of(" \n\r\t"));
     env_vars["CREATE_INDEX"].erase(env_vars["CREATE_INDEX"].find_last_not_of(" \n\r\t") + 1);
 
+    env_vars["INDICE_INVERT_PARALELO"].erase(0, env_vars["INDICE_INVERT_PARALELO"].find_first_not_of(" \n\r\t"));
+    env_vars["INDICE_INVERT_PARALELO"].erase(env_vars["INDICE_INVERT_PARALELO"].find_last_not_of(" \n\r\t") + 1);
+
+    env_vars["GAME_APP"].erase(0, env_vars["GAME_APP"].find_first_not_of(" \n\r\t"));
+    env_vars["GAME_APP"].erase(env_vars["GAME_APP"].find_last_not_of(" \n\r\t") + 1);
+
     // Verificación de limpieza
     string user_file = env_vars["USER_FILE"];
     string perfil_file = env_vars["PERFIL_FILE"];
@@ -578,6 +588,8 @@ int main(int argc, char* argv[]) {
     string user_admin_path = env_vars["ADMIN_SYS"];
     string matmul_path = env_vars["MUTLI_M"];
     string create_index_path = env_vars["CREATE_INDEX"];
+    string create_index_parallel_path = env_vars["INDICE_INVERT_PARALELO"];
+    string game_app_path = env_vars["GAME_APP"];
     
     // Concatenar directorio de libros con el archivo específico
     string ruta_libro = libros_dir + "/" + file;
@@ -643,7 +655,7 @@ int main(int argc, char* argv[]) {
             case 3:
                 limpiarConsola();
                 cout << ":::::::::: Juego ::::::::::" << endl;
-                cout << "\n=== Funcionalidad en desarrollo ===\n" << endl;
+                run_game(game_app_path);
                 break;
             case 4:
                 limpiarConsola();
@@ -665,6 +677,11 @@ int main(int argc, char* argv[]) {
                 limpiarConsola();
                 cout << ":::::::::: Crear índice invertido ::::::::::" << endl;
                 create_index(create_index_path);
+                break;
+            case 8:
+                limpiarConsola();
+                cout << ":::::::::: Crear índice invertido paralelo ::::::::::" << endl;
+                create_index(create_index_parallel_path);
                 break;
             default:
                 limpiarConsola();

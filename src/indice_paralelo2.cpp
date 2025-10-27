@@ -359,29 +359,35 @@ AppConfig configurar_aplicacion(int argc, char* argv[]) {
     AppConfig config;
 
     if (argc != 3) {
-        cout << "Uso correcto: " << argv[0] << " <nombre_indice_base> <ruta_carpetas>" << endl;
-        cout << "Ejemplo: " << argv[0] << " mi_indice data/libros" << endl;
-        cout << "Esto generará: data/mi_indice.idx, data/mi_indice.map, data/mi_indice.log" << endl;
+        cout << "Uso correcto: " << argv[0] << " <nombre_indice.idx> <ruta_carpetas>" << endl;
+        cout << "Ejemplo: " << argv[0] << " mi_indice.idx libros" << endl;
+        cout << "Esto generará: data/mi_indice.idx, data/MAPA-LIBROS.map, data/mi_indice.log" << endl;
         cout << "\nVariables de entorno (opcionales):" << endl;
         cout << " N_THREADS: Número de hilos (default: 5)" << endl;
         cout << " N_LOTE: Tamaño de lote por hilo (default: 10)" << endl;
         return config; // config.valida sigue en false
     }
 
-    // Derivar los 3 paths del argumento base
-    string nombre_base = string(argv[1]);
+    // Derivar los paths del argumento base
+    string nombre_completo = string(argv[1]);
     config.path_carpeta = argv[2];
     
-    // Manejar si el usuario pone 'data/mi_indice' o solo 'mi_indice'
-    if (nombre_base.find('/') != string::npos || nombre_base.find('\\') != string::npos) {
-         config.path_indice = nombre_base + ".idx";
-         config.path_mapa = nombre_base + ".map";
-         config.path_log = nombre_base + ".log";
-    } else {
-         config.path_indice = "data/" + nombre_base + ".idx";
-         config.path_mapa = "data/" + nombre_base + ".map";
-         config.path_log = "data/" + nombre_base + ".log";
+    // Extraer solo el nombre del archivo sin la ruta
+    size_t ultima_barra = nombre_completo.find_last_of("/\\");
+    string nombre_archivo = (ultima_barra != string::npos) 
+        ? nombre_completo.substr(ultima_barra + 1) 
+        : nombre_completo;
+    
+    // Quitar la extensión .idx para derivar el nombre base
+    string nombre_base = nombre_archivo;
+    if (nombre_archivo.size() >= 4 && nombre_archivo.substr(nombre_archivo.size() - 4) == ".idx") {
+        nombre_base = nombre_archivo.substr(0, nombre_archivo.size() - 4);
     }
+    
+    // Todos los archivos se crean en la carpeta data/
+    config.path_indice = "data/" + nombre_archivo;  // data/mi_indice.idx
+    config.path_mapa = "data/MAPA-LIBROS.map";      // Nombre fijo
+    config.path_log = "data/" + nombre_base + ".log";  // data/mi_indice.log
 
     // Leer variables de entorno
     config.N_THREADS = leer_variable_entorno("N_THREADS", 5);
