@@ -71,7 +71,7 @@ bool terminaEnIdx(const string& nombreArchivo) {
            nombreArchivo.compare(nombreArchivo.size() - 4, 4, ".idx") == 0;
 }
 
-int create_index(string create_index_path){
+int create_index(string create_index_path, int modo){
     #ifdef _WIN32
         printf("[PID: %d]\n", GetCurrentProcessId());
     #else
@@ -88,8 +88,39 @@ int create_index(string create_index_path){
     cout << "Ingrese la ruta de la carpeta donde se encuentran los libros: ";
     cin >> path_carpetas;
 
-    system((create_index_path + " " + nombre_indice + " " + path_carpetas).c_str());
-    return 0;
+    if(modo == 0){
+        system((create_index_path + " " + nombre_indice + " " + path_carpetas).c_str());
+        return 0;
+    } else {
+        int n_threads = 0;
+        int n_lote = 0;
+
+        // Bucle hasta que ambos sean enteros positivos
+        while (true) {
+            cout << "\nIngrese el número de hilos: ";
+            if (!(cin >> n_threads) || n_threads <= 0) {
+                cout << "Error: n_threads debe ser un entero positivo. Intente de nuevo." << endl;
+                cin.clear();
+                cin.ignore(10000, '\n');
+                continue;
+            }
+
+            cout << "Ingrese el tamaño del lote: ";
+            if (!(cin >> n_lote) || n_lote <= 0) {
+                cout << "Error: n_lote debe ser un entero positivo. Intente de nuevo." << endl;
+                cin.clear();
+                cin.ignore(10000, '\n');
+                continue;
+            }
+
+            // Ambos valores válidos
+            break;
+        }
+
+        string comando = create_index_path + " " + nombre_indice + " " + path_carpetas + " " + to_string(n_threads) + " " + to_string(n_lote);
+        system(comando.c_str());
+        return 0;
+    }
 }
 
 int run_game(string game_app_path){
@@ -676,12 +707,12 @@ int main(int argc, char* argv[]) {
             case 7:
                 limpiarConsola();
                 cout << ":::::::::: Crear índice invertido ::::::::::" << endl;
-                create_index(create_index_path);
+                create_index(create_index_path, 0);
                 break;
             case 8:
                 limpiarConsola();
                 cout << ":::::::::: Crear índice invertido paralelo ::::::::::" << endl;
-                create_index(create_index_parallel_path);
+                create_index(create_index_parallel_path, 1);
                 break;
             default:
                 limpiarConsola();
