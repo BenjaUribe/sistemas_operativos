@@ -3,6 +3,15 @@
 #include <sys/socket.h>
 #include <unistd.h>
 
+void print_pid(){
+    #ifdef _WIN32
+        printf("[PID: %d]\n", GetCurrentProcessId());
+    #else
+        printf("[PID: %d]\n", getpid());
+    #endif
+}
+
+
 // Constantes del cliente
 const string DEFAULT_SERVER_IP = "127.0.0.1";
 const int DEFAULT_SERVER_PORT = 8080;
@@ -192,9 +201,9 @@ bool handleShipPlacement(int socket, Board& myBoard) {
     
     // myBoard debe venir inicializado por el llamador
     
-    // Definir los tipos de barcos en orden
-    ShipType shipTypes[NUM_SHIPS] = {DESTROYER, BATTLESHIP, AIRCRAFT_CARRIER};
-    string shipNames[NUM_SHIPS] = {"Destructor", "Acorazado", "Portaaviones"};
+    // Definir los tipos de barcos en orden (del más grande al más pequeño)
+    ShipType shipTypes[NUM_SHIPS] = {AIRCRAFT_CARRIER, BATTLESHIP, DESTROYER};
+    string shipNames[NUM_SHIPS] = {"Portaaviones", "Acorazado", "Destructor"};
     
     for (int ship = 0; ship < NUM_SHIPS; ship++) {
         bool placed = false;
@@ -386,9 +395,9 @@ bool handleSingleShipPlacement(int socket) {
                 return false;
             }
             
-            // Determinar tipo de barco (rotativo: DESTROYER, BATTLESHIP, AIRCRAFT_CARRIER)
+            // Determinar tipo de barco (rotativo: AIRCRAFT_CARRIER, BATTLESHIP, DESTROYER)
             static int ship_type_index = 0;
-            ShipType shipTypes[3] = {DESTROYER, BATTLESHIP, AIRCRAFT_CARRIER};
+            ShipType shipTypes[3] = {AIRCRAFT_CARRIER, BATTLESHIP, DESTROYER};
             ShipType currentShipType = shipTypes[ship_type_index % 3];
             ship_type_index++;
             
@@ -430,7 +439,9 @@ int main() {
         return 1;
     }
     cout << "✓ Socket del cliente creado" << endl;
-    
+
+    print_pid();
+
     // Paso 2: Configurar dirección del servidor
     struct sockaddr_in server_address;
     server_address.sin_family = AF_INET;

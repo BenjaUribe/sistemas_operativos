@@ -3,6 +3,15 @@
 #include <sys/socket.h>
 #include <unistd.h>
 
+void print_pid(){
+    #ifdef _WIN32
+        printf("[PID: %d]\n", GetCurrentProcessId());
+    #else
+        printf("[PID: %d]\n", getpid());
+    #endif
+}
+
+
 // Constantes del servidor
 const int PORT = 8080;
 
@@ -143,6 +152,9 @@ int main() {
     }
     cout << "✓ Socket creado exitosamente" << endl;
     
+    print_pid();
+
+
     // Paso 2: Configurar dirección del servidor
     struct sockaddr_in address;
     address.sin_family = AF_INET;        // IPv4
@@ -299,7 +311,7 @@ int main() {
             sendGameMessage(client_sockets[player_idx], place_ships_msg);
             
             // Recibir colocación de cada barco
-            for (int ship_idx = 0; ship_idx < NUM_SHIPS; ship_idx++) {
+            for (int ship_idx = NUM_SHIPS; ship_idx > 0; ship_idx--) {
                 bool ship_placed = false;
                 while (!ship_placed) {
                     GameMessage ship_msg;
