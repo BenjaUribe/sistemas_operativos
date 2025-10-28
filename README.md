@@ -22,3 +22,10 @@ Para ejecutar, se debe entrar a la carpeta `/src` donde se ubica el archivo `men
 - **`MATRIZ1_FILE`**: ruta del archivo `matriz1.txt`, el cual almacena la matriz para la multiplicacion de matrices. <br/>
 - **`MATRIZ2_FILE`**: ruta del archivo `matriz2.txt`, el cual almacena la matriz para la multiplicacion de matrices. <br/>
 - **`LIBROS_DIR`**: ruta del archivo `libros`, el cual almacena la ruta de la carpeta donde se almacena todos los libros. <br/>
+- **`ADMIN_SYS`**: ruta al archivo `user_admin`, el cual se encarga de administrar todos los usuarios del sistema. <br/>
+- **`MUTLI_M`**: ruta al archivo `matmul`, el cual multiplica dos matrices entregadas como parametros. <br/>
+- **`CREATE_INDEX`**: ruta al archivo `indice_invertido`, el cual crea un indice invertido usando la carpeta libros. <br/>
+- **`INDICE_INVERT_PARALELO`**: ruta al archivo `indice_invertido_paralelo`, el cual crea un indice invertido usando threads. <br/>
+- **`GAME_APP`**: ruta al archivo `battleship_server`, el crea un socket para que los jugadores puedan conectarse para iniciar el juego <br/>
+
+
