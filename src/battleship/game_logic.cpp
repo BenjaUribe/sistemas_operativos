@@ -93,8 +93,8 @@ void Game::setup_teams(GameMode mode) {
     teams[1].add_player(3);
     
     int board_size = getBoardSizeForMode(mode);
-    cout << "🔵 Equipo 1: Jugadores 0 y 1 (tablero " << board_size << "x" << board_size << ")" << endl;
-    cout << "🔴 Equipo 2: Jugadores 2 y 3 (tablero " << board_size << "x" << board_size << ")" << endl;
+    cout << "- Equipo 1: Jugadores 0 y 1 (tablero " << board_size << "x" << board_size << ")" << endl;
+    cout << "- Equipo 2: Jugadores 2 y 3 (tablero " << board_size << "x" << board_size << ")" << endl;
 }
 
 // Inicializar juego
@@ -173,15 +173,15 @@ void startGame(Game& game) {
         }
     } else {
         // Modo 2vs2: Verificar que ambos equipos tengan todos sus barcos
-        cout << "\n🔍 Verificando estado de equipos para iniciar combate..." << endl;
-        cout << "🔵 Equipo 1: " << game.teams[0].ships_placed_count << "/6 barcos" << endl;
-        cout << "🔴 Equipo 2: " << game.teams[1].ships_placed_count << "/6 barcos" << endl;
+        cout << "\n Verificando estado de equipos para iniciar combate..." << endl;
+        cout << "- Equipo 1: " << game.teams[0].ships_placed_count << "/6 barcos" << endl;
+        cout << "- Equipo 2: " << game.teams[1].ships_placed_count << "/6 barcos" << endl;
         
         bool teams_ready = (game.teams[0].ships_placed_count == 6 && 
                            game.teams[1].ships_placed_count == 6);
         
         if (teams_ready) {
-            cout << "\n✅ Ambos equipos listos - Cambiando estado a IN_PROGRESS" << endl;
+            cout << "\n Ambos equipos listos - Cambiando estado a IN_PROGRESS" << endl;
             game.state = IN_PROGRESS;
             game.current_turn = 0; // Empezar con jugador 0 (Equipo 1)
             
@@ -190,12 +190,12 @@ void startGame(Game& game) {
                 game.players[i].is_turn = (i == 0);
             }
             
-            cout << "🎯 Juego 2vs2 iniciado! " << game.players[0].name << " (Equipo 1) comienza." << endl;
-            cout << "🔄 Estado del juego: " << (game.state == IN_PROGRESS ? "IN_PROGRESS" : "OTRO") << endl;
+            cout << " Juego 2vs2 iniciado! " << game.players[0].name << " (Equipo 1) comienza." << endl;
+            cout << " Estado del juego: " << (game.state == IN_PROGRESS ? "IN_PROGRESS" : "OTRO") << endl;
         } else {
-            cout << "\n⚠️ Error: Equipos no están listos para el combate" << endl;
-            cout << "🔵 Equipo 1: " << game.teams[0].ships_placed_count << "/6 barcos" << endl;
-            cout << "🔴 Equipo 2: " << game.teams[1].ships_placed_count << "/6 barcos" << endl;
+            cout << "\n Error: Equipos no están listos para el combate" << endl;
+            cout << " Equipo 1: " << game.teams[0].ships_placed_count << "/6 barcos" << endl;
+            cout << " Equipo 2: " << game.teams[1].ships_placed_count << "/6 barcos" << endl;
         }
     }
 }

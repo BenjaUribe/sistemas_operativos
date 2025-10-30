@@ -11,6 +11,15 @@ void print_pid(){
     #endif
 }
 
+// funcion para limpiar consola
+void limpiarConsola() {
+    #ifdef _WIN32
+        system("cls");
+    #else
+        system("clear");
+    #endif
+    
+}
 
 // Constantes del servidor
 const int PORT = 8080;
@@ -150,7 +159,7 @@ int main() {
         cout << "Error: No se pudo crear el socket" << endl;
         return 1;
     }
-    cout << "✓ Socket creado exitosamente" << endl;
+    cout << "Socket creado exitosamente" << endl;
     
     print_pid();
 
@@ -161,7 +170,7 @@ int main() {
     address.sin_addr.s_addr = INADDR_ANY; // Escuchar en todas las interfaces
     address.sin_port = htons(PORT);      // Puerto convertido a formato de red
     
-    cout << "✓ Dirección configurada (0.0.0.0:" << PORT << ")" << endl;
+    cout << "Dirección configurada (0.0.0.0:" << PORT << ")" << endl;
     
     // Paso 3: bind() - Reservar el puerto
     int bind_result = bind(server_socket, (struct sockaddr*)&address, sizeof(address));
@@ -171,7 +180,7 @@ int main() {
         close(server_socket);
         return 1;
     }
-    cout << "✓ Puerto " << PORT << " reservado exitosamente" << endl;
+    cout << "Puerto " << PORT << " reservado exitosamente" << endl;
     
     // Paso 4: listen() - Empezar a escuchar conexiones
     int listen_result = listen(server_socket, target_players);
@@ -180,7 +189,7 @@ int main() {
         close(server_socket);
         return 1;
     }
-    cout << "✓ Servidor escuchando conexiones..." << endl;
+    cout << "Servidor escuchando conexiones..." << endl;
     cout << " Esperando " << target_players << " jugadores..." << endl;
     
     // Array para guardar los sockets de los clientes
@@ -211,7 +220,7 @@ int main() {
         // Enviar mensaje de bienvenida estructurado
         GameMessage welcome = createWelcomeMessage(i);
         if (sendGameMessage(client_sockets[i], welcome)) {
-            cout << "✓ Mensaje de bienvenida enviado al jugador " << (i + 1) << endl;
+            cout << "Mensaje de bienvenida enviado al jugador " << (i + 1) << endl;
         } else {
             cout << "Error: No se pudo enviar bienvenida al jugador " << (i + 1) << endl;
         }
@@ -220,7 +229,7 @@ int main() {
         int board_size = getBoardSizeForMode(selected_mode);
         GameMessage board_size_msg = createBoardSizeMessage(board_size);
         if (sendGameMessage(client_sockets[i], board_size_msg)) {
-            cout << "✓ Tamaño de tablero (" << board_size << "x" << board_size << ") enviado al jugador " << (i + 1) << endl;
+            cout << "Tamaño de tablero (" << board_size << "x" << board_size << ") enviado al jugador " << (i + 1) << endl;
         } else {
             cout << "Error: No se pudo enviar tamaño de tablero al jugador " << (i + 1) << endl;
         }
@@ -291,10 +300,10 @@ int main() {
         cout << "✓ Jugador " << (i + 1) << " (" << player_names[i] << ") inicializado" << endl;
     }
     
-    cout << "\n📋 Iniciando fase de colocación de barcos..." << endl;
+    cout << "\nIniciando fase de colocación de barcos..." << endl;
     
     // Dar tiempo para que los clientes procesen los mensajes
-    cout << "⏳ Esperando que los clientes estén listos..." << endl;
+    cout << "Esperando que los clientes estén listos..." << endl;
     usleep(1000000); // Esperar 1 segundo
     
     // === FASE DE COLOCACIÓN DE BARCOS ===
@@ -302,7 +311,7 @@ int main() {
     if (selected_mode == MODE_1VS1) {
         // Modo 1vs1: Cada jugador coloca en su propio tablero
         for (int player_idx = 0; player_idx < target_players; player_idx++) {
-            cout << "\n🚢 Jugador " << (player_idx + 1) << " (" << player_names[player_idx] << ") colocando barcos..." << endl;
+            cout << "\nJugador " << (player_idx + 1) << " (" << player_names[player_idx] << ") colocando barcos..." << endl;
             
             // Notificar al jugador que debe colocar barcos
             GameMessage place_ships_msg(MSG_WAIT);
@@ -335,7 +344,7 @@ int main() {
                                 sendGameMessage(client_sockets[player_idx], confirm);
                                 ship_placed = true;
                             } else {
-                                cout << "  ❌ Posición inválida para barco " << (ship_idx + 1) << endl;
+                                cout << " Posición inválida para barco " << (ship_idx + 1) << endl;
                                 
                                 // Enviar error al cliente
                                 GameMessage error(MSG_ERROR);
@@ -343,10 +352,10 @@ int main() {
                                 sendGameMessage(client_sockets[player_idx], error);
                             }
                         } else {
-                            cout << "  ⚠️ Mensaje inesperado del jugador (tipo " << ship_msg.type << ")" << endl;
+                            cout << " Mensaje inesperado del jugador (tipo " << ship_msg.type << ")" << endl;
                         }
                     } else {
-                        cout << "  ❌ Error recibiendo datos del jugador " << (player_idx + 1) << endl;
+                        cout << " Error recibiendo datos del jugador " << (player_idx + 1) << endl;
                         break;
                     }
                 }
@@ -354,48 +363,48 @@ int main() {
             
             // Marcar jugador como listo
             markPlayerReady(battleship_game.players[player_idx]);
-            cout << "✅ Jugador " << (player_idx + 1) << " terminó de colocar barcos" << endl;
+            cout << "Jugador " << (player_idx + 1) << " terminó de colocar barcos" << endl;
         }
         
     } else {
         // Modo 2vs2: Colocación alternada en tableros compartidos por equipo
         int total_ships = NUM_SHIPS * target_players; // 3 barcos * 4 jugadores = 12 barcos total
         
-        cout << "\n🔄 Modo 2vs2: Colocación alternada entre equipos" << endl;
-        cout << "📋 Orden: Equipo A (J1) → Equipo B (J3) → Equipo A (J2) → Equipo B (J4) → ..." << endl;
+        cout << "\nModo 2vs2: Colocación alternada entre equipos" << endl;
+        cout << "Orden: Equipo A (J1) → Equipo B (J3) → Equipo A (J2) → Equipo B (J4) → ..." << endl;
         
         for (int ship_number = 0; ship_number < total_ships; ship_number++) {
             int current_player = getNextPlacingPlayer(battleship_game, ship_number);
             int player_team = getPlayerTeam(current_player);
-            
-            cout << "\n🚢 Turno " << (ship_number + 1) << "/" << total_ships << 
-                    ": " << player_names[current_player] << 
-                    " (Equipo " << (player_team + 1) << ") colocando barco..." << endl;
-            
-            // Enviar estado actual del tablero del equipo al jugador
-            string board_desc = "Tablero actual del Equipo " + to_string(player_team + 1);
-            sendBoardState(client_sockets[current_player], battleship_game.teams[player_team].shared_board, board_desc);
-            
-            // Notificar al jugador actual
-            GameMessage place_msg(MSG_WAIT);
-            int ships_in_team = battleship_game.teams[player_team].ships_placed_count + 1;
-            string msg_text = "Tu turno: coloca barco " + to_string(ships_in_team) + "/6 para tu equipo";
-            strncpy(place_msg.text, msg_text.c_str(), sizeof(place_msg.text) - 1);
-            sendGameMessage(client_sockets[current_player], place_msg);
-            
-            // Notificar a otros jugadores que esperen
-            for (int i = 0; i < target_players; i++) {
-                if (i != current_player) {
-                    GameMessage wait_msg(MSG_WAIT);
-                    string wait_text = player_names[current_player] + " está colocando barco para su equipo...";
-                    strncpy(wait_msg.text, wait_text.c_str(), sizeof(wait_msg.text) - 1);
-                    sendGameMessage(client_sockets[i], wait_msg);
-                }
-            }
-            
-            // Recibir colocación del barco
+
             bool ship_placed = false;
             while (!ship_placed) {
+                cout << "\nTurno " << (ship_number + 1) << "/" << total_ships << 
+                        ": " << player_names[current_player] << 
+                        " (Equipo " << (player_team + 1) << ") colocando barco..." << endl;
+
+                // Enviar estado actual del tablero del equipo al jugador
+                string board_desc = "Tablero actual del Equipo " + to_string(player_team + 1);
+                sendBoardState(client_sockets[current_player], battleship_game.teams[player_team].shared_board, board_desc);
+
+                // Notificar al jugador actual
+                GameMessage place_msg(MSG_WAIT);
+                int ships_in_team = battleship_game.teams[player_team].ships_placed_count + 1;
+                string msg_text = "Tu turno: coloca barco " + to_string(ships_in_team) + "/6 para tu equipo";
+                strncpy(place_msg.text, msg_text.c_str(), sizeof(place_msg.text) - 1);
+                sendGameMessage(client_sockets[current_player], place_msg);
+
+                // Notificar a otros jugadores que esperen
+                for (int i = 0; i < target_players; i++) {
+                    if (i != current_player) {
+                        GameMessage wait_msg(MSG_WAIT);
+                        string wait_text = player_names[current_player] + " está colocando barco para su equipo...";
+                        strncpy(wait_msg.text, wait_text.c_str(), sizeof(wait_msg.text) - 1);
+                        sendGameMessage(client_sockets[i], wait_msg);
+                    }
+                }
+
+                // Recibir colocación del barco
                 GameMessage ship_msg;
                 if (receiveGameMessage(client_sockets[current_player], ship_msg)) {
                     if (ship_msg.type == MSG_PLACE_SHIP) {
@@ -405,46 +414,47 @@ int main() {
                                     ship_msg.x, 
                                     ship_msg.y, 
                                     static_cast<Orientation>(ship_msg.data2));
-                        
+
                         // Intentar colocar barco en tablero compartido del equipo
                         if (placeShip(battleship_game.teams[player_team].shared_board, new_ship)) {
                             battleship_game.teams[player_team].team_ships.push_back(new_ship);
                             battleship_game.teams[player_team].ships_placed_count++;
-                            
+
                             cout << "  ✓ Barco colocado en tablero del Equipo " << (player_team + 1) << 
                                     " en (" << ship_msg.x << "," << ship_msg.y << ")" << endl;
-                            
+
                             // Confirmar al cliente
                             GameMessage confirm(MSG_WAIT);
                             strncpy(confirm.text, "Barco colocado en tablero del equipo", sizeof(confirm.text) - 1);
                             sendGameMessage(client_sockets[current_player], confirm);
                             ship_placed = true;
                         } else {
-                            cout << "  ❌ Posición inválida para barco en tablero del equipo" << endl;
-                            
+                            cout << " Posición inválida para barco en tablero del equipo" << endl;
+
                             // Enviar error al cliente
                             GameMessage error(MSG_ERROR);
                             strncpy(error.text, "Posición inválida, intenta otra vez", sizeof(error.text) - 1);
                             sendGameMessage(client_sockets[current_player], error);
+                            // El ciclo while continúa, permitiendo reintentar
                         }
                     } else {
-                        cout << "  ⚠️ Mensaje inesperado del jugador (tipo " << ship_msg.type << ")" << endl;
+                        cout << " Mensaje inesperado del jugador (tipo " << ship_msg.type << ")" << endl;
                     }
                 } else {
-                    cout << "  ❌ Error recibiendo datos del jugador " << (current_player + 1) << endl;
+                    cout << " Error recibiendo datos del jugador " << (current_player + 1) << endl;
                     break;
                 }
             }
         }
         
-        cout << "\n✅ Todos los barcos colocados en tableros de equipos!" << endl;
-        cout << "🔵 Equipo 1: " << battleship_game.teams[0].ships_placed_count << " barcos" << endl;
-        cout << "🔴 Equipo 2: " << battleship_game.teams[1].ships_placed_count << " barcos" << endl;
+        cout << "\n Todos los barcos colocados en tableros de equipos!" << endl;
+        cout << "- Equipo 1: " << battleship_game.teams[0].ships_placed_count << " barcos" << endl;
+        cout << "- Equipo 2: " << battleship_game.teams[1].ships_placed_count << " barcos" << endl;
     }
     
     // Iniciar el juego
     startGame(battleship_game);
-    cout << "\n⚔️ ¡Iniciando combate!" << endl;
+    cout << "\n¡Iniciando combate!" << endl;
     
     // Notificar a todos los jugadores que el juego comenzó
     for (int i = 0; i < target_players; i++) {
@@ -466,7 +476,7 @@ int main() {
     bool game_over = false;
     while (!game_over) {
         int current_player = battleship_game.current_turn;
-        cout << "\n🎯 Turno de " << player_names[current_player] << endl;
+        cout << "\nTurno de " << player_names[current_player] << endl;
         
         // Notificar al jugador activo que es su turno
         GameMessage your_turn(MSG_YOUR_TURN);
@@ -488,7 +498,7 @@ int main() {
             GameMessage shot_msg;
             if (receiveGameMessage(client_sockets[current_player], shot_msg)) {
                 if (shot_msg.type == MSG_SHOOT) {
-                    cout << "  💥 " << player_names[current_player] << " dispara a (" << shot_msg.x << "," << shot_msg.y << ")" << endl;
+                    cout << player_names[current_player] << " dispara a (" << shot_msg.x << "," << shot_msg.y << ")" << endl;
                     
                     bool hit = false;
                     bool sunk = false;
@@ -540,7 +550,7 @@ int main() {
                                     // Encontrar qué barco fue impactado y actualizar sus hits
                                     for (auto& ship : battleship_game.teams[defending_team].team_ships) {
                                         if (checkShipHit(ship, shot_msg.x, shot_msg.y)) {
-                                            cout << "  🎯 ¡Impacto en equipo " << (defending_team + 1) << "!";
+                                            cout << " ¡Impacto en equipo " << (defending_team + 1) << "!";
                                             if (ship.sunk()) {
                                                 cout << " ¡Barco hundido!";
                                                 sunk = true;
@@ -552,7 +562,7 @@ int main() {
                                 } else {
                                     // Agua
                                     target_board.grid[shot_msg.x][shot_msg.y] = MISS;
-                                    cout << "  🌊 Agua..." << endl;
+                                    cout << " Agua..." << endl;
                                 }
                                 
                                 // Verificar si el equipo defensor perdió todos los barcos
@@ -613,22 +623,22 @@ int main() {
                             }
                             
                             battleship_game.players[battleship_game.current_turn].is_turn = true;
-                            cout << "  🔄 Turno cambiado. Ahora juega: " << player_names[battleship_game.current_turn] << endl;
+                            cout << "Turno cambiado. Ahora juega: " << player_names[battleship_game.current_turn] << endl;
                         } else if (!game_over && hit) {
-                            cout << "  🎯 " << player_names[current_player] << " mantiene el turno por impacto" << endl;
+                            cout << player_names[current_player] << " mantiene el turno por impacto" << endl;
                         }
                         
                     } else {
-                        cout << "  ❌ Disparo inválido" << endl;
+                        cout << "Disparo inválido" << endl;
                         GameMessage error(MSG_ERROR);
                         strncpy(error.text, "Disparo inválido, intenta otra posición", sizeof(error.text) - 1);
                         sendGameMessage(client_sockets[current_player], error);
                     }
                 } else {
-                    cout << "  ⚠️ Mensaje inesperado del jugador (esperaba disparo)" << endl;
+                    cout << "Mensaje inesperado del jugador (esperaba disparo)" << endl;
                 }
             } else {
-                cout << "  ❌ Error recibiendo disparo del jugador" << endl;
+                cout << "Error recibiendo disparo del jugador" << endl;
                 game_over = true; // Terminar juego si hay problemas de comunicación
                 break;
             }
@@ -642,8 +652,8 @@ int main() {
             int winner = battleship_game.current_turn;
             int loser = (winner + 1) % 2;
             
-            cout << "\n🏆 ¡" << player_names[winner] << " ha ganado la partida!" << endl;
-            cout << "📊 Barcos restantes:" << endl;
+            cout << "\n¡" << player_names[winner] << " ha ganado la partida!" << endl;
+            cout << "Barcos restantes:" << endl;
             cout << "   " << player_names[0] << ": " << battleship_game.players[0].ships_remaining() << endl;
             cout << "   " << player_names[1] << ": " << battleship_game.players[1].ships_remaining() << endl;
             
@@ -666,11 +676,11 @@ int main() {
             int winning_player = battleship_game.current_turn;
             int winning_team = getPlayerTeam(winning_player);
             
-            cout << "\n🏆 ¡Equipo " << (winning_team + 1) << " ha ganado la partida!" << endl;
-            cout << "🔵 Equipo ganador: ";
-            cout << "📊 Barcos restantes por equipo:" << endl;
-            cout << "   🔵 Equipo 1: " << battleship_game.teams[0].ships_remaining() << " barcos" << endl;
-            cout << "   🔴 Equipo 2: " << battleship_game.teams[1].ships_remaining() << " barcos" << endl;
+            cout << "\n¡Equipo " << (winning_team + 1) << " ha ganado la partida!" << endl;
+            cout << "Equipo ganador: ";
+            cout << "Barcos restantes por equipo:" << endl;
+            cout << "- Equipo 1: " << battleship_game.teams[0].ships_remaining() << " barcos" << endl;
+            cout << "- Equipo 2: " << battleship_game.teams[1].ships_remaining() << " barcos" << endl;
             
             // Enviar mensajes a todos los jugadores
             for (int i = 0; i < target_players; i++) {
@@ -696,9 +706,9 @@ int main() {
             cout << endl;
         }
         
-        cout << "\n✅ Partida completada exitosamente" << endl;
+        cout << "\nPartida completada exitosamente" << endl;
     } else {
-        cout << "\n⚠️ Juego terminado por error de comunicación" << endl;
+        cout << "\nJuego terminado por error de comunicación" << endl;
     }
     
     // Cerrar todas las conexiones

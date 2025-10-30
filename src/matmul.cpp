@@ -3,6 +3,7 @@
 #include <fstream>
 #include <string>
 #include <sstream>
+#include <algorithm> // Para std::all_of
 
 #include <stdio.h>
 
@@ -103,10 +104,17 @@ int convert_matriz(string path, vector<vector<int>> &matriz, char separador){
                 token.erase(token.find_last_not_of(" \t\n\r") + 1);
                 if(!token.empty()) {
                     try {
-                        int num = stoi(token);
-                        fila.push_back(num);
+                        // Verificar que el token contiene solo dígitos antes de convertirlo
+                        if (all_of(token.begin(), token.end(), ::isdigit)) {
+                            int num = stoi(token);
+                            fila.push_back(num);
+                        } else {
+                            cerr << "Error: El token '" << token << "' no es un número válido. Abortando operación.\n" << endl;
+                            return -1; // Detener la ejecución y retornar error
+                        }
                     } catch(const exception& e) {
-                        cerr << "Error: No se pudo convertir '" << token << "' a número\n" << endl;
+                        cerr << "Error: No se pudo convertir '" << token << "' a número. Abortando operación.\n" << endl;
+                        return -1; // Detener la ejecución y retornar error
                     }
                 }
             }
