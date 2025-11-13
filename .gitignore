@@ -1,0 +1,72 @@
+# Archivos compilados y ejecutables
+*.o
+*.obj
+*.a
+*.lib
+*.so
+*.dll
+*.dylib
+*.exe
+*.out
+
+# Ejecutables sin extensión (comunes en Linux/Unix)
+matmul
+indice_invertido
+indice_paralelo
+menu_principal
+user_admin
+
+# Archivos de depuración
+*.dSYM/
+*.pdb
+*.ilk
+
+# Archivos generados por el compilador
+*.gch
+*.pch
+
+# Archivos de Make
+*.d
+
+# Archivos temporales del sistema
+*~
+.DS_Store
+Thumbs.db
+
+# Archivos de IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*.tmp
+
+# Archivos de logs
+*.log
+
+# Archivos de configuración local
+.env.local
+config.local
+
+# Directorios de build
+build/
+bin/
+obj/
+debug/
+release/
+
+# Core dumps
+core
+core.*
+
+# Archivos específicos del proyecto battleship
+src/battleship/server
+src/battleship/client
+src/battleship/battleship_server
+src/battleship/battleship_client
+
+# Archivos de índices generados
+*.idx
+
+# Archivos de matrices temporales
+*.matrix
+*.mat
