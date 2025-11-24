@@ -40,7 +40,8 @@ map<int, string> perfiles_opciones = {
     {5, "Calcular f(x) = x*x + 2x + 8"},
     {6, "Conteo sobre texto"},
     {7, "Crear índice invertido"},
-    {8, "Crear índice invertido paralelo"}
+    {8, "Crear índice invertido paralelo"},
+    {10, "Prueba de rendimiento Indice Paralelo"}
 };
 
 // Usaremos unordered_map<string, pair<string,string>>
@@ -121,6 +122,26 @@ int create_index(string create_index_path, int modo){
         system(comando.c_str());
         return 0;
     }
+}
+int performance_test(string performance_test_path){
+    int n_lote = 0;
+
+    // Bucle hasta que número de lote sea un entero positivo
+    while (true) {
+            cout << "Ingrese el tamaño del lote: ";
+            if (!(cin >> n_lote) || n_lote <= 0) {
+                cout << "Error: n_lote debe ser un entero positivo. Intente de nuevo." << endl;
+                cin.clear();
+                cin.ignore(10000, '\n');
+                continue;
+            }
+
+            // Ambos valores válidos
+            break;
+        }
+    string comando = performance_test_path + " " + to_string(n_lote);
+    system(comando.c_str());
+    return 0;
 }
 
 int run_game(string game_app_path){
@@ -609,6 +630,9 @@ int main(int argc, char* argv[]) {
     env_vars["GAME_APP"].erase(0, env_vars["GAME_APP"].find_first_not_of(" \n\r\t"));
     env_vars["GAME_APP"].erase(env_vars["GAME_APP"].find_last_not_of(" \n\r\t") + 1);
 
+    env_vars["PERFORMANCE_TEST"].erase(0, env_vars["PERFORMANCE_TEST"].find_first_not_of(" \n\r\t"));
+    env_vars["PERFORMANCE_TEST"].erase(env_vars["PERFORMANCE_TEST"].find_last_not_of(" \n\r\t") + 1);
+
     // Verificación de limpieza
     string user_file = env_vars["USER_FILE"];
     string perfil_file = env_vars["PERFIL_FILE"];
@@ -621,7 +645,8 @@ int main(int argc, char* argv[]) {
     string create_index_path = env_vars["CREATE_INDEX"];
     string create_index_parallel_path = env_vars["INDICE_INVERT_PARALELO"];
     string game_app_path = env_vars["GAME_APP"];
-    
+    string performance_test_path = env_vars["PERFORMANCE_TEST"];
+
     // Concatenar directorio de libros con el archivo específico
     string ruta_libro = libros_dir + "/" + file;
 
@@ -713,6 +738,11 @@ int main(int argc, char* argv[]) {
                 limpiarConsola();
                 cout << ":::::::::: Crear índice invertido paralelo ::::::::::" << endl;
                 create_index(create_index_parallel_path, 1);
+                break;
+            case 10:
+                limpiarConsola();
+                cout << ":::::::::: Prueba de rendimiento ::::::::::" << endl;
+                performance_test(performance_test_path);
                 break;
             default:
                 limpiarConsola();

@@ -1,5 +1,5 @@
 # Compilar todo por defecto
-all: user_admin menu matmul indice_invertido battleship indice_paralelo
+all: user_admin menu matmul indice_invertido battleship indice_paralelo rendimiento
 
 # Programas individuales
 user_admin:
@@ -14,8 +14,12 @@ matmul:
 indice_invertido:
 	g++ -o indice_invertido -Wall indice_invertido.cpp
 
-indice_invertido:
+indice_paralelo:
 	g++ -o indice_paralelo -Wall indice_paralelo.cpp
+
+rendimiento:
+	g++ -o rendimiento -Wall rendimiento.cpp 
+
 
 # Compilar battleship completo (servidor y cliente)
 battleship: server client
@@ -30,7 +34,7 @@ client:
 
 # Limpiar archivos ejecutables
 clean:
-	rm -f user_admin menu matmul indice_invertido indice_paralelo battleship_server battleship_client
+	rm -f user_admin menu matmul indice_invertido indice_paralelo battleship_server battleship_client rendimiento
 
 .PHONY: all battleship server client clean
 

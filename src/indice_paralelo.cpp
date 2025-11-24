@@ -45,9 +45,10 @@ struct AppConfig {
     string path_mapa;
     string path_log;
     string path_carpeta;
+    string path_log_tiempos; 
     int N_THREADS;
     int N_LOTE;
-    bool valida = false; // Para saber si la configuración fue exitosa
+    bool valida = false;
 };
 
 
@@ -344,7 +345,7 @@ AppConfig configurar_aplicacion(int argc, char* argv[]) {
         cout << "Uso correcto: " << argv[0] << " <nombre_indice.idx> <ruta_carpetas> <n_threads> <n_lote>" << endl;
         cout << "Ejemplo: " << argv[0] << " mi_indice.idx libros 5 10" << endl;
         cout << "Esto generará: data/mi_indice.idx, data/MAPA-LIBROS.map, data/mi_indice.log" << endl;
-        return config; // config.valida sigue en false
+        return config;
     }
 
     // Derivar los paths del argumento base
@@ -371,14 +372,16 @@ AppConfig configurar_aplicacion(int argc, char* argv[]) {
     }
     
     // Todos los archivos se crean en la carpeta data/
-    config.path_indice = "data/" + nombre_archivo;  // data/mi_indice.idx
-    config.path_mapa = "data/MAPA-LIBROS.map";      // Nombre fijo
-    config.path_log = "data/" + nombre_base + ".log";  // data/mi_indice.log
+    config.path_indice = "data/" + nombre_archivo;
+    config.path_mapa = "data/MAPA-LIBROS.map";
+    config.path_log = "data/" + nombre_base + ".log";
+    config.path_log_tiempos = "data/logs_tiempos.txt"; 
 
     cout << "\n--- Configuración ---" << endl;
     cout << "Path Indice: " << config.path_indice << endl;
     cout << "Path Mapa  : " << config.path_mapa << endl;
     cout << "Path Log   : " << config.path_log << endl;
+    cout << "Path Log Tiempos: " << config.path_log_tiempos << endl; 
     cout << "Path Libros: " << config.path_carpeta << endl;
     cout << "N_THREADS  : " << config.N_THREADS << endl;
     cout << "N_LOTE     : " << config.N_LOTE << endl;
@@ -401,7 +404,7 @@ int main(int argc, char* argv[]) {
     // 1. Configurar la aplicación
     AppConfig config = configurar_aplicacion(argc, argv);
     if (!config.valida) {
-        return 1; // Salir si los argumentos son incorrectos
+        return 1;
     }
 
     // 2. Crear/Limpiar los archivos de salida
@@ -409,15 +412,26 @@ int main(int argc, char* argv[]) {
     if (crear_archivo(config.path_mapa) != 0) return 1;
     if (crear_archivo(config.path_log) != 0) return 1;
 
-    // 3. Ejecutar el proceso
+    // 3. Ejecutar el proceso y medir tiempo
     auto inicio = chrono::high_resolution_clock::now();
     
-    crear_indice(config); // Pasar la configuración completa
+    crear_indice(config);
     
     auto fin = chrono::high_resolution_clock::now();
-    chrono::duration<double> duracion = fin - inicio;
+    chrono::duration<double, milli> duracion = fin - inicio; // ← Cambiar a milliseconds
 
     cout << "\n=== Índice invertido creado exitosamente ===" << endl;
-    cout << "Tiempo total de procesamiento: " << duracion.count() << " segundos" << endl;
+    cout << "Tiempo total: " << duracion.count() << " ms" << endl;
+
+    // 4. Escribir en logs_tiempos.txt
+    ofstream log_tiempos(config.path_log_tiempos, ios::app); // ← Modo append
+    if (log_tiempos.is_open()) {
+        log_tiempos << "(" << config.N_THREADS << ", " << duracion.count() << ")" << endl;
+        log_tiempos.close();
+        cout << "Registro de tiempo guardado en: " << config.path_log_tiempos << endl;
+    } else {
+        cerr << "Error: No se pudo abrir el archivo de log de tiempos" << endl;
+    }
+
     return 0;
 }
