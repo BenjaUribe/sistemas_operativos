@@ -13,10 +13,13 @@
 matmul
 indice_invertido
 indice_paralelo
-menu_principal
+menu
 user_admin
+buscador_sistOpe
 battleship_client
 battleship_server
+motor_busqueda
+cache
 
 # Archivos de depuración
 *.dSYM/
@@ -68,6 +71,7 @@ src/battleship/battleship_client
 
 # Archivos de índices generados
 *.idx
+*.map
 
 # Archivos de matrices temporales
 *.matrix
