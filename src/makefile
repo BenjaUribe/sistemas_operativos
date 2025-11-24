@@ -1,5 +1,5 @@
 # Compilar todo por defecto
-all: user_admin menu matmul indice_invertido battleship indice_paralelo buscador_sistema	
+all: user_admin menu matmul indice_invertido battleship indice_paralelo rendimiento buscador_sistema
 
 # Programas individuales
 user_admin:
@@ -8,7 +8,7 @@ user_admin:
 menu:
 	g++ -o menu -Wall menu_principal.cpp
 
-matmul:	
+matmul:
 	g++ -o matmul -Wall matmul.cpp
 
 indice_invertido:
@@ -16,6 +16,10 @@ indice_invertido:
 
 indice_paralelo:
 	g++ -o indice_paralelo -Wall indice_paralelo.cpp
+
+rendimiento:
+	g++ -o rendimiento -Wall rendimiento.cpp 
+
 
 # Compilar battleship completo (servidor y cliente)
 battleship: server client
@@ -27,7 +31,7 @@ server:
 # Compilar cliente
 client:
 	g++ -o battleship_client -Wall -std=c++11 battleship/client.cpp battleship/board.cpp battleship/ship.cpp battleship/player.cpp battleship/game_logic.cpp
-
+  
 # Sistema de búsqueda (Motor, Cache y Buscador)
 buscador_sistema: motor_busqueda cache buscador_sistOpe
 
@@ -45,7 +49,7 @@ buscador_sistope:
 
 # Limpiar archivos ejecutables
 clean:
-	rm -f user_admin menu matmul indice_invertido indice_paralelo battleship_server battleship_client motor_busqueda cache buscador_sistOpe
+	rm -f user_admin menu matmul indice_invertido indice_paralelo battleship_server battleship_client rendimiento motor_busqueda cache buscador_sistOpe
 
 .PHONY: all battleship server client buscador_sistema motor_busqueda cache buscador_sistope clean
 
