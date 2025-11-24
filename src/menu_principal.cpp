@@ -7,11 +7,13 @@
 #include <sstream>
 #include <cctype>
 #include <stdio.h>
+#include <filesystem>
 
 #ifdef _WIN32
     #include <windows.h>
 #else
     #include <unistd.h>
+    #include <dirent.h>
 #endif
 
 using namespace std;
@@ -41,6 +43,7 @@ map<int, string> perfiles_opciones = {
     {6, "Conteo sobre texto"},
     {7, "Crear índice invertido"},
     {8, "Crear índice invertido paralelo"},
+    {9, "BUSCADOR SistOpe"},
     {10, "Prueba de rendimiento Indice Paralelo"}
 };
 
@@ -148,6 +151,68 @@ int run_game(string game_app_path){
     system((game_app_path).c_str());
     return 0;
 }
+
+int buscador(string search_app_path, string query_file){
+    namespace fs = std::filesystem;
+    
+    // Buscar archivos .idx en la carpeta data/
+    vector<string> archivos_idx;
+    string data_path = "data/";
+    
+    // Verificar si la carpeta data/ existe
+    if (!fs::exists(data_path) || !fs::is_directory(data_path)) {
+        cout << "\nError: La carpeta 'data/' no existe." << endl;
+        return;
+    }
+    
+    // Iterar sobre todos los archivos en data/
+    for (const auto& entry : fs::directory_iterator(data_path)) {
+        if (entry.is_regular_file()) {
+            string filename = entry.path().filename().string();
+            if (terminaEnIdx(filename)) {
+                archivos_idx.push_back(entry.path().string());
+            }
+        }
+    }
+    
+    // Verificar si se encontraron archivos .idx
+    if (archivos_idx.empty()) {
+        cout << "\nNo se encontraron archivos .idx en la carpeta data/" << endl;
+        cout << "Por favor, cree primero un indice invertido usando la opcion 7 u 8." << endl;
+        return;
+    }
+    
+    // Mostrar archivos disponibles
+    cout << "\n=== Archivos de indice disponibles ===" << endl;
+    for (size_t i = 0; i < archivos_idx.size(); i++) {
+        cout << i + 1 << ". " << archivos_idx[i] << endl;
+    }
+    
+    // Seleccionar archivo
+    int seleccion;
+    do {
+        cout << "\nSeleccione el numero del archivo a usar (1-" << archivos_idx.size() << "): ";
+        cin >> seleccion;
+        
+        if (cin.fail() || seleccion < 1 || seleccion > (int)archivos_idx.size()) {
+            cout << "Error: Seleccion invalida." << endl;
+            cin.clear();
+            cin.ignore(10000, '\n');
+            seleccion = 0;
+        }
+    } while (seleccion < 1 || seleccion > (int)archivos_idx.size());
+    
+    string nombre_indice = archivos_idx[seleccion - 1];
+    cout << "\nUsando archivo: " << nombre_indice << endl;
+
+    // Ejecutar buscador_sistOpe con el archivo seleccionado
+    system((search_app_path + " " + nombre_indice + " " + query_file).c_str());
+  
+    return 0;
+}
+
+
+
 
 // funciones para las matrices
 int matrizNxN(string M_path, char separador){
@@ -632,6 +697,11 @@ int main(int argc, char* argv[]) {
 
     env_vars["PERFORMANCE_TEST"].erase(0, env_vars["PERFORMANCE_TEST"].find_first_not_of(" \n\r\t"));
     env_vars["PERFORMANCE_TEST"].erase(env_vars["PERFORMANCE_TEST"].find_last_not_of(" \n\r\t") + 1);
+  
+    env_vars["SEARCH_APP"].erase(0, env_vars["SEARCH_APP"].find_first_not_of(" \n\r\t"));
+    env_vars["SEARCH_APP"].erase(env_vars["SEARCH_APP"].find_last_not_of(" \n\r\t") + 1);
+
+    
 
     // Verificación de limpieza
     string user_file = env_vars["USER_FILE"];
@@ -646,6 +716,7 @@ int main(int argc, char* argv[]) {
     string create_index_parallel_path = env_vars["INDICE_INVERT_PARALELO"];
     string game_app_path = env_vars["GAME_APP"];
     string performance_test_path = env_vars["PERFORMANCE_TEST"];
+    string search_app_path = env_vars["SEARCH_APP"];
 
     // Concatenar directorio de libros con el archivo específico
     string ruta_libro = libros_dir + "/" + file;
@@ -743,6 +814,10 @@ int main(int argc, char* argv[]) {
                 limpiarConsola();
                 cout << ":::::::::: Prueba de rendimiento ::::::::::" << endl;
                 performance_test(performance_test_path);
+            case 9:
+                limpiarConsola();
+                cout << ":::::::::: BUSCADOR SistOpe ::::::::::" << endl;
+                buscador(search_app_path, query_file);
                 break;
             default:
                 limpiarConsola();
