@@ -152,7 +152,7 @@ int run_game(string game_app_path){
     return 0;
 }
 
-int buscador(string search_app_path, string query_file){
+int buscador(string search_app_path){
     namespace fs = std::filesystem;
     
     // Buscar archivos .idx en la carpeta data/
@@ -162,7 +162,7 @@ int buscador(string search_app_path, string query_file){
     // Verificar si la carpeta data/ existe
     if (!fs::exists(data_path) || !fs::is_directory(data_path)) {
         cout << "\nError: La carpeta 'data/' no existe." << endl;
-        return;
+        return 0;
     }
     
     // Iterar sobre todos los archivos en data/
@@ -179,7 +179,7 @@ int buscador(string search_app_path, string query_file){
     if (archivos_idx.empty()) {
         cout << "\nNo se encontraron archivos .idx en la carpeta data/" << endl;
         cout << "Por favor, cree primero un indice invertido usando la opcion 7 u 8." << endl;
-        return;
+        return 0;
     }
     
     // Mostrar archivos disponibles
@@ -206,7 +206,7 @@ int buscador(string search_app_path, string query_file){
     cout << "\nUsando archivo: " << nombre_indice << endl;
 
     // Ejecutar buscador_sistOpe con el archivo seleccionado
-    system((search_app_path + " " + nombre_indice + " " + query_file).c_str());
+    system((search_app_path + " " + nombre_indice).c_str());
   
     return 0;
 }
@@ -817,7 +817,7 @@ int main(int argc, char* argv[]) {
             case 9:
                 limpiarConsola();
                 cout << ":::::::::: BUSCADOR SistOpe ::::::::::" << endl;
-                buscador(search_app_path, query_file);
+                buscador(search_app_path);
                 break;
             default:
                 limpiarConsola();
