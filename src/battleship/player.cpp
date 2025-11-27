@@ -47,8 +47,13 @@ void initializePlayer(Player& player, int id, const string& name) {
     // los mensajes MSG_PLACE_SHIP. Evita duplicados en players[].ships.
 }
 
-// Realizar un disparo
+// Realizar un disparo (versión sin estadísticas - para compatibilidad)
 bool makeShot(Player& attacker, Player& defender, int x, int y) {
+    return makeShot(attacker, defender, x, y, nullptr);
+}
+
+// Realizar un disparo (versión con estadísticas)
+bool makeShot(Player& attacker, Player& defender, int x, int y, GameStats* stats) {
     // Verificar posición válida
     if (!isValidPosition(x, y, defender.own_board.size)) {
         return false;
@@ -60,9 +65,12 @@ bool makeShot(Player& attacker, Player& defender, int x, int y) {
         return false;
     }
     
+    bool is_hit = false;
+    
     // Verificar si hay un barco en esa posición
     if (defender.own_board.grid[x][y] == SHIP) {
         // ¡Impacto!
+        is_hit = true;
         updateCell(defender.own_board, x, y, HIT);
         updateCell(attacker.opponent_board, x, y, HIT);
         
@@ -79,9 +87,15 @@ bool makeShot(Player& attacker, Player& defender, int x, int y) {
         }
     } else {
         // Agua
+        is_hit = false;
         updateCell(defender.own_board, x, y, MISS);
         updateCell(attacker.opponent_board, x, y, MISS);
         cout << "Agua..." << endl;
+    }
+    
+    // Actualizar estadísticas si se proporcionó
+    if (stats != nullptr) {
+        updateStats(*stats, attacker.id, is_hit);
     }
     
     return true;
