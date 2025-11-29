@@ -1,0 +1,212 @@
+========================================
+PARTIDA - 2025-11-27 20:14:44
+Modo: 1vs1
+========================================
+Jugador 1: 1
+  - Aciertos: 4
+  - Fallos: 2
+  - Precisión: 66.67%
+
+Jugador 2: 2
+  - Aciertos: 9
+  - Fallos: 1
+  - Precisión: 90.00%
+
+Total de turnos: 32
+Duración: 1m 44s
+Ganador: 2
+========================================
+
+========================================
+PARTIDA - 2025-11-27 20:18:11
+Modo: 2vs2
+========================================
+EQUIPO 1:
+  1:
+    - Aciertos: 0
+    - Fallos: 0
+    - Precisión: 0.00%
+  2:
+    - Aciertos: 0
+    - Fallos: 0
+    - Precisión: 0.00%
+  Total Equipo 1: 0 aciertos, 0 fallos (0.00%)
+
+EQUIPO 2:
+  3:
+    - Aciertos: 0
+    - Fallos: 0
+    - Precisión: 0.00%
+  4:
+    - Aciertos: 0
+    - Fallos: 0
+    - Precisión: 0.00%
+  Total Equipo 2: 0 aciertos, 0 fallos (0.00%)
+
+Total de turnos: 22
+Duración: 4m 10s
+Ganador: Equipo 1
+========================================
+
+========================================
+PARTIDA - 2025-11-27 20:26:49
+Modo: 2vs2
+========================================
+EQUIPO 1:
+  1:
+    - Aciertos: 0
+    - Fallos: 0
+    - Precisión: 0.00%
+  2:
+    - Aciertos: 0
+    - Fallos: 0
+    - Precisión: 0.00%
+  Total Equipo 1: 0 aciertos, 0 fallos (0.00%)
+
+EQUIPO 2:
+  3:
+    - Aciertos: 0
+    - Fallos: 0
+    - Precisión: 0.00%
+  4:
+    - Aciertos: 0
+    - Fallos: 0
+    - Precisión: 0.00%
+  Total Equipo 2: 0 aciertos, 0 fallos (0.00%)
+
+Total de turnos: 23
+Duración: 3m 28s
+Ganador: Equipo 1
+========================================
+
+========================================
+PARTIDA - 2025-11-27 20:34:04
+Modo: 2vs2
+========================================
+EQUIPO 1:
+  1:
+    - Aciertos: 0
+    - Fallos: 0
+    - Precisión: 0.00%
+  2:
+    - Aciertos: 0
+    - Fallos: 0
+    - Precisión: 0.00%
+  Total Equipo 1: 0 aciertos, 0 fallos (0.00%)
+
+EQUIPO 2:
+  3:
+    - Aciertos: 0
+    - Fallos: 0
+    - Precisión: 0.00%
+  4:
+    - Aciertos: 0
+    - Fallos: 0
+    - Precisión: 0.00%
+  Total Equipo 2: 0 aciertos, 0 fallos (0.00%)
+
+Total de turnos: 20
+Duración: 2m 52s
+Ganador: Equipo 1
+========================================
+
+========================================
+PARTIDA - 2025-11-27 20:43:52
+Modo: 2vs2
+========================================
+EQUIPO 1:
+  1:
+    - Aciertos: 16
+    - Fallos: 1
+    - Precisión: 94.12%
+  2:
+    - Aciertos: 2
+    - Fallos: 0
+    - Precisión: 100.00%
+  Total Equipo 1: 18 aciertos, 1 fallos (94.74%)
+
+EQUIPO 2:
+  3:
+    - Aciertos: 0
+    - Fallos: 1
+    - Precisión: 0.00%
+  4:
+    - Aciertos: 0
+    - Fallos: 0
+    - Precisión: 0.00%
+  Total Equipo 2: 0 aciertos, 1 fallos (0.00%)
+
+Total de turnos: 2
+Duración: 3m 6s
+Ganador: Equipo 1
+========================================
+
+========================================
+PARTIDA - 2025-11-28 10:10:37
+Modo: 1vs1
+========================================
+Jugador 1: 1
+  - Aciertos: 1
+  - Fallos: 2
+  - Precisión: 33.33%
+
+Jugador 2: 2
+  - Aciertos: 9
+  - Fallos: 1
+  - Precisión: 90.00%
+
+Total de turnos: 3
+Duración: 1m 37s
+Ganador: 2
+========================================
+
+========================================
+PARTIDA - 2025-11-28 10:29:39
+Modo: 2vs2
+========================================
+EQUIPO 1:
+  1:
+    - Aciertos: 9
+    - Fallos: 3
+    - Precisión: 75.00%
+  2:
+    - Aciertos: 9
+    - Fallos: 2
+    - Precisión: 81.82%
+  Total Equipo 1: 18 aciertos, 5 fallos (78.26%)
+
+EQUIPO 2:
+  3:
+    - Aciertos: 13
+    - Fallos: 3
+    - Precisión: 81.25%
+  4:
+    - Aciertos: 5
+    - Fallos: 2
+    - Precisión: 71.43%
+  Total Equipo 2: 18 aciertos, 5 fallos (78.26%)
+
+Total de turnos: 10
+Duración: 6m 11s
+Ganador: Equipo 1
+========================================
+
+========================================
+PARTIDA - 2025-11-28 11:31:12
+Modo: 1vs1
+========================================
+Jugador 1: 2
+  - Aciertos: 9
+  - Fallos: 7
+  - Precisión: 56.25%
+
+Jugador 2: 1
+  - Aciertos: 4
+  - Fallos: 7
+  - Precisión: 36.36%
+
+Total de turnos: 14
+Duración: 2m 24s
+Ganador: 2
+========================================
+
