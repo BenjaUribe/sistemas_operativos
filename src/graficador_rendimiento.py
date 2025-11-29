@@ -10,7 +10,7 @@ def obtener_ruta_base():
 
 # Cargar variables de entorno
 dir_actual = obtener_ruta_base()
-dir_proyecto = os.path.dirname(dir_actual)  # Subir un nivel desde src/
+dir_proyecto = os.path.dirname(dir_actual)
 ruta_env = os.path.join(dir_proyecto, '.env')
 load_dotenv(ruta_env)
 
@@ -58,7 +58,6 @@ plt.xticks(threads)
 # Obtener ruta de salida desde .env
 ruta_relativa = os.getenv('GRAFICOS_REN', 'data/graficos/graficador_rendimiento_indice')
 if ruta_relativa.startswith('data/'):
-    # Convertir data/... a src/data/...
     ruta_graficos = os.path.join(dir_actual, ruta_relativa)
 else:
     ruta_graficos = os.path.join(dir_proyecto, ruta_relativa)
@@ -75,7 +74,7 @@ print(f"Grafico guardado exitosamente en: {output_path}")
 # Vaciar el archivo de logs
 try:
     with open(archivo_logs, "w") as f:
-        pass  # Abre en modo escritura y cierra, dejándolo vacío
+        pass  
     print(f"Archivo de logs vaciado: {archivo_logs}")
 except OSError as e:
     print(f"Advertencia: No se pudo vaciar el archivo de logs: {e}")

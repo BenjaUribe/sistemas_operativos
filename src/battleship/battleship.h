@@ -5,7 +5,7 @@
 #include <vector>
 #include <string>
 #include <cstring>
-#include <ctime> // Para el tiempo
+#include <ctime> 
 
 using namespace std;
 
@@ -132,8 +132,8 @@ struct Player {
     vector<Ship> ships;
     bool is_turn;
     bool is_ready;
-    int hits;           // Aciertos
-    int total_shots;    // Disparos totales
+    int hits;           
+    int total_shots;    
     
     // Constructor
     Player();
