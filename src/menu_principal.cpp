@@ -44,7 +44,8 @@ map<int, string> perfiles_opciones = {
     {7, "Crear índice invertido"},
     {8, "Crear índice invertido paralelo"},
     {9, "BUSCADOR SistOpe"},
-    {10, "Prueba de rendimiento Indice Paralelo"}
+    {10, "Prueba de rendimiento Indice Paralelo"},
+    {11, "Graficos de Estadisticas del Juego"}
 };
 
 // Usaremos unordered_map<string, pair<string,string>>
@@ -143,6 +144,12 @@ int performance_test(string performance_test_path){
             break;
         }
     string comando = performance_test_path + " " + to_string(n_lote);
+    system(comando.c_str());
+    return 0;
+}
+
+int game_stats(string graficador_estadisticas_path){
+    string comando = "python3 \"" + graficador_estadisticas_path + "\"";
     system(comando.c_str());
     return 0;
 }
@@ -701,6 +708,9 @@ int main(int argc, char* argv[]) {
     env_vars["SEARCH_APP"].erase(0, env_vars["SEARCH_APP"].find_first_not_of(" \n\r\t"));
     env_vars["SEARCH_APP"].erase(env_vars["SEARCH_APP"].find_last_not_of(" \n\r\t") + 1);
 
+    env_vars["GRAFICADOR_ESTADISTICAS"].erase(0, env_vars["GRAFICADOR_ESTADISTICAS"].find_first_not_of(" \n\r\t"));
+    env_vars["GRAFICADOR_ESTADISTICAS"].erase(env_vars["GRAFICADOR_ESTADISTICAS"].find_last_not_of(" \n\r\t") + 1);
+
     
 
     // Verificación de limpieza
@@ -717,6 +727,7 @@ int main(int argc, char* argv[]) {
     string game_app_path = env_vars["GAME_APP"];
     string performance_test_path = env_vars["PERFORMANCE_TEST"];
     string search_app_path = env_vars["SEARCH_APP"];
+    string graficador_estadisticas_path = env_vars["GRAFICADOR_ESTADISTICAS"];
 
     // Concatenar directorio de libros con el archivo específico
     string ruta_libro = libros_dir + "/" + file;
@@ -814,10 +825,16 @@ int main(int argc, char* argv[]) {
                 limpiarConsola();
                 cout << ":::::::::: Prueba de rendimiento ::::::::::" << endl;
                 performance_test(performance_test_path);
+                break;
             case 9:
                 limpiarConsola();
                 cout << ":::::::::: BUSCADOR SistOpe ::::::::::" << endl;
                 buscador(search_app_path);
+                break;
+            case 11:
+                limpiarConsola();
+                cout << ":::::::::: Graficos de Estadisticas del Juego ::::::::::" << endl;
+                game_stats(graficador_estadisticas_path);
                 break;
             default:
                 limpiarConsola();

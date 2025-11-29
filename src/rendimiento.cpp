@@ -56,8 +56,8 @@ int main(int argc, char* argv[]) {
     
     
     // Limpiar espacios en blanco de CANT_THREADS
-    env_vars["CANT_THREADS"].erase(0, env_vars["CANT_THREADS"].find_first_not_of(" \n\r\t"));
-    env_vars["CANT_THREADS"].erase(env_vars["CANT_THREADS"].find_last_not_of(" \n\r\t") + 1);
+    env_vars["SIZE_ARRAY_THREADS"].erase(0, env_vars["SIZE_ARRAY_THREADS"].find_first_not_of(" \n\r\t"));
+    env_vars["SIZE_ARRAY_THREADS"].erase(env_vars["SIZE_ARRAY_THREADS"].find_last_not_of(" \n\r\t") + 1);
 
     // Limpiar espacios en blanco de INDICE_INVERT_PARALELO
     env_vars["INDICE_INVERT_PARALELO"].erase(0, env_vars["INDICE_INVERT_PARALELO"].find_first_not_of(" \n\r\t"));
@@ -70,36 +70,30 @@ int main(int argc, char* argv[]) {
     env_vars["LIBROS_DIR"].erase(0, env_vars["LIBROS_DIR"].find_first_not_of(" \n\r\t"));
     env_vars["LIBROS_DIR"].erase(env_vars["LIBROS_DIR"].find_last_not_of(" \n\r\t") + 1);
     
-    string cant_threads_str = env_vars["CANT_THREADS"];
+    int size_array_threads = stoi(env_vars["SIZE_ARRAY_THREADS"]);
     string index_path = env_vars["INDICE_INVERT_PARALELO"];
     string nombre_indice = env_vars["NAME_PTRIAL"];
-    string path_carpeta = env_vars["LIBROS_DIR"]; // ← CORRECCIÓN: Usar LIBROS_DIR
+    string path_carpeta = env_vars["LIBROS_DIR"];
     
-    // Convertir string a vector de enteros
+    // Pedir al usuario que ingrese los números de threads
     vector<int> CANT_THREADS;
-    stringstream ss(cant_threads_str);
-    string item;
+    cout << "Ingrese " << size_array_threads << " numeros de threads:" << endl;
     
-    // AGREGAR ESTE BLOQUE PARA PARSEAR:
-    while (getline(ss, item, ',')) {
-        try {
-            item.erase(0, item.find_first_not_of(" \n\r\t"));
-            item.erase(item.find_last_not_of(" \n\r\t") + 1);
-            if (!item.empty()) {
-                CANT_THREADS.push_back(stoi(item));
-            }
-        } catch (const exception& e) {
-            cerr << "Error al parsear thread: " << item << " - " << e.what() << endl;
+    for (int i = 0; i < size_array_threads; i++) {
+        int num_thread;
+        cout << "Thread #" << (i + 1) << ": ";
+        cin >> num_thread;
+        
+        if (num_thread <= 0) {
+            cerr << "Error: El numero de threads debe ser positivo. Intente nuevamente." << endl;
+            i--; // Repetir esta iteración
+            continue;
         }
+        
+        CANT_THREADS.push_back(num_thread);
     }
     
-    // Verificar que se parsearon threads
-    if (CANT_THREADS.empty()) {
-        cerr << "ERROR: No se pudieron parsear threads de: " << cant_threads_str << endl;
-        return 1;
-    }
-    
-    cout << "Threads a probar: ";
+    cout << "\nThreads a probar: ";
     for (int t : CANT_THREADS) cout << t << " ";
     cout << endl;
     cout << "iniciando" << endl;

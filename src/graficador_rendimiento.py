@@ -1,14 +1,30 @@
 import matplotlib.pyplot as plt
 import re
+import os
+from datetime import datetime
+from dotenv import load_dotenv
+
+def obtener_ruta_base():
+    """Retorna el directorio donde se encuentra este script .py"""
+    return os.path.dirname(os.path.abspath(__file__))
+
+# Cargar variables de entorno
+dir_actual = obtener_ruta_base()
+dir_proyecto = os.path.dirname(dir_actual)  # Subir un nivel desde src/
+ruta_env = os.path.join(dir_proyecto, '.env')
+load_dotenv(ruta_env)
 
 print("Generando grafico de rendimiento...")
 
+# Obtener ruta del archivo de logs
+archivo_logs = os.path.join(dir_actual, 'data', 'logs_tiempos.txt')
+
 # Leer el archivo de logs de tiempos
 try:
-    with open("data/logs_tiempos.txt", "r") as f:
+    with open(archivo_logs, "r") as f:
         lines = f.readlines()
 except FileNotFoundError:
-    print("ERROR: No se encontro el archivo data/logs_tiempos.txt")
+    print(f"ERROR: No se encontro el archivo {archivo_logs}")
     exit(1)
 
 # Parsear las tuplas (threads, tiempo)
@@ -39,15 +55,28 @@ plt.title('Rendimiento del Indice Invertido Paralelo', fontsize=14, fontweight='
 plt.grid(True, alpha=0.3)
 plt.xticks(threads)
 
-# Guardar el grafico
-output_path = "data/graficos/grafico_rendimiento.png"
+# Obtener ruta de salida desde .env
+ruta_relativa = os.getenv('GRAFICOS_REN', 'data/graficos/graficador_rendimiento_indice')
+if ruta_relativa.startswith('data/'):
+    # Convertir data/... a src/data/...
+    ruta_graficos = os.path.join(dir_actual, ruta_relativa)
+else:
+    ruta_graficos = os.path.join(dir_proyecto, ruta_relativa)
+
+# Crear directorio si no existe
+os.makedirs(ruta_graficos, exist_ok=True)
+
+# Guardar el grafico con timestamp
+fecha_hora = datetime.now().strftime("%Y-%m-%d %H-%M-%S")
+output_path = os.path.join(ruta_graficos, f"{fecha_hora}.png")
 plt.savefig(output_path, dpi=300, bbox_inches='tight')
 print(f"Grafico guardado exitosamente en: {output_path}")
 
 # Vaciar el archivo de logs
 try:
-    with open("data/logs_tiempos.txt", "w") as f:
+    with open(archivo_logs, "w") as f:
         pass  # Abre en modo escritura y cierra, dejándolo vacío
+    print(f"Archivo de logs vaciado: {archivo_logs}")
 except OSError as e:
     print(f"Advertencia: No se pudo vaciar el archivo de logs: {e}")
 

@@ -3,14 +3,14 @@
 // === IMPLEMENTACIÓN DE LA CLASE PLAYER ===
 
 // Constructores
-Player::Player() : id(0), name(""), is_turn(false), is_ready(false) {
+Player::Player() : id(0), name(""), is_turn(false), is_ready(false), hits(0), total_shots(0) {
     own_board = Board();
     opponent_board = Board();
 }
 
 // nombre  = username ??
 Player::Player(int player_id, const string& player_name) 
-    : id(player_id), name(player_name), is_turn(false), is_ready(false) {
+    : id(player_id), name(player_name), is_turn(false), is_ready(false), hits(0), total_shots(0) {
     own_board = Board();
     opponent_board = Board();
 }
@@ -37,6 +37,8 @@ void initializePlayer(Player& player, int id, const string& name) {
     player.name = name;
     player.is_turn = false;
     player.is_ready = false;
+    player.hits = 0;
+    player.total_shots = 0;
     
     initializeBoard(player.own_board);
     initializeBoard(player.opponent_board);
@@ -60,9 +62,13 @@ bool makeShot(Player& attacker, Player& defender, int x, int y) {
         return false;
     }
     
+    // Incrementar contador de disparos
+    attacker.total_shots++;
+    
     // Verificar si hay un barco en esa posición
     if (defender.own_board.grid[x][y] == SHIP) {
         // ¡Impacto!
+        attacker.hits++;  // Incrementar aciertos
         updateCell(defender.own_board, x, y, HIT);
         updateCell(attacker.opponent_board, x, y, HIT);
         
