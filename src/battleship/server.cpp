@@ -2,6 +2,7 @@
 #include <arpa/inet.h>
 #include <sys/socket.h>
 #include <unistd.h>
+#include <ctime>
 
 void print_pid(){
     #ifdef _WIN32
@@ -302,6 +303,9 @@ int main() {
     
     cout << "\nIniciando fase de colocación de barcos..." << endl;
     
+    // INICIAR MEDICIÓN DE TIEMPO (incluye colocación de barcos)
+    time_t tiempo_inicio = time(nullptr);
+    
     // Dar tiempo para que los clientes procesen los mensajes
     cout << "Esperando que los clientes estén listos..." << endl;
     usleep(1000000); // Esperar 1 segundo
@@ -456,6 +460,13 @@ int main() {
     startGame(battleship_game);
     cout << "\n¡Iniciando combate!" << endl;
     
+    // Inicializar contadores de estadísticas (tiempo_inicio ya se inicializó antes)
+    int turnos_totales = 0;
+    for (int i = 0; i < target_players; i++) {
+        battleship_game.players[i].hits = 0;
+        battleship_game.players[i].total_shots = 0;
+    }
+    
     // Notificar a todos los jugadores que el juego comenzó
     for (int i = 0; i < target_players; i++) {
         GameMessage game_start(MSG_WAIT);
@@ -507,11 +518,19 @@ int main() {
                         // Modo 1vs1: Atacar tablero individual del oponente
                         int opponent = (current_player + 1) % 2;
                         
+                        // Incrementar contador de disparos
+                        battleship_game.players[current_player].total_shots++;
+                        
                         if (makeShot(battleship_game.players[current_player], 
                                     battleship_game.players[opponent], 
                                     shot_msg.x, shot_msg.y)) {
                             
                             hit = (battleship_game.players[opponent].own_board.grid[shot_msg.x][shot_msg.y] == HIT);
+                            
+                            // Incrementar contador de aciertos
+                            if (hit) {
+                                battleship_game.players[current_player].hits++;
+                            }
                             
                             // Verificar si algún barco se hundió
                             if (hit) {
@@ -541,11 +560,15 @@ int main() {
                             if (target_board.grid[shot_msg.x][shot_msg.y] != HIT && 
                                 target_board.grid[shot_msg.x][shot_msg.y] != MISS) {
                                 
+                                // Incrementar contador de disparos
+                                battleship_game.players[current_player].total_shots++;
+                                
                                 // Verificar si hay un barco en esa posición
                                 if (target_board.grid[shot_msg.x][shot_msg.y] == SHIP) {
                                     // ¡Impacto!
                                     target_board.grid[shot_msg.x][shot_msg.y] = HIT;
                                     hit = true;
+                                    battleship_game.players[current_player].hits++;
                                     
                                     // Encontrar qué barco fue impactado y actualizar sus hits
                                     for (auto& ship : battleship_game.teams[defending_team].team_ships) {
@@ -601,6 +624,7 @@ int main() {
                             if (selected_mode == MODE_1VS1) {
                                 // Alternancia simple entre 2 jugadores
                                 battleship_game.current_turn = (battleship_game.current_turn + 1) % 2;
+                                if (battleship_game.current_turn == 0) turnos_totales++;
                             } else {
                                 // Modo 2vs2: Usar un orden de turnos por equipos para no alternar siempre
                                 // entre los mismos dos jugadores. Definimos un orden fijo que
@@ -620,6 +644,7 @@ int main() {
 
                                 int nextPos = (pos + 1) % orderSize;
                                 battleship_game.current_turn = turnOrder[nextPos];
+                                if (battleship_game.current_turn == 0) turnos_totales++;
                             }
                             
                             battleship_game.players[battleship_game.current_turn].is_turn = true;
@@ -671,6 +696,16 @@ int main() {
             lose_msg.data1 = 0; // 0 = perdedor
             sendGameMessage(client_sockets[loser], lose_msg);
             
+            // GUARDAR ESTADÍSTICAS 1v1
+            time_t tiempo_fin = time(nullptr);
+            int j1_fallos = battleship_game.players[0].total_shots - battleship_game.players[0].hits;
+            int j2_fallos = battleship_game.players[1].total_shots - battleship_game.players[1].hits;
+            guardarEstadisticasPartida1v1(
+                battleship_game.players[0].hits, j1_fallos,
+                battleship_game.players[1].hits, j2_fallos,
+                turnos_totales, tiempo_inicio, tiempo_fin
+            );
+            
         } else {
             // Modo 2vs2: El equipo ganador es el del jugador que hizo el último disparo
             int winning_player = battleship_game.current_turn;
@@ -704,6 +739,20 @@ int main() {
                 sendGameMessage(client_sockets[i], msg);
             }
             cout << endl;
+            
+            // GUARDAR ESTADÍSTICAS 2v2
+            time_t tiempo_fin = time(nullptr);
+            int j1_fallos = battleship_game.players[0].total_shots - battleship_game.players[0].hits;
+            int j2_fallos = battleship_game.players[1].total_shots - battleship_game.players[1].hits;
+            int j3_fallos = battleship_game.players[2].total_shots - battleship_game.players[2].hits;
+            int j4_fallos = battleship_game.players[3].total_shots - battleship_game.players[3].hits;
+            guardarEstadisticasPartida2v2(
+                battleship_game.players[0].hits, j1_fallos,
+                battleship_game.players[1].hits, j2_fallos,
+                battleship_game.players[2].hits, j3_fallos,
+                battleship_game.players[3].hits, j4_fallos,
+                turnos_totales, tiempo_inicio, tiempo_fin
+            );
         }
         
         cout << "\nPartida completada exitosamente" << endl;

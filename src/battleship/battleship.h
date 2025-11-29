@@ -5,6 +5,7 @@
 #include <vector>
 #include <string>
 #include <cstring>
+#include <ctime> // Para el tiempo
 
 using namespace std;
 
@@ -131,6 +132,8 @@ struct Player {
     vector<Ship> ships;
     bool is_turn;
     bool is_ready;
+    int hits;           // Aciertos
+    int total_shots;    // Disparos totales
     
     // Constructor
     Player();
@@ -169,6 +172,8 @@ struct Game {
     int current_turn;
     int winner;
     int active_players;             // Número real de jugadores (2 o 4)
+    int turn_count;         // Contador de turnos
+    time_t start_time;      // Tiempo de inicio
     
     // Constructor
     Game();
@@ -213,6 +218,17 @@ string getGameStatus(const Game& game);
 int getNextPlacingPlayer(const Game& game, int ship_number);
 int getPlayerTeam(int player_id);
 bool isTeamMate(int player1, int player2);
+
+// Funciones para guardar estadísticas
+void guardarEstadisticasPartida1v1(int jugador1Aciertos, int jugador1Fallos,
+                                    int jugador2Aciertos, int jugador2Fallos,
+                                    int turnos, time_t tiempoInicio, time_t tiempoFin);
+
+void guardarEstadisticasPartida2v2(int jugador1Aciertos, int jugador1Fallos,
+                                    int jugador2Aciertos, int jugador2Fallos,
+                                    int jugador3Aciertos, int jugador3Fallos,
+                                    int jugador4Aciertos, int jugador4Fallos,
+                                    int turnos, time_t tiempoInicio, time_t tiempoFin);
 
 // === FUNCIONES DE RED ===
 

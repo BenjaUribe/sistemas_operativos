@@ -1,4 +1,7 @@
 #include "battleship.h"
+#include <fstream>
+#include <iomanip>
+#include <sys/stat.h>
 
 // === IMPLEMENTACIONES DE TEAM ===
 
@@ -63,6 +66,12 @@ void Game::switch_turn() {
         players[current_turn].is_turn = false;
         current_turn = (current_turn + 1) % active_players;
         players[current_turn].is_turn = true;
+        
+        // Incrementar contador de turnos solo cuando vuelve al jugador 0
+        // (así un "turno" cuenta cuando todos han jugado)
+        if (current_turn == 0) {
+            turn_count++;
+        }
     }
 }
 
@@ -169,6 +178,14 @@ void startGame(Game& game) {
             game.players[0].is_turn = true;
             game.players[1].is_turn = false;
             
+            // Inicializar contadores de estadísticas
+            game.turn_count = 0;
+            game.start_time = time(nullptr);
+            for (int i = 0; i < 2; i++) {
+                game.players[i].hits = 0;
+                game.players[i].total_shots = 0;
+            }
+            
             cout << "\n¡Juego iniciado! " << game.players[0].name << " comienza." << endl;
         }
     } else {
@@ -188,6 +205,14 @@ void startGame(Game& game) {
             // Configurar turnos
             for (int i = 0; i < game.active_players; i++) {
                 game.players[i].is_turn = (i == 0);
+            }
+            
+            // Inicializar contadores de cada jugador
+            game.turn_count = 0;
+            game.start_time = time(nullptr);
+            for (int i = 0; i < game.active_players; i++) {
+                game.players[i].hits = 0;
+                game.players[i].total_shots = 0;
             }
             
             cout << " Juego 2vs2 iniciado! " << game.players[0].name << " (Equipo 1) comienza." << endl;
@@ -222,6 +247,22 @@ bool processMove(Game& game, int x, int y) {
         game.state = FINISHED;
         game.winner = attacker_idx;
         cout << "\n¡" << attacker.name << " ha ganado el juego!" << endl;
+        
+        // GUARDAR ESTADÍSTICAS AL FINALIZAR LA PARTIDA
+        time_t tiempo_fin = time(nullptr);
+        
+        if (game.mode == MODE_2VS2) {
+            guardarEstadisticasPartida2v2(game.players[0].hits, game.players[0].total_shots,
+                                          game.players[1].hits, game.players[1].total_shots,
+                                          game.players[2].hits, game.players[2].total_shots,
+                                          game.players[3].hits, game.players[3].total_shots,
+                                          game.turn_count, game.start_time, tiempo_fin);
+        } else {
+            guardarEstadisticasPartida1v1(game.players[0].hits, game.players[0].total_shots,
+                                          game.players[1].hits, game.players[1].total_shots,
+                                          game.turn_count, game.start_time, tiempo_fin);
+        }
+        
         return true;
     }
     
@@ -285,4 +326,101 @@ int getPlayerTeam(int player_id) {
 // Verificar si dos jugadores son compañeros de equipo
 bool isTeamMate(int player1, int player2) {
     return getPlayerTeam(player1) == getPlayerTeam(player2);
+}
+
+// === FUNCIONES PARA GUARDAR ESTADÍSTICAS ===
+
+// Función para verificar si un directorio existe
+bool directorioExiste(const std::string& ruta) {
+    struct stat info;
+    return (stat(ruta.c_str(), &info) == 0 && (info.st_mode & S_IFDIR));
+}
+
+// Función para crear directorio si no existe
+void crearDirectorioSiNoExiste(const std::string& ruta) {
+    if (!directorioExiste(ruta)) {
+        #ifdef _WIN32
+            _mkdir(ruta.c_str());
+        #else
+            mkdir(ruta.c_str(), 0777);
+        #endif
+    }
+}
+
+void guardarEstadisticasPartida1v1(int jugador1Aciertos, int jugador1Fallos,
+                                    int jugador2Aciertos, int jugador2Fallos,
+                                    int turnos, time_t tiempoInicio, time_t tiempoFin) {
+    std::cout << "\n=== GUARDANDO ESTADÍSTICAS 1v1 ===" << std::endl;
+    std::cout << "J1: " << jugador1Aciertos << " aciertos, " << jugador1Fallos << " fallos" << std::endl;
+    std::cout << "J2: " << jugador2Aciertos << " aciertos, " << jugador2Fallos << " fallos" << std::endl;
+    std::cout << "Turnos: " << turnos << std::endl;
+    
+    // Crear directorio data si no existe
+    crearDirectorioSiNoExiste("data");
+    
+    std::ofstream archivo("data/estadisticas_partidas.txt", std::ios::app);
+    
+    if (archivo.is_open()) {
+        int duracion = static_cast<int>(difftime(tiempoFin, tiempoInicio));
+        
+        std::cout << "Escribiendo: (" << jugador1Aciertos << "," << jugador1Fallos << "),(" 
+                  << jugador2Aciertos << "," << jugador2Fallos << "),(-1,-1),(-1,-1),1v1," 
+                  << duracion << "," << turnos << std::endl;
+        
+        archivo << "(" << jugador1Aciertos << "," << jugador1Fallos << ")," 
+                << "(" << jugador2Aciertos << "," << jugador2Fallos << ")," 
+                << "(-1,-1)," 
+                << "(-1,-1)," 
+                << "1v1," 
+                << duracion << "," 
+                << turnos << std::endl;
+        
+        archivo.flush();
+        archivo.close();
+        std::cout << "✓ Estadísticas guardadas en data/estadisticas_partidas.txt" << std::endl;
+    } else {
+        std::cerr << "✗ Error: No se pudo abrir el archivo de estadísticas." << std::endl;
+    }
+}
+
+void guardarEstadisticasPartida2v2(int jugador1Aciertos, int jugador1Fallos,
+                                    int jugador2Aciertos, int jugador2Fallos,
+                                    int jugador3Aciertos, int jugador3Fallos,
+                                    int jugador4Aciertos, int jugador4Fallos,
+                                    int turnos, time_t tiempoInicio, time_t tiempoFin) {
+    std::cout << "\n=== GUARDANDO ESTADÍSTICAS 2v2 ===" << std::endl;
+    std::cout << "J1: " << jugador1Aciertos << " aciertos, " << jugador1Fallos << " fallos" << std::endl;
+    std::cout << "J2: " << jugador2Aciertos << " aciertos, " << jugador2Fallos << " fallos" << std::endl;
+    std::cout << "J3: " << jugador3Aciertos << " aciertos, " << jugador3Fallos << " fallos" << std::endl;
+    std::cout << "J4: " << jugador4Aciertos << " aciertos, " << jugador4Fallos << " fallos" << std::endl;
+    std::cout << "Turnos: " << turnos << std::endl;
+    
+    // Crear directorio data si no existe
+    crearDirectorioSiNoExiste("data");
+    
+    std::ofstream archivo("data/estadisticas_partidas.txt", std::ios::app);
+    
+    if (archivo.is_open()) {
+        int duracion = static_cast<int>(difftime(tiempoFin, tiempoInicio));
+        
+        std::cout << "Escribiendo: (" << jugador1Aciertos << "," << jugador1Fallos << "),(" 
+                  << jugador2Aciertos << "," << jugador2Fallos << "),(" 
+                  << jugador3Aciertos << "," << jugador3Fallos << "),(" 
+                  << jugador4Aciertos << "," << jugador4Fallos << "),2v2," 
+                  << duracion << "," << turnos << std::endl;
+        
+        archivo << "(" << jugador1Aciertos << "," << jugador1Fallos << ")," 
+                << "(" << jugador2Aciertos << "," << jugador2Fallos << ")," 
+                << "(" << jugador3Aciertos << "," << jugador3Fallos << ")," 
+                << "(" << jugador4Aciertos << "," << jugador4Fallos << ")," 
+                << "2v2," 
+                << duracion << "," 
+                << turnos << std::endl;
+        
+        archivo.flush();
+        archivo.close();
+        std::cout << "✓ Estadísticas guardadas en data/estadisticas_partidas.txt" << std::endl;
+    } else {
+        std::cerr << "✗ Error: No se pudo abrir el archivo de estadísticas." << std::endl;
+    }
 }
