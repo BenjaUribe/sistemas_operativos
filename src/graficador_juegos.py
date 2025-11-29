@@ -10,7 +10,7 @@ def obtener_ruta_base():
 
 # Cargar variables de entorno con la ruta correcta
 dir_actual = obtener_ruta_base()
-dir_proyecto = os.path.dirname(dir_actual)  # Subir un nivel desde src/
+dir_proyecto = os.path.dirname(dir_actual) 
 ruta_env = os.path.join(dir_proyecto, '.env')
 load_dotenv(ruta_env)
 
@@ -23,7 +23,7 @@ def obtener_ruta_grafico(tipo_grafico):
     Retorna la ruta absoluta para guardar un gráfico específico
     tipo_grafico:'tipos', 'tiempos', 'precision', 'turnos'
     """
-    dir_actual = obtener_ruta_base()  # src/
+    dir_actual = obtener_ruta_base()  
     
     # Mapeo de tipos de gráfico a variables de entorno
     mapeo_env = {
@@ -35,17 +35,12 @@ def obtener_ruta_grafico(tipo_grafico):
     
     var_env = mapeo_env.get(tipo_grafico)
     if not var_env:
-        # Si no se encuentra, usar ruta por defecto dentro de src/data
         ruta_grafico = os.path.join(dir_actual, 'data', 'graficos')
     else:
         ruta_relativa = os.getenv(var_env, 'data/graficos')
-        # Las rutas del .env son relativas a la raíz del proyecto, pero data está en src/
-        # Entonces ajustamos la ruta para que apunte a src/data/graficos
         if ruta_relativa.startswith('data/'):
-            # Convertir data/graficos/... a src/data/graficos/...
             ruta_grafico = os.path.join(dir_actual, ruta_relativa)
         else:
-            # Ruta absoluta o ya incluye src/
             dir_proyecto = os.path.dirname(dir_actual)
             ruta_grafico = os.path.join(dir_proyecto, ruta_relativa)
     
@@ -59,7 +54,6 @@ def leer_estadisticas(archivo='estadisticas_partidas.txt'):
     dir_actual = obtener_ruta_base()
     dir_proyecto = os.path.dirname(dir_actual)
     
-    # Buscar en varias ubicaciones posibles
     rutas_posibles = [
         os.path.join(dir_actual, 'data', archivo),  # src/data/
         os.path.join(dir_proyecto, 'data', archivo),  # raiz/data/
@@ -173,10 +167,11 @@ def graficar_porcentaje_tipos_partida(partidas):
     tipos = [p['tipo'] for p in partidas]
     count_1v1 = tipos.count('1v1')
     count_2v2 = tipos.count('2v2')
+    total_partidas = len(partidas)
     
     fig, ax = plt.subplots(figsize=(10, 8))
     sizes = [count_1v1, count_2v2]
-    labels = ['1v1', '2v2']
+    labels = [f'1v1 ({count_1v1})', f'2v2 ({count_2v2})']
     colors = ['#3498db', '#2ecc71']
     explode = (0.05, 0.05)
     
@@ -185,6 +180,15 @@ def graficar_porcentaje_tipos_partida(partidas):
                                         textprops={'fontsize': 14, 'fontweight': 'bold'})
     
     ax.set_title('Distribución de Tipos de Partida', fontsize=16, fontweight='bold', pad=20)
+    
+    # Agregar leyenda con el total de partidas en la esquina superior
+    ax.text(1.3, 1.0, f'Total de partidas: {total_partidas}', 
+            transform=ax.transAxes,
+            fontsize=12, 
+            fontweight='bold',
+            bbox=dict(boxstyle='round,pad=0.5', facecolor='lightgray', edgecolor='black', linewidth=2),
+            verticalalignment='top',
+            horizontalalignment='right')
     
     plt.tight_layout()
     ruta_guardado = obtener_ruta_grafico('tipos')
