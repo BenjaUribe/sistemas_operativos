@@ -294,10 +294,6 @@ int main() {
     // Configurar modo del juego
     battleship_game.set_mode(selected_mode, target_players);
     
-    // Inicializar estadísticas de la partida
-    GameStats game_stats;
-    initGameStats(game_stats, selected_mode, target_players);
-    
     // Configurar jugadores con nombres reales
     for (int i = 0; i < target_players; i++) {
         initializePlayer(battleship_game.players[i], i, player_names[i]);
@@ -513,7 +509,7 @@ int main() {
                         
                         if (makeShot(battleship_game.players[current_player], 
                                     battleship_game.players[opponent], 
-                                    shot_msg.x, shot_msg.y, &game_stats)) {
+                                    shot_msg.x, shot_msg.y)) {
                             
                             hit = (battleship_game.players[opponent].own_board.grid[shot_msg.x][shot_msg.y] == HIT);
                             
@@ -551,9 +547,6 @@ int main() {
                                     target_board.grid[shot_msg.x][shot_msg.y] = HIT;
                                     hit = true;
                                     
-                                    // Actualizar estadísticas del jugador que dispara
-                                    updateStats(game_stats, current_player, true);
-                                    
                                     // Encontrar qué barco fue impactado y actualizar sus hits
                                     for (auto& ship : battleship_game.teams[defending_team].team_ships) {
                                         if (checkShipHit(ship, shot_msg.x, shot_msg.y)) {
@@ -570,9 +563,6 @@ int main() {
                                     // Agua
                                     target_board.grid[shot_msg.x][shot_msg.y] = MISS;
                                     cout << " Agua..." << endl;
-                                    
-                                    // Actualizar estadísticas del jugador que dispara
-                                    updateStats(game_stats, current_player, false);
                                 }
                                 
                                 // Verificar si el equipo defensor perdió todos los barcos
@@ -606,8 +596,6 @@ int main() {
                         
                         // Cambiar turno solo si falló (MISS) y el juego no terminó
                         if (!game_over && !hit) {
-                            // Incrementar contador de turnos cuando cambia el turno
-                            game_stats.total_turns++;
                             battleship_game.players[current_player].is_turn = false;
 
                             if (selected_mode == MODE_1VS1) {
@@ -669,11 +657,6 @@ int main() {
             cout << "   " << player_names[0] << ": " << battleship_game.players[0].ships_remaining() << endl;
             cout << "   " << player_names[1] << ": " << battleship_game.players[1].ships_remaining() << endl;
             
-            // Finalizar estadísticas y guardarlas
-            game_stats.game_end = time(nullptr);
-            game_stats.winner_name = player_names[winner];
-            saveGameStats(game_stats, battleship_game.players, player_names, target_players);
-            
             // Enviar mensaje de victoria al ganador
             GameMessage win_msg(MSG_GAME_OVER);
             string win_text = "¡Felicidades! ¡Has ganado la partida!";
@@ -698,11 +681,6 @@ int main() {
             cout << "Barcos restantes por equipo:" << endl;
             cout << "- Equipo 1: " << battleship_game.teams[0].ships_remaining() << " barcos" << endl;
             cout << "- Equipo 2: " << battleship_game.teams[1].ships_remaining() << " barcos" << endl;
-            
-            // Finalizar estadísticas y guardarlas
-            game_stats.game_end = time(nullptr);
-            game_stats.winner_name = "Equipo " + to_string(winning_team + 1);
-            saveGameStats(game_stats, battleship_game.players, player_names, target_players);
             
             // Enviar mensajes a todos los jugadores
             for (int i = 0; i < target_players; i++) {
