@@ -91,27 +91,6 @@ enum GameState {
     FINISHED
 };
 
-// Estructura para estadísticas de partida (soporta hasta 4 jugadores)
-struct GameStats {
-    int player_hits[MAX_PLAYERS];      // Aciertos por jugador (0-3)
-    int player_misses[MAX_PLAYERS];    // Fallos por jugador (0-3)
-    int total_turns;
-    string winner_name;
-    time_t game_start;
-    time_t game_end;
-    GameMode mode;                     // Modo de juego (1vs1 o 2vs2)
-    int num_players;                   // Número de jugadores (2 o 4)
-    
-    GameStats() : total_turns(0), winner_name(""), 
-                  game_start(0), game_end(0), 
-                  mode(MODE_1VS1), num_players(2) {
-        for (int i = 0; i < MAX_PLAYERS; i++) {
-            player_hits[i] = 0;
-            player_misses[i] = 0;
-        }
-    }
-};
-
 // Estructura del tablero
 struct Board {
     vector<vector<int>> grid;
@@ -220,14 +199,8 @@ bool checkShipHit(Ship& ship, int x, int y);
 // Funciones del jugador (player.cpp)
 void initializePlayer(Player& player, int id, const string& name);
 bool makeShot(Player& attacker, Player& defender, int x, int y);
-bool makeShot(Player& attacker, Player& defender, int x, int y, GameStats* stats);
 bool hasWon(const Player& player);
 void markPlayerReady(Player& player);
-
-// Funciones para estadísticas
-void saveGameStats(const GameStats& stats, const Player players[], const string player_names[], int num_players);
-void updateStats(GameStats& stats, int player_id, bool is_hit);
-void initGameStats(GameStats& stats, GameMode mode, int num_players);
 
 // Funciones del juego (game_logic.cpp)
 void initializeGame(Game& game, GameMode mode);
