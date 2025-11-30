@@ -160,60 +160,10 @@ int run_game(string game_app_path){
 }
 
 int buscador(string search_app_path){
-    namespace fs = std::filesystem;
-    
-    // Buscar archivos .idx en la carpeta data/
-    vector<string> archivos_idx;
-    string data_path = "data/";
-    
-    // Verificar si la carpeta data/ existe
-    if (!fs::exists(data_path) || !fs::is_directory(data_path)) {
-        cout << "\nError: La carpeta 'data/' no existe." << endl;
-        return 0;
-    }
-    
-    // Iterar sobre todos los archivos en data/
-    for (const auto& entry : fs::directory_iterator(data_path)) {
-        if (entry.is_regular_file()) {
-            string filename = entry.path().filename().string();
-            if (terminaEnIdx(filename)) {
-                archivos_idx.push_back(entry.path().string());
-            }
-        }
-    }
-    
-    // Verificar si se encontraron archivos .idx
-    if (archivos_idx.empty()) {
-        cout << "\nNo se encontraron archivos .idx en la carpeta data/" << endl;
-        cout << "Por favor, cree primero un indice invertido usando la opcion 7 u 8." << endl;
-        return 0;
-    }
-    
-    // Mostrar archivos disponibles
-    cout << "\n=== Archivos de indice disponibles ===" << endl;
-    for (size_t i = 0; i < archivos_idx.size(); i++) {
-        cout << i + 1 << ". " << archivos_idx[i] << endl;
-    }
-    
-    // Seleccionar archivo
-    int seleccion;
-    do {
-        cout << "\nSeleccione el numero del archivo a usar (1-" << archivos_idx.size() << "): ";
-        cin >> seleccion;
-        
-        if (cin.fail() || seleccion < 1 || seleccion > (int)archivos_idx.size()) {
-            cout << "Error: Seleccion invalida." << endl;
-            cin.clear();
-            cin.ignore(10000, '\n');
-            seleccion = 0;
-        }
-    } while (seleccion < 1 || seleccion > (int)archivos_idx.size());
-    
-    string nombre_indice = archivos_idx[seleccion - 1];
-    cout << "\nUsando archivo: " << nombre_indice << endl;
+
 
     // Ejecutar buscador_sistOpe con el archivo seleccionado
-    system((search_app_path + " " + nombre_indice).c_str());
+    system((search_app_path).c_str());
   
     return 0;
 }
