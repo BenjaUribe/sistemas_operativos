@@ -3,7 +3,7 @@
 
 ---
 
-## 📋 Tabla de Contenidos
+##  Tabla de Contenidos
 - [Descripción](#descripción)
 - [Requisitos](#requisitos)
 - [Instalación](#instalación)
@@ -19,7 +19,7 @@
 
 ---
 
-## 📖 Descripción
+##  Descripción
 
 Sistema operativo que integra múltiples funcionalidades:
 - Gestión de usuarios y perfiles
@@ -31,7 +31,7 @@ Sistema operativo que integra múltiples funcionalidades:
 
 ---
 
-## 🔧 Requisitos
+##  Requisitos
 
 - **Compilador**: `g++` con soporte para C++11 o superior
 - **Build Tool**: `make`
@@ -40,7 +40,7 @@ Sistema operativo que integra múltiples funcionalidades:
 
 ---
 
-## 📦 Instalación
+##  Instalación
 
 ### Compilación
 ```bash
@@ -63,7 +63,7 @@ Esto generará los siguientes ejecutables:
 
 ---
 
-## 🚀 Componentes del Sistema
+##  Componentes del Sistema
 
 ### Menú Principal
 Punto de entrada principal del sistema que integra todas las funcionalidades.
@@ -236,16 +236,6 @@ sistemas_operativos/
         └── matriz2.txt
 ```
 
----
 
-## 📝 Notas Adicionales
-
-- El sistema de búsqueda utiliza comunicación por sockets TCP en localhost
-- La caché implementa política LRU para optimizar búsquedas frecuentes
-- El índice invertido mapea palabras a IDs de libros con frecuencias
-- El juego Battleship soporta múltiples jugadores conectados simultáneamente
-- Las pruebas de rendimiento comparan versiones secuencial vs paralela
-
----
 
 
