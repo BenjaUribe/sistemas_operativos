@@ -37,11 +37,15 @@ Sistema operativo que integra múltiples funcionalidades:
 - **Build Tool**: `make`
 - **Sistema Operativo**: Linux/Unix o Windows con WSL
 - **Python**: Para generación de gráficos (opcional)
+- 
 
 ---
 
 ##  Instalación
-
+```bash
+sudo apt install python3-dotenv
+sudo apt install python3-matplotlib
+```
 ### Compilación
 ```bash
 cd src
@@ -236,6 +240,7 @@ sistemas_operativos/
         ├── matriz1.txt
         └── matriz2.txt
 ```
+
 
 
 
