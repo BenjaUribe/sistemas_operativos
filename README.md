@@ -178,6 +178,7 @@ El archivo `.env` en la raíz del proyecto contiene las siguientes configuracion
 - **`TOPK`**: Número de resultados a mostrar (por defecto: 3)
 - **`CACHE_PORT`**: Puerto del servidor caché (por defecto: 8081)
 - **`MOTOR_PORT`**: Puerto del motor de búsqueda (por defecto: 8082)
+- **`SEARCH_APP`**: Ruta aplicación motor de busqueda
 
 ### Multiplicación de Matrices
 - **`MATRIZ1_FILE`**: Ruta a `matriz1.txt`
@@ -235,6 +236,7 @@ sistemas_operativos/
         ├── matriz1.txt
         └── matriz2.txt
 ```
+
 
 
 
