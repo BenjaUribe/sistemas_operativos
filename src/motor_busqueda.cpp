@@ -231,7 +231,7 @@ bool parsear_json_query(const string& json, string& query, int& topk) {
 
 int main(int argc, char* argv[]) {
     if (argc < 3) {
-        cout << "Uso: motor_busqueda <archivo_indice.idx> <mapa_libros.map>" << endl;
+        cout << "Uso: ./motor_busqueda <archivo_indice.idx> <mapa_libros.map>" << endl;
         return 1;
     }
 
@@ -265,9 +265,6 @@ int main(int argc, char* argv[]) {
     SOCKET servidor_socket = socket(AF_INET, SOCK_STREAM, 0);
     if (servidor_socket == INVALID_SOCKET) {
         cerr << "Error al crear socket" << endl;
-        #ifdef _WIN32
-            WSACleanup();
-        #endif
         return 1;
     }
 

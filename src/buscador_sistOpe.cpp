@@ -228,15 +228,7 @@ void mostrar_resultados(const string& json_respuesta) {
 }
 
 int main (int argc, char* argv[]) {
-    
-    if(argc < 2) {
-        cout << "Uso: buscador_sistOpe <archivo_indice.idx> " << endl;
-        return 1;
-    }
-    string indice_path = argv[1];
-
-    cout << "Ejecutando buscador_sistOpe con el archivo de índice: " << indice_path << endl;
-
+    cout << ":::::::::: Buscador de Libros con Caché LRU ::::::::::" << endl;
     #ifdef _WIN32
         printf("[PID: %d]\n", GetCurrentProcessId());
     #else
@@ -252,26 +244,36 @@ int main (int argc, char* argv[]) {
     cout << "Cache Puerto: " << cache_port << endl;
     cout << "TOPK: " << topk << endl;
 
-    cout  << "\nIngrese la palabra/frase a buscar: ";
-    string busqueda;
-    getline(cin, busqueda);
-    
-    if (busqueda.empty()) {
-        cout << "Error: Debe ingresar una búsqueda válida" << endl;
-        return 1;
+    // Bucle principal para realizar múltiples búsquedas
+    while (true) {
+        cout  << "\n" << string(60, '=') << endl;
+        cout << "Ingrese la palabra/frase a buscar (o '-1' para terminar): ";
+        string busqueda;
+        getline(cin, busqueda);
+        
+        // Verificar si el usuario quiere salir
+        if (busqueda == "-1") {
+            cout << "\nSaliendo del buscador..." << endl;
+            break;
+        }
+        
+        if (busqueda.empty()) {
+            cout << "Error: Debe ingresar una búsqueda válida" << endl;
+            continue;
+        }
+        
+        // Realizar consulta a la cache
+        auto inicio = chrono::high_resolution_clock::now();
+        string respuesta = query_cache(busqueda, topk, cache_port);
+        auto fin = chrono::high_resolution_clock::now();
+        
+        double tiempo_total = chrono::duration<double, milli>(fin - inicio).count();
+        
+        // Mostrar resultados
+        mostrar_resultados(respuesta);
+        
+        cout << "Tiempo total del cliente: " << tiempo_total << " ms" << endl;
     }
-    
-    // Realizar consulta a la cache
-    auto inicio = chrono::high_resolution_clock::now();
-    string respuesta = query_cache(busqueda, topk, cache_port);
-    auto fin = chrono::high_resolution_clock::now();
-    
-    double tiempo_total = chrono::duration<double, milli>(fin - inicio).count();
-    
-    // Mostrar resultados
-    mostrar_resultados(respuesta);
-    
-    cout << "Tiempo total del cliente: " << tiempo_total << " ms" << endl;
 
     return 0;
 }

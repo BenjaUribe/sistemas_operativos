@@ -48,7 +48,7 @@ int main(int argc, char* argv[]) {
         return 1;
     }
     
-    int n_lote = atoi(argv[1]); // ← Solo 1 argumento (n_lote)
+    int n_lote = atoi(argv[1]); // Solo 1 argumento (n_lote)
 
     // Leer variables del .env
     map<string, string> env_vars = leer_env("../.env");

@@ -176,7 +176,7 @@ void actualizar_cache(const string& query, const string& resultados_json) {
     nueva_entrada.resultados_json = limpiar_json_tiempos(resultados_json);
     nueva_entrada.timestamp = chrono::high_resolution_clock::now();
     
-    cout << "  JSON limpio guardado: " << nueva_entrada.resultados_json << endl;
+    //cout << "  JSON limpio guardado: " << nueva_entrada.resultados_json << endl;
     
     cache_memory.push_back(nueva_entrada);
     cout << "  Entrada guardada en cache (" << cache_memory.size() << "/" << CACHE_SIZE << ")" << endl;
@@ -259,7 +259,7 @@ int main (int argc, char* argv[]) {
     motor_port_str.erase(motor_port_str.find_last_not_of(" \n\r\t") + 1);
     MOTOR_PORT = stoi(motor_port_str);
     
-    cout << "=== CACHE MIDDLEWARE ===" << endl;
+    cout << "=== CACHE ===" << endl;
     cout << "Tamaño de caché: " << CACHE_SIZE << endl;
     cout << "Puerto Cache: " << CACHE_PORT << endl;
     cout << "Puerto Motor: " << MOTOR_PORT << endl;
@@ -325,7 +325,7 @@ int main (int argc, char* argv[]) {
             buffer[bytes_recibidos] = '\0';
             string mensaje_recibido(buffer);
             
-            cout << "JSON recibido: " << mensaje_recibido << endl;
+            //cout << "JSON recibido: " << mensaje_recibido << endl;
             
             // Parsear JSON
             string query;
@@ -369,11 +369,11 @@ int main (int argc, char* argv[]) {
                     
                     // Limpiar JSON y agregar tiempos correctos
                     string json_limpio = limpiar_json_tiempos(respuesta_motor);
-                    cout << "  JSON limpio: " << json_limpio << endl;
+                    //cout << "  JSON limpio: " << json_limpio << endl;
                     respuesta = agregar_tiempo_cache(json_limpio, tiempo_cache, false, tiempo_motor);
                     
-                    cout << " \nJSON final " << endl;
-                    cout << "     " << respuesta << endl;
+                    //cout << " \nJSON final " << endl;
+                    //cout << "     " << respuesta << endl;
                 }
                 
                 cout << " Enviando respuesta al Buscador" << endl;
