@@ -210,36 +210,40 @@ El archivo `.env` en la raíz del proyecto contiene las siguientes configuracion
 
 ```
 sistemas_operativos/
-├── .env                          # Variables de entorno
-├── README.md                     # Este archivo
+├── .env                            # Variables de entorno
+├── README.md                       # Este archivo
 ├── src/
-│   ├── makefile                  # Archivo de compilación
-│   ├── menu_principal.cpp        # Menú principal
-│   ├── user_admin.cpp            # Administrador de usuarios
-│   ├── buscador_sistOpe.cpp      # Cliente del buscador
-│   ├── cache.cpp                 # Servidor caché
-│   ├── motor_busqueda.cpp        # Motor de búsqueda
-│   ├── indice_invertido.cpp      # Generador de índice
-│   ├── indice_paralelo.cpp       # Generador paralelo
-│   ├── matmul.cpp                # Multiplicador de matrices
-│   └── battleship/               # Código del juego
+│   ├── makefile                    # Archivo de compilación
+│   ├── menu_principal.cpp          # Menú principal
+│   ├── user_admin.cpp              # Administrador de usuarios
+│   ├── buscador_sistOpe.cpp        # Cliente del buscador
+│   ├── cache.cpp                   # Servidor caché
+│   ├── motor_busqueda.cpp          # Motor de búsqueda
+│   ├── indice_invertido.cpp        # Generador de índice
+│   ├── indice_paralelo.cpp         # Generador paralelo
+│   ├── rendimiento.cpp             # Metricas del indice paralelo
+│   ├── graficar_juegos.py          # Grafica las estadisticas del juego
+│   ├── graficador_rendimiento.py   # Grafica las estadisticas del indice paralelo
+│   ├── matmul.cpp                  # Multiplicador de matrices
+│   └── battleship/                 # Código del juego
 │       ├── battleship.h
 │       ├── server.cpp
 │       ├── client.cpp
 │       └── ...
 └── data/
-    ├── USUARIOS.txt              # Base de datos de usuarios
-    ├── PERFILES.txt              # Perfiles del sistema
-    ├── indice.idx                # Índice invertido
-    ├── MAPA-LIBROS.map           # Mapeo ID → nombre de libro
-    ├── libros/                   # Colección de libros
+    ├── USUARIOS.txt                # Base de datos de usuarios
+    ├── PERFILES.txt                # Perfiles del sistema
+    ├── indice.idx                  # Índice invertido
+    ├── MAPA-LIBROS.map             # Mapeo ID → nombre de libro
+    ├── libros/                     # Colección de libros
     │   ├── el_principito.txt
     │   ├── don_quijote.txt
     │   └── ...
-    └── matrices/                 # Archivos de matrices
+    └── matrices/                   # Archivos de matrices
         ├── matriz1.txt
         └── matriz2.txt
 ```
+
 
 
 
