@@ -77,11 +77,11 @@ int main(int argc, char* argv[]) {
     
     // Pedir al usuario que ingrese los números de threads
     vector<int> CANT_THREADS;
-    cout << "Ingrese " << size_array_threads << " numeros de threads:" << endl;
+    cout << "Ingrese " << size_array_threads << " cantidades de threads:" << endl;
     
     for (int i = 0; i < size_array_threads; i++) {
         int num_thread;
-        cout << "Thread #" << (i + 1) << ": ";
+        cout << "n #" << (i + 1) << ": ";
         cin >> num_thread;
         
         if (num_thread <= 0) {
@@ -93,17 +93,24 @@ int main(int argc, char* argv[]) {
         CANT_THREADS.push_back(num_thread);
     }
     
-    cout << "\nThreads a probar: ";
+    cout << "\nCantidades de threads a probar: ";
     for (int t : CANT_THREADS) cout << t << " ";
     cout << endl;
     cout << "iniciando" << endl;
 
-    for (int num_threads : CANT_THREADS){ // ← Más limpio
+    // Abrir archivo de logs para escribir el n_lote al inicio
+    ofstream log_file("data/logs_tiempos.txt");
+    if (log_file.is_open()) {
+        log_file << "n_lote=" << n_lote << endl;
+        log_file.close();
+    } else {
+        cerr << "No se pudo abrir data/logs_tiempos.txt para escribir n_lote" << endl;
+    }
 
+    for (int num_threads : CANT_THREADS){ // ← Más limpio
         string comando = index_path + " " + nombre_indice + " " + path_carpeta + " " + to_string(num_threads) + " " + to_string(n_lote);
         cout << "Ejecutando: " << comando << endl; 
         system(comando.c_str());
-
     }
     cout << "Prueba de rendimiento finalizada." << endl;
     
